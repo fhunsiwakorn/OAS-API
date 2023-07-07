@@ -12,11 +12,11 @@ const port = process.env.PORT || 9200;
 
 app.use(express.json(), cors());
 
-// app.use("/", home);
-// app.use("/user", users);
-// app.use("/news", news);
-// app.use("/course", course);
-// app.use("/master_data", master_data);
+app.use("/", home);
+app.use("/user", users);
+app.use("/news", news);
+app.use("/course", course);
+app.use("/master_data", master_data);
 app.use("/media_file", media_file);
 // ทำงานทุก request ที่เข้ามา
 app.use(function (req, res, next) {
