@@ -158,7 +158,7 @@ router.post("/list", middleware, (req, res, next) => {
   });
 });
 
-router.post("/image", middleware, (req, res, next) => {
+router.post("/image/create", middleware, (req, res, next) => {
   const data = req.body;
   const news_id = data.news_id;
   con.query(
@@ -173,22 +173,23 @@ router.post("/image", middleware, (req, res, next) => {
           message: "Data is null",
         });
       }
-    }
-  );
-  con.query(
-    "INSERT INTO app_news_image (ni_path_file,ni_name_file,news_id) VALUES (?,?,?)",
-    [data.ni_path_file, data.ni_name_file, news_id],
-    function (err, result) {
-      if (err) throw err;
-      return res.json(result);
+
+      con.query(
+        "INSERT INTO app_news_image (ni_path_file,ni_name_file,news_id) VALUES (?,?,?)",
+        [data.ni_path_file, data.ni_name_file, news_id],
+        function (err, result) {
+          if (err) throw err;
+          return res.json(result);
+        }
+      );
     }
   );
 });
 
-router.delete("/image/:ni_id", middleware, (req, res, next) => {
+router.delete("/image/delete/:ni_id", middleware, (req, res, next) => {
   const { ni_id } = req.params;
   con.query(
-    "DELETE app_news_image WHERE ni_id=? ",
+    "DELETE FROM  app_news_image WHERE ni_id=? ",
     [ni_id],
     function (err, result) {
       if (err) throw err;
