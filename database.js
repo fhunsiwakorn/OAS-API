@@ -5,7 +5,6 @@ const connection = mysql.createConnection({
   port: "3306",
   password: "",
   database: "oas",
-  socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock", //for mac and linux
 });
 
 connection.connect(function (err) {
