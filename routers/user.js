@@ -189,6 +189,26 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
     })
     .catch((err) => console.error(err.message));
 });
+
+router.get("/get/:user_id", middleware, (req, res, next) => {
+  const { user_id } = req.params;
+
+  con.query(
+    "SELECT user_id,  user_name,  user_firstname,  user_lastname, user_email, user_phone, user_type, crt_date, udp_date  FROM app_user WHERE  user_id = ? LIMIT 1",
+    [user_id],
+    function (err, results) {
+      if (results.length <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null", // error.sqlMessage
+        });
+      }
+
+      return res.json(results[0]);
+    }
+  );
+});
+
 router.delete("/delete/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   con.query(

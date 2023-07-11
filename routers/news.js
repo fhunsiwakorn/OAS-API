@@ -80,6 +80,23 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
   );
 });
 
+router.get("/get/:news_id", middleware, (req, res, next) => {
+  const { news_id } = req.params;
+  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
+  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
+  FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1 AND app_news.news_id=?`;
+  con.query(sql, [news_id], function (err, results) {
+    if (results.length <= 0) {
+      return res.status(204).json({
+        status: 204,
+        message: "Data is null", // error.sqlMessage
+      });
+    }
+
+    return res.json(results[0]);
+  });
+});
+
 router.delete("/delete/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
   con.query(
