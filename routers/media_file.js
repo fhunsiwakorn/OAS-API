@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const middleware = require("../middleware");
+const functions = require("../functions");
 const multer = require("multer");
 const mime = require("mime-types");
 const fs = require("fs");
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     // console.log(file.originalname);
     const extension = file.originalname.split(".").pop();
-    cb(null, file.fieldname + "-" + Date.now() + "." + extension);
+    cb(null, file.fieldname + "-" + functions.randomCode() + "." + extension);
   },
 });
 const upload = multer({ storage: storage });

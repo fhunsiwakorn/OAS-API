@@ -80,20 +80,6 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
   );
 });
 
-function getObj(news_id) {
-  let a = [];
-  let b = con.query(
-    "SELECT * FROM app_news_image WHERE news_id=? ",
-    [1],
-    function (err, rows) {
-      if (err) throw err;
-      // res.json(result);
-      //console.log(rows);
-      return result;
-    }
-  );
-  return b;
-}
 router.get("/get/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
   let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
