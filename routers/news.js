@@ -80,20 +80,50 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
   );
 });
 
+function getObj(news_id) {
+  let a = [];
+  let b = con.query(
+    "SELECT * FROM app_news_image WHERE news_id=? ",
+    [1],
+    function (err, rows) {
+      if (err) throw err;
+      // res.json(result);
+      //console.log(rows);
+      return result;
+    }
+  );
+  return b;
+}
 router.get("/get/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
   let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1 AND app_news.news_id=?`;
-  con.query(sql, [news_id], function (err, results) {
-    if (results.length <= 0) {
+
+  con.query(sql, [news_id], function (err, main) {
+    if (main.length <= 0) {
       return res.status(204).json({
         status: 204,
         message: "Data is null", // error.sqlMessage
       });
     }
 
-    return res.json(results[0]);
+    con.query(
+      "SELECT * FROM app_news_image WHERE news_id=? ",
+      [news_id],
+      (err, images_list) => {
+        if (err) throw err;
+
+        // return rows;
+        const obj1 = main[0];
+        const obj2 = { images_list: images_list };
+        const mergedObject = {
+          ...obj1,
+          ...obj2,
+        };
+        res.json(mergedObject);
+      }
+    );
   });
 });
 
