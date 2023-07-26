@@ -126,7 +126,7 @@ router.post("/list", middleware, (req, res, next) => {
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (course_code  LIKE ? OR course_name  LIKE  ? OR course_description  LIKE  ?)`; //
+    sql += ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
@@ -134,7 +134,7 @@ router.post("/list", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `  ORDER BY course_id DESC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY app_course.course_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
@@ -295,7 +295,7 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (cs_name  LIKE ? OR cs_description  LIKE  ?)`; //
+    sql += ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
     search_param = [`%${search}%`, `%${search}%`];
   }
 
@@ -303,7 +303,7 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `  ORDER BY cs_id DESC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY app_course_lesson.cs_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql, p.concat(search_param), (err, results) => {

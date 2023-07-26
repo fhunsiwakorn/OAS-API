@@ -159,7 +159,7 @@ router.post("/list", middleware, (req, res, next) => {
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (news_title  LIKE ? OR news_description  LIKE  ?)`; //
+    sql += ` AND (app_news.news_title  LIKE ? OR app_news.news_description  LIKE  ?)`; //
     search_param = [`%${search}%`, `%${search}%`];
   }
 
@@ -167,7 +167,7 @@ router.post("/list", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `  ORDER BY news_id DESC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY app_news.news_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {

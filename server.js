@@ -5,6 +5,7 @@ const home = require("./routers/home");
 const users = require("./routers/user");
 const news = require("./routers/news");
 const course = require("./routers/course");
+const exam = require("./routers/exam");
 const master_data = require("./routers/master_data");
 const media_file = require("./routers/media_file");
 
@@ -16,6 +17,7 @@ app.use("/", home);
 app.use("/user", users);
 app.use("/news", news);
 app.use("/course", course);
+app.use("/exam", exam);
 app.use("/master_data", master_data);
 app.use("/media_file", media_file);
 // ทำงานทุก request ที่เข้ามา
