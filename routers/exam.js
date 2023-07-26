@@ -222,14 +222,25 @@ router.post("/question/list", middleware, (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT eq_id,eq_name,eq_image,eq_answer,em_id FROM app_exam_question WHERE cancelled=1`;
+  let sql = `SELECT
+	t1.eq_id, 
+	t1.eq_name, 
+	t1.eq_image, 
+	t1.eq_answer, 
+	t1.em_id,
+	CONCAT('[',(SELECT    GROUP_CONCAT((json_object('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id ) ,']') AS choices
+FROM
+	app_exam_question t1
+	WHERE
+	t1.cancelled =1
+  `;
 
   con.query(sql, (err, results) => {
     total = results.length;
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (eq_name  LIKE ?)`; //
+    sql += ` AND (t1.eq_name  LIKE ?)`; //
     search_param = [`%${search}%`];
   }
 
@@ -237,7 +248,7 @@ router.post("/question/list", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `  ORDER BY app_exam_question.eq_id DESC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY t1.eq_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
@@ -247,6 +258,25 @@ router.post("/question/list", middleware, (req, res, next) => {
         message: "Bad Request", // error.sqlMessage
       });
     }
+    let obj = [];
+    results.forEach((el) => {
+      // console.log(JSON.parse(el?.choices));
+      let eq_id = el?.eq_id;
+      let eq_name = el?.eq_name;
+      let eq_image = el?.eq_image;
+      let eq_answer = el?.eq_answer;
+      let em_id = el?.em_id;
+      let choices = JSON.parse(el?.choices);
+      let newObj = {
+        eq_id: eq_id,
+        eq_name: eq_name,
+        eq_image: eq_image,
+        eq_answer: eq_answer,
+        em_id: em_id,
+        choices: choices,
+      };
+      obj.push(newObj);
+    });
 
     const response = {
       total: total, // จำนวนรายการทั้งหมด
@@ -255,7 +285,7 @@ router.post("/question/list", middleware, (req, res, next) => {
       limit_page: per_page, // limit data
       total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
       search: search, // คำค้นหา
-      data: results, // รายการข้อมูล
+      data: obj, // รายการข้อมูล
     };
     return res.json(response);
   });
