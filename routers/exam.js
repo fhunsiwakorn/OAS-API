@@ -119,7 +119,7 @@ router.post("/main/list", middleware, (req, res, next) => {
 
     const response = {
       total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
+      total_filter: total_filter, // จำนวนรายการที่ค้นหา
       current_page: current_page, // หน้าที่กำลังแสดงอยู่
       limit_page: per_page, // limit data
       total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
@@ -228,7 +228,7 @@ router.post("/question/list", middleware, (req, res, next) => {
 	t1.eq_image, 
 	t1.eq_answer, 
 	t1.em_id,
-	CONCAT('[',(SELECT    GROUP_CONCAT((json_object('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id ) ,']') AS choices
+	CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id ) ,']') AS choices
 FROM
 	app_exam_question t1
 	WHERE
@@ -280,7 +280,7 @@ FROM
 
     const response = {
       total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
+      total_filter: total_filter, // จำนวนรายการที่ค้นหา
       current_page: current_page, // หน้าที่กำลังแสดงอยู่
       limit_page: per_page, // limit data
       total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
@@ -322,12 +322,14 @@ router.delete("/question/delete/:eq_id", middleware, (req, res, next) => {
 router.post("/choice/create", middleware, (req, res, next) => {
   const data = req.body;
   const eq_id = data.eq_id;
+  const ec_index = data.ec_index;
   //   const em_id = data.em_id;
   let em_id;
   con.query(
     "SELECT em_id FROM app_exam_question WHERE eq_id = ?  LIMIT 1",
     [eq_id],
     (err, rows) => {
+      if (err) throw err;
       let checkuser = rows.length;
       let question = rows[0];
       if (checkuser <= 0) {
@@ -337,12 +339,28 @@ router.post("/choice/create", middleware, (req, res, next) => {
         });
       }
       em_id = question?.em_id;
+
       con.query(
-        "INSERT INTO app_exam_choice (ec_index,ec_name,ec_image,eq_id,em_id) VALUES (?,?,?,?,?)",
-        [data.ec_index, data.ec_name, data.ec_image, eq_id, em_id],
-        function (err, result) {
+        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? ",
+        [eq_id, ec_index],
+        (err, rows) => {
           if (err) throw err;
-          return res.json(result);
+          let _check_data = rows.length;
+
+          if (_check_data > 0) {
+            return res.status(400).json({
+              status: 400,
+              message: "Error Transaction",
+            });
+          }
+          con.query(
+            "INSERT INTO app_exam_choice (ec_index,ec_name,ec_image,eq_id,em_id) VALUES (?,?,?,?,?)",
+            [ec_index, data.ec_name, data.ec_image, eq_id, em_id],
+            function (err, result) {
+              if (err) throw err;
+              return res.json(result);
+            }
+          );
         }
       );
     }
@@ -353,6 +371,7 @@ router.put("/choice/update/:ec_id", middleware, (req, res, next) => {
   const { ec_id } = req.params;
   const data = req.body;
   const eq_id = data.eq_id;
+  const ec_index = data.ec_index;
   //   const em_id = data.em_id;
   let em_id;
   con.query(
@@ -368,13 +387,28 @@ router.put("/choice/update/:ec_id", middleware, (req, res, next) => {
         });
       }
       em_id = question?.em_id;
+
       con.query(
-        "UPDATE  app_exam_choice SET ec_index=?,ec_name=?,ec_image=?,eq_id=?,em_id=? WHERE ec_id=? ",
-        [data.ec_index, data.ec_name, data.ec_image, eq_id, em_id, ec_id],
-        function (err, result) {
+        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? AND ec_id !=?",
+        [eq_id, ec_index, ec_id],
+        (err, rows) => {
           if (err) throw err;
-          // console.log("1 record inserted");
-          return res.json(result);
+          let _check_data = rows.length;
+
+          if (_check_data > 0) {
+            return res.status(400).json({
+              status: 400,
+              message: "Error Transaction",
+            });
+          }
+          con.query(
+            "UPDATE  app_exam_choice SET ec_index=?,ec_name=?,ec_image=?,eq_id=?,em_id=? WHERE ec_id=? ",
+            [ec_index, data.ec_name, data.ec_image, eq_id, em_id, ec_id],
+            function (err, result) {
+              if (err) throw err;
+              return res.json(result);
+            }
+          );
         }
       );
     }
