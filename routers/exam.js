@@ -90,8 +90,12 @@ router.post("/main/list", middleware, (req, res, next) => {
   let total_filter = 0;
   let search_param = [];
   let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.crt_date,app_exam_main.udp_date ,
-     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM app_exam_main LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp WHERE app_exam_main.cancelled=1`;
+     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, COUNT(q.em_id) AS total_question
+     FROM app_exam_main 
+     LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
+     LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
+     LEFT JOIN  app_exam_question q ON q.em_id = app_exam_main.em_id 
+     WHERE app_exam_main.cancelled=1`;
 
   con.query(sql, (err, results) => {
     total = results.length;
@@ -106,7 +110,7 @@ router.post("/main/list", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `  ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
+  sql += ` GROUP BY  app_exam_main.em_id ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
