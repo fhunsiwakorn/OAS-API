@@ -174,7 +174,7 @@ router.post("/question/create", middleware, (req, res, next) => {
       }
       con.query(
         "INSERT INTO app_exam_question (eq_name,eq_image,eq_answer,em_id) VALUES (?,?,?,?)",
-        [data.eq_name, data.eq_image, data.eq_answer, data.em_id],
+        [data.eq_name, data.eq_image, data.eq_answer, em_id],
         function (err, result) {
           if (err) throw err;
           return res.json(result);
@@ -213,9 +213,10 @@ router.put("/question/update/:eq_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/question/list", middleware, (req, res, next) => {
+router.post("/question/:em_id/list", middleware, (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
+  const { em_id } = req.params;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = (current_page - 1) * per_page;
@@ -232,10 +233,11 @@ router.post("/question/list", middleware, (req, res, next) => {
 FROM
 	app_exam_question t1
 	WHERE
+  t1.em_id =? AND
 	t1.cancelled =1
   `;
-
-  con.query(sql, (err, results) => {
+  let param1 = [em_id];
+  con.query(sql, param1, (err, results) => {
     total = results.length;
   });
 
@@ -244,14 +246,14 @@ FROM
     search_param = [`%${search}%`];
   }
 
-  con.query(sql, search_param, (err, rows) => {
+  con.query(sql, param1.concat(search_param), (err, rows) => {
     total_filter = rows.length;
   });
 
   sql += `  ORDER BY t1.eq_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
-  con.query(sql, search_param, (err, results) => {
+  con.query(sql, param1.concat(search_param), (err, results) => {
     if (err) {
       return res.status(400).json({
         status: 400,
