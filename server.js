@@ -9,6 +9,11 @@ const exam = require("./routers/exam");
 const master_data = require("./routers/master_data");
 const media_file = require("./routers/media_file");
 
+// const http = require("http");
+const os = require("os");
+const cluster = require("cluster");
+const numOfCpuCores = os.cpus().length;
+
 const port = process.env.PORT || 9200;
 
 app.use(express.json(), cors());
@@ -39,6 +44,44 @@ app.use(function (err, req, res, next) {
   // res.render("error");
 });
 
-app.listen(port, () => {
-  console.log("Application is running on port " + port);
-});
+if (numOfCpuCores > 1) {
+  if (cluster.isMaster) {
+    console.log(`Cluster master ${process.pid} is running.`);
+
+    for (let i = 0; i < numOfCpuCores; i++) {
+      cluster.fork();
+    }
+
+    cluster.on("exit", function (worker) {
+      console.log("Worker", worker.id, " has exitted.");
+    });
+  } else {
+    // const server = http.createServer((req, res) => {
+    //   res.end("Hello there Fhun!");
+    // });
+
+    app.listen(port, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(
+          `Server is listening on port ${port} and process ${process.pid}.`
+        );
+      }
+    });
+  }
+} else {
+  app.listen(port, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(
+        `Server is listening on port ${port} and process ${process.pid}.`
+      );
+    }
+  });
+}
+
+// app.listen(port, () => {
+//   console.log("Application is running on port " + port);
+// });

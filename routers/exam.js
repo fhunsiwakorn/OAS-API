@@ -90,7 +90,7 @@ router.post("/main/list", middleware, (req, res, next) => {
   let total_filter = 0;
   let search_param = [];
   let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.crt_date,app_exam_main.udp_date ,
-     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, COUNT(q.em_id) AS total_question
+     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, COUNT(q.eq_id) AS total_question
      FROM app_exam_main 
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
      LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
@@ -233,7 +233,7 @@ router.post("/question/:em_id/list", middleware, (req, res, next) => {
 	t1.eq_image, 
 	t1.eq_answer, 
 	t1.em_id,
-	CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id ) ,']') AS choices
+	CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']') AS choices
 FROM
 	app_exam_question t1
 	WHERE
