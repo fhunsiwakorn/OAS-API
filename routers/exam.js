@@ -96,8 +96,9 @@ router.post("/main/list", middleware, (req, res, next) => {
      LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
      LEFT JOIN  app_exam_question q ON q.em_id = app_exam_main.em_id 
      WHERE app_exam_main.cancelled=1`;
-
-  con.query(sql, (err, results) => {
+  let group = " GROUP BY  app_exam_main.em_id ";
+  let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
+  con.query(sql + group, (err, results) => {
     total = results.length;
   });
 
@@ -106,14 +107,14 @@ router.post("/main/list", middleware, (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  con.query(sql, search_param, (err, rows) => {
+  con.query(sql + group, search_param, (err, rows) => {
     total_filter = rows.length;
   });
 
-  sql += ` GROUP BY  app_exam_main.em_id ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
+  // sql += ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
-  con.query(sql, search_param, (err, results) => {
+  con.query(sql + group + order, search_param, (err, results) => {
     if (err) {
       return res.status(400).json({
         status: 400,
