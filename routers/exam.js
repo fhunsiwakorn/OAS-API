@@ -98,20 +98,24 @@ router.post("/main/list", middleware, (req, res, next) => {
      WHERE app_exam_main.cancelled=1`;
   let group = " GROUP BY  app_exam_main.em_id ";
   let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
-  con.query(sql + group, (err, results) => {
-    total = results.length;
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1 ";
+  con.query(sql_count, (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (app_exam_main.em_code  LIKE ? OR app_exam_main.em_name  LIKE  ? OR app_exam_main.em_description  LIKE  ?)`; //
+    let q = ` AND (app_exam_main.em_code  LIKE ? OR app_exam_main.em_name  LIKE  ? OR app_exam_main.em_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  con.query(sql + group, search_param, (err, rows) => {
-    total_filter = rows.length;
+  con.query(sql_count, search_param, (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
   });
-
-  // sql += ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
   con.query(sql + group + order, search_param, (err, results) => {
@@ -234,7 +238,7 @@ router.post("/question/:em_id/list", middleware, (req, res, next) => {
 	t1.eq_image, 
 	t1.eq_answer, 
 	t1.em_id,
-	CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']') AS choices
+	IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
 FROM
 	app_exam_question t1
 	WHERE
@@ -242,16 +246,23 @@ FROM
 	t1.cancelled =1
   `;
   let param1 = [em_id];
-  con.query(sql, param1, (err, results) => {
-    total = results.length;
+
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_exam_question t1 WHERE t1.em_id=? AND t1.cancelled=1 ";
+  con.query(sql_count, param1, (err, results) => {
+    // console.log(results);
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (t1.eq_name  LIKE ?)`; //
+    let q = ` AND (t1.eq_name  LIKE ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [`%${search}%`];
   }
 
-  con.query(sql, param1.concat(search_param), (err, rows) => {
+  con.query(sql_count, param1.concat(search_param), (err, rows) => {
     total_filter = rows.length;
   });
 

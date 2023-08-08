@@ -16,21 +16,27 @@ router.post("/list?", middleware, (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
+  let u = "";
   let sql =
     "SELECT 	user_id,  user_name,  user_firstname,  user_lastname, user_email, user_phone, user_type, crt_date, udp_date  FROM app_user WHERE cancelled=1";
-  if (req.query.user_type) {
-    //
-    let user_type = req.query.user_type;
-    sql += " AND user_type =  " + user_type; // ประเภท User
-  }
 
-  con.query(sql, (err, results) => {
-    total = results.length;
+  if (req.query.user_type) {
+    let user_type = req.query.user_type;
+    u = " AND user_type =  " + user_type; // ประเภท User
+    sql += u;
+  }
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_user WHERE  cancelled=1 ";
+  con.query(sql_count + u, (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
 
   if (search !== "" || search.length > 0) {
     // sql += ` AND (user_name  LIKE  '%${search}%' OR user_firstname  LIKE  '%${search}%' OR user_lastname  LIKE  '%${search}%' OR user_email  LIKE  '%${search}%' OR user_phone  LIKE  '%${search}%')`; //
-    sql += ` AND (user_name  LIKE ? OR user_firstname  LIKE  ? OR user_lastname  LIKE  ? OR user_email  LIKE  ? OR user_phone  LIKE  ?)`; //
+    let q = ` AND (user_name  LIKE ? OR user_firstname  LIKE  ? OR user_lastname  LIKE  ? OR user_email  LIKE  ? OR user_phone  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [
       `%${search}%`,
       `%${search}%`,
@@ -40,8 +46,9 @@ router.post("/list?", middleware, (req, res, next) => {
     ];
   }
 
-  con.query(sql, search_param, (err, rows) => {
-    total_filter = rows.length;
+  con.query(sql_count + u, search_param, (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
   });
 
   sql += `  ORDER BY user_id DESC LIMIT ${offset},${per_page} `;

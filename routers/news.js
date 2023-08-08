@@ -150,23 +150,34 @@ router.post("/list", middleware, (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
+  let u = "";
+
   let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1`;
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_news WHERE  app_news.cancelled=1  ";
 
-  con.query(sql, (err, results) => {
-    total = results.length;
+  if (req.query.news_type) {
+    //
+    let news_type = req.query.news_type;
+    u = " AND app_news.news_type =  " + news_type; // ประเภท News
+    sql += u;
+  }
+
+  con.query(sql_count + u, (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
-
   if (search !== "" || search.length > 0) {
     sql += ` AND (app_news.news_title  LIKE ? OR app_news.news_description  LIKE  ?)`; //
     search_param = [`%${search}%`, `%${search}%`];
   }
 
-  con.query(sql, search_param, (err, rows) => {
-    total_filter = rows.length;
+  con.query(sql_count + u, search_param, (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
   });
-
   sql += `  ORDER BY app_news.news_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล

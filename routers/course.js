@@ -121,17 +121,22 @@ router.post("/list", middleware, (req, res, next) => {
    CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
    FROM app_course LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course.user_udp WHERE app_course.cancelled=1`;
 
-  con.query(sql, (err, results) => {
-    total = results.length;
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
+  con.query(sql_count, param1, (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
-
   if (search !== "" || search.length > 0) {
-    sql += ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
+    let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  con.query(sql, search_param, (err, rows) => {
-    total_filter = rows.length;
+  con.query(sql_count, search_param, (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
   });
 
   sql += `  ORDER BY app_course.course_id DESC LIMIT ${offset},${per_page} `;
@@ -290,17 +295,24 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
      FROM app_course_lesson LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp WHERE app_course_lesson.cancelled=1 AND app_course_lesson.course_id=?`;
   let p = [course_id];
-  con.query(sql, p, (err, results) => {
-    total = results.length;
+
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.course_id =? ";
+  con.query(sql_count, p, (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
   });
 
   if (search !== "" || search.length > 0) {
-    sql += ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
+    let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [`%${search}%`, `%${search}%`];
   }
 
-  con.query(sql, p.concat(search_param), (err, rows) => {
-    total_filter = rows.length;
+  con.query(sql_count, p.concat(search_param), (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
   });
 
   sql += `  ORDER BY app_course_lesson.cs_id DESC LIMIT ${offset},${per_page} `;
