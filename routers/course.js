@@ -123,7 +123,7 @@ router.post("/list", middleware, (req, res, next) => {
 
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
-  con.query(sql_count, param1, (err, results) => {
+  con.query(sql_count, (err, results) => {
     let res = results[0];
     total = res !== undefined ? res?.numRows : 0;
   });

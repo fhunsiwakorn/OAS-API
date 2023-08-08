@@ -344,7 +344,7 @@ router.post("/choice/create", middleware, (req, res, next) => {
   //   const em_id = data.em_id;
   let em_id;
   con.query(
-    "SELECT em_id FROM app_exam_question WHERE eq_id = ?  LIMIT 1",
+    "SELECT em_id FROM app_exam_question WHERE eq_id = ? AND cancelled=1 LIMIT 1",
     [eq_id],
     (err, rows) => {
       if (err) throw err;
@@ -359,7 +359,7 @@ router.post("/choice/create", middleware, (req, res, next) => {
       em_id = question?.em_id;
 
       con.query(
-        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? ",
+        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? AND cancelled=1",
         [eq_id, ec_index],
         (err, rows) => {
           if (err) throw err;
@@ -407,7 +407,7 @@ router.put("/choice/update/:ec_id", middleware, (req, res, next) => {
       em_id = question?.em_id;
 
       con.query(
-        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? AND ec_id !=?",
+        "SELECT ec_index FROM app_exam_choice WHERE eq_id = ? AND ec_index=? AND ec_id !=? AND cancelled=1",
         [eq_id, ec_index, ec_id],
         (err, rows) => {
           if (err) throw err;
