@@ -36,7 +36,7 @@ router.get("/file/?", (req, res) => {
   //   console.log(mimeType);
   const extension = mimeType.split("/")[0];
   //   console.log(extension);
-  file = path;
+  let file = path;
   if (extension === "image") {
     fileToLoad = fs.readFileSync(file);
     res.writeHead(200, { "Content-Type": mimeType });
