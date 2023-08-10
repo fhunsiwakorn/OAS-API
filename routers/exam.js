@@ -94,7 +94,7 @@ router.post("/main/list", middleware, (req, res, next) => {
      FROM app_exam_main 
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
      LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
-     LEFT JOIN  app_exam_question q ON q.em_id = app_exam_main.em_id 
+     LEFT JOIN  app_exam_question q ON q.em_id = app_exam_main.em_id  AND  q.cancelled = 1
      WHERE app_exam_main.cancelled=1`;
   let group = " GROUP BY  app_exam_main.em_id ";
   let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
