@@ -465,7 +465,8 @@ router.post("/start/render", middleware, (req, res, next) => {
   const user_id = data.user_id;
   const offset = (current_page - 1) * per_page;
   let total_cach = 0;
-
+  let total_cach_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
+  let exam_complete = 0;
   let sql_question = `SELECT
   t0.ec_score,
   t0.is_complete,
@@ -502,6 +503,17 @@ FROM
   );
 
   con.query(
+    "SELECT COUNT(*) AS total_cach_complete FROM app_exam_cache WHERE em_id = ? AND user_id =? AND is_complete=1",
+    [em_id, user_id],
+    (err, rows) => {
+      total_cach_complete =
+        rows[0]?.total_cach_complete !== undefined
+          ? rows[0]?.total_cach_complete
+          : 0;
+    }
+  );
+
+  con.query(
     "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?  LIMIT 1",
     [em_id],
     (err, results) => {
@@ -516,6 +528,10 @@ FROM
       }
 
       let em_random_amount = results[0]?.em_random_amount;
+      // ตรวจสอบว่าทำข้อสอบเสร้จหมดทุกข้อยัง
+      if (total_cach_complete >= total_cach && clear_cach !== 1) {
+        exam_complete = 1;
+      }
       // console.log(total_cach);
       if (total_cach < 1) {
         con.query(
@@ -551,11 +567,14 @@ FROM
           };
           obj.push(newObj);
         });
+        // console.log(total_cach_complete);
+        // console.log(total_cach);
         const response = {
           total: total_cach, // จำนวนรายการทั้งหมด
           current_page: current_page, // หน้าที่กำลังแสดงอยู่
           limit_page: per_page, // limit data
           total_page: Math.ceil(total_cach / per_page), // จำนวนหน้าทั้งหมด
+          exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
           data: obj, // รายการข้อมูล
         };
         return res.json(response);
