@@ -505,6 +505,16 @@ FROM
     "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?  LIMIT 1",
     [em_id],
     (err, results) => {
+      if (err) throw err;
+      let _check_data = results.length;
+
+      if (_check_data <= 0) {
+        return res.status(400).json({
+          status: 400,
+          message: "Error Transaction",
+        });
+      }
+
       let em_random_amount = results[0]?.em_random_amount;
       // console.log(total_cach);
       if (total_cach < 1) {
@@ -541,8 +551,14 @@ FROM
           };
           obj.push(newObj);
         });
-
-        return res.json(obj);
+        const response = {
+          total: total_cach, // จำนวนรายการทั้งหมด
+          current_page: current_page, // หน้าที่กำลังแสดงอยู่
+          limit_page: per_page, // limit data
+          total_page: Math.ceil(total_cach / per_page), // จำนวนหน้าทั้งหมด
+          data: obj, // รายการข้อมูล
+        };
+        return res.json(response);
       });
     }
   );
