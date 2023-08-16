@@ -455,4 +455,139 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
   );
 });
 
+router.post("/start/render", middleware, (req, res, next) => {
+  // const { em_id, user_id } = req.params;
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const clear_cach = data.clear_cach; // 0 = ไม่เคลียร์ , 1 = เคลียร์
+  const em_id = data.em_id;
+  const user_id = data.user_id;
+  const offset = (current_page - 1) * per_page;
+  let total_cach = 0;
+
+  let sql_question = `SELECT
+  t0.ec_score,
+  t0.is_complete,
+  t0.ec_id,
+  t1.eq_id, 
+  t1.eq_name, 
+  t1.eq_image, 
+  t1.eq_answer, 
+  t1.em_id,
+  IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
+FROM
+  app_exam_cache t0
+  INNER JOIN  app_exam_question t1 ON t1.eq_id = t0.eq_id  AND  t1.cancelled = 1
+  INNER JOIN  app_user t2 ON t2.user_id = t0.user_id 
+  WHERE
+  t0.em_id =?  AND
+  t0.user_id =?
+  ORDER BY t0.id ASC
+  LIMIT  ${offset},${per_page}
+  `;
+  if (clear_cach === 1) {
+    con.query("DELETE  FROM app_exam_cache WHERE em_id = ? AND user_id =?", [
+      em_id,
+      user_id,
+    ]);
+  }
+
+  con.query(
+    "SELECT COUNT(*) AS total_cach FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
+    [em_id, user_id],
+    (err, rows) => {
+      total_cach = rows[0]?.total_cach !== undefined ? rows[0]?.total_cach : 0;
+    }
+  );
+
+  con.query(
+    "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?  LIMIT 1",
+    [em_id],
+    (err, results) => {
+      let em_random_amount = results[0]?.em_random_amount;
+      // console.log(total_cach);
+      if (total_cach < 1) {
+        con.query(
+          `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id) SELECT IF(em_id >=1,'0','0') AS c1 ,eq_id,em_id ,IF(em_id >=1,${user_id},'0') AS c2 FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
+          [em_id, em_random_amount]
+        );
+      }
+
+      con.query(sql_question, [em_id, user_id], function (err, rows_question) {
+        let obj = [];
+        rows_question.forEach((el) => {
+          // console.log(JSON.parse(el?.choices));
+          let ec_score = el?.ec_score;
+          let is_complete = el?.is_complete;
+          let eq_id = el?.eq_id;
+          let eq_name = el?.eq_name;
+          let eq_image = el?.eq_image;
+          let eq_answer = el?.eq_answer;
+          let ec_id = el?.ec_id;
+          let em_id = el?.em_id;
+          let choices = JSON.parse(el?.choices);
+          let newObj = {
+            user_id: user_id,
+            ec_score: ec_score,
+            is_complete: is_complete,
+            eq_id: eq_id,
+            eq_name: eq_name,
+            eq_image: eq_image,
+            eq_answer: eq_answer,
+            em_id: em_id,
+            ec_id: ec_id,
+            choices: choices,
+          };
+          obj.push(newObj);
+        });
+
+        return res.json(obj);
+      });
+    }
+  );
+});
+
+router.post("/send/render", middleware, (req, res, next) => {
+  const data = req.body;
+  const ec_id = data.ec_id;
+  const user_id = data.user_id;
+
+  // เช็คคำตอบที่ถุกกำหนดในคำถาม
+  con.query(
+    " SELECT * FROM app_exam_choice WHERE ec_id = ? LIMIT 1 ",
+    [ec_id],
+    (err, rows_choice) => {
+      if (err) throw err;
+      let eq_id =
+        rows_choice[0]?.eq_id !== undefined ? rows_choice[0]?.eq_id : 0;
+      let em_id =
+        rows_choice[0]?.em_id !== undefined ? rows_choice[0]?.em_id : 0;
+      let ec_index = rows_choice[0]?.ec_index;
+      let score = 0;
+
+      //นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
+      con.query(
+        "SELECT eq_answer FROM app_exam_question WHERE eq_id = ?  LIMIT 1",
+        [eq_id],
+        (err, rows_question) => {
+          let eq_answer = rows_question[0]?.eq_answer;
+          if (eq_answer === ec_index) {
+            score = 1;
+          }
+          // Update คำตอบและให้คะแนน
+          con.query(
+            "UPDATE  app_exam_cache SET ec_score=?,is_complete=?,ec_id=? WHERE eq_id=? AND em_id=?  AND user_id=? ",
+            [score, 1, ec_id, eq_id, em_id, user_id],
+            function (err, result) {
+              if (err) throw err;
+              return res.json(result);
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
 module.exports = router;
