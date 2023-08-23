@@ -625,4 +625,101 @@ router.post("/send/render", middleware, (req, res, next) => {
   );
 });
 
+router.post("/result/render", middleware, (req, res, next) => {
+  const data = req.body;
+  const em_id = data.em_id;
+  const user_id = data.user_id;
+
+  // เช็คคำตอบที่ถุกกำหนดในคำถาม
+  con.query(
+    " SELECT SUM(ec_score) AS sum_score, COUNT(*) AS total_question FROM app_exam_cache WHERE em_id	 = ? AND  user_id=? LIMIT 1 ",
+    [em_id, user_id],
+    (err, rs) => {
+      // if (err) throw err;
+      let _check_data = rs.length;
+      if (_check_data <= 0) {
+        return res.status(400).json({
+          status: 400,
+          message: "Error Transaction",
+        });
+      }
+      // console.log(rs);
+      let sum_score = rs[0]?.sum_score !== undefined ? rs[0]?.sum_score : 0;
+      let total_question =
+        rs[0]?.total_question !== undefined ? rs[0]?.total_question : 0;
+      // นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
+      con.query(
+        "INSERT INTO app_exam_result (er_score_total,er_question_total,crt_date,udp_date,user_id,em_id) VALUES (?,?,?,?,?,?)",
+        [sum_score, total_question, localISOTime, localISOTime, user_id, em_id],
+        (err, rs_end) => {
+          // Update ข้อสอบที่กำลังทำทั้งหมดเป็น ทำครบแล้ว
+          con.query(
+            "UPDATE  app_exam_cache SET is_complete = 1 WHERE em_id=?  AND user_id=? ",
+            [em_id, user_id],
+            function (err, result) {
+              // if (err) throw err;
+              return res.json(result);
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+router.post("/time/render", middleware, (req, res, next) => {
+  const data = req.body;
+  const em_id = data.em_id;
+  const user_id = data.user_id;
+  const et_time = data.et_time;
+  con.query(
+    " SELECT * FROM app_exam_time WHERE em_id = ? AND user_id=?",
+    [em_id, user_id],
+    (err, rs_time) => {
+      if (err) throw err;
+      let _check_data = rs_time.length;
+      if (_check_data <= 0) {
+        con.query(
+          "INSERT INTO app_exam_time (et_time,em_id,user_id) VALUES (?,?,?)",
+          [et_time, em_id, user_id],
+          (err, rs) => {
+            return res.json(rs);
+          }
+        );
+      } else {
+        con.query(
+          "UPDATE  app_exam_time SET et_time=? WHERE em_id=?  AND user_id=?",
+          [et_time, em_id, user_id],
+          (err, rs) => {
+            return res.json(rs);
+          }
+        );
+      }
+    }
+  );
+});
+router.get("/time?", middleware, (req, res, next) => {
+  const em_id = req.query.em_id;
+  const user_id = req.query.user_id;
+  con.query(
+    " SELECT * FROM app_exam_time WHERE em_id = ? AND user_id = ?",
+    [em_id, user_id],
+    (err, rs) => {
+      return res.json(rs[0]);
+    }
+  );
+});
+
+router.get("/history?", middleware, (req, res, next) => {
+  const em_id = req.query.em_id;
+  const user_id = req.query.user_id;
+  con.query(
+    " SELECT * FROM app_exam_result WHERE em_id = ? AND user_id = ? ORDER BY er_id DESC ",
+    [em_id, user_id],
+    (err, rs) => {
+      return res.json(rs);
+    }
+  );
+});
+
 module.exports = router;
