@@ -20,7 +20,7 @@ router.post("/main/create", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "INSERT INTO app_exam_main (em_code,em_name,em_cover,em_description,em_random_amount,em_time,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_exam_main (em_code,em_name,em_cover,em_description,em_random_amount,em_time,dlt_code,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
           data.em_code,
           data.em_name,
@@ -28,6 +28,7 @@ router.post("/main/create", middleware, (req, res, next) => {
           data.em_description,
           data.em_random_amount,
           data.em_time,
+          data.dlt_code,
           localISOTime,
           localISOTime,
           user_id,
@@ -58,7 +59,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "UPDATE  app_exam_main SET em_code=? , em_name=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,udp_date=?,user_udp=? WHERE em_id=? ",
+        "UPDATE  app_exam_main SET em_code=? , em_name=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,dlt_code=?,udp_date=?,user_udp=? WHERE em_id=? ",
         [
           data.em_code,
           data.em_name,
@@ -66,6 +67,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
           data.em_description,
           data.em_random_amount,
           data.em_time,
+          data.dlt_code,
           localISOTime,
           user_id,
           em_id,
@@ -89,7 +91,7 @@ router.post("/main/list", middleware, (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.crt_date,app_exam_main.udp_date ,
+  let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.dlt_code,app_exam_main.crt_date,app_exam_main.udp_date ,
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, COUNT(q.eq_id) AS total_question
      FROM app_exam_main 
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  

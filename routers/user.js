@@ -1,8 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const request = require("request");
 const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
+const functions = require("../functions");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const numSaltRounds = 8;
@@ -76,8 +78,8 @@ router.post("/list?", middleware, (req, res, next) => {
 router.post("/login", middleware, (req, res, next) => {
   const data = req.body;
   con.query(
-    "SELECT * FROM app_user WHERE user_name = ? LIMIT 1",
-    [data.user_name],
+    "SELECT * FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
+    [data.user_name, data.user_name, data.user_name],
     function (err, response) {
       bcrypt
         .compare(data.user_password, response[0]?.user_password)
@@ -106,11 +108,13 @@ router.post("/login", middleware, (req, res, next) => {
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
   let user_name = data.user_name;
-  let checkuser;
+  let user_phone = data.user_phone;
+  let user_email = data.user_email;
+  let checkuser = 0;
 
   con.query(
-    "SELECT user_name FROM app_user WHERE user_name = ? LIMIT 1",
-    [user_name],
+    "SELECT user_name FROM app_user WHERE user_name = ? OR user_email=? OR user_phone=? LIMIT 1",
+    [user_name, user_email, user_phone],
     (err, rows) => {
       checkuser = rows.length;
     }
@@ -129,15 +133,16 @@ router.post("/create", middleware, (req, res, next) => {
       let userHash = hash;
       // console.log("Hash ", hash);
       con.query(
-        "INSERT INTO app_user (user_name, user_password,user_firstname,user_lastname,user_email,user_phone,user_type,crt_date,udp_date) VALUES (?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_user (user_name, user_password,user_firstname,user_lastname,user_email,user_phone,user_type,active,crt_date,udp_date) VALUES (?,?,?,?,?,?,?,?,?,?)",
         [
           user_name,
           userHash,
           data.user_firstname,
           data.user_lastname,
-          data.user_email,
-          data.user_phone,
+          user_email,
+          user_phone,
           data.user_type,
+          data.active,
           localISOTime,
           localISOTime,
         ],
@@ -154,10 +159,12 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   const data = req.body;
   let user_name = data.user_name;
-  let checkuser;
+  let user_phone = data.user_phone;
+  let user_email = data.user_email;
+  let checkuser = 0;
   con.query(
-    "SELECT user_name FROM app_user WHERE user_name = ? AND user_id != ? LIMIT 1",
-    [user_name, user_id],
+    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? LIMIT 1",
+    [user_name, user_email, user_phone, user_id],
     (err, rows) => {
       checkuser = rows.length;
     }
@@ -175,15 +182,16 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
       }
       let userHash = hash;
       con.query(
-        "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,udp_date=? WHERE user_id=? ",
+        "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
         [
-          data.user_name,
+          user_name,
           userHash,
           data.user_firstname,
           data.user_lastname,
-          data.user_email,
-          data.user_phone,
+          user_email,
+          user_phone,
           data.user_type,
+          data.active,
           localISOTime,
           user_id,
         ],
@@ -199,21 +207,55 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
 
 router.get("/get/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
+  let sql = `SELECT 
+  t1.* ,
+  (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'location_id', t2.location_id,'country_id',t2.country_id,
+  'location', (SELECT   GROUP_CONCAT((JSON_OBJECT('zipcode', t3.zipcode,'zipcode_name', t3.zipcode_name , 'province_code', t3.province_code,'province_name', t3.province_name)))  FROM app_zipcode_lao t3  WHERE t3.id =  t2.location_id),
+  'country', (SELECT   GROUP_CONCAT((JSON_OBJECT('country_name_eng', t4.country_name_eng,'country_official_name_eng', t4.country_official_name_eng , 'capital_name_eng', t4.capital_name_eng,'zone', t4.zone)))  FROM app_country t4  WHERE t4.country_id =  t2.country_id)
 
-  con.query(
-    "SELECT user_id,  user_name,  user_firstname,  user_lastname, user_email, user_phone, user_type, crt_date, udp_date  FROM app_user WHERE  user_id = ? LIMIT 1",
-    [user_id],
-    function (err, results) {
-      if (results.length <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null", // error.sqlMessage
-        });
-      }
-
-      return res.json(results[0]);
+  )))  FROM app_user_detail t2  WHERE t2.user_id =  t1.user_id ) AS detail
+  FROM app_user t1 
+  WHERE  t1.user_id = ? LIMIT 1
+  `;
+  con.query(sql, [user_id], function (err, results) {
+    if (results.length <= 0) {
+      return res.status(204).json({
+        status: 204,
+        message: "Data is null", // error.sqlMessage
+      });
     }
-  );
+    let data = results[0];
+    let detail = data?.detail !== undefined ? JSON.parse(data?.detail) : {};
+    let set_detail = {};
+    if (detail != undefined) {
+      let location = JSON.parse(detail?.location);
+      let country = JSON.parse(detail?.country);
+      set_detail = {
+        verify_account: detail?.verify_account,
+        user_img: detail?.user_img,
+        user_birthday: detail?.user_birthday,
+        user_address: detail?.user_address,
+        location_id: detail?.location_id,
+        country_id: detail?.country_id,
+        location: location,
+        country: country,
+      };
+    }
+    const response = {
+      user_id: data?.user_id,
+      user_name: data?.user_name,
+      user_firstname: data?.user_firstname,
+      user_lastname: data?.user_lastname,
+      user_email: data?.user_email,
+      user_phone: data?.user_phone,
+      user_type: data?.user_type,
+      active: data?.active,
+      crt_date: data?.crt_date,
+      udp_date: data?.udp_date,
+      detail: set_detail,
+    };
+    return res.json(response);
+  });
 });
 
 router.delete("/delete/:user_id", middleware, (req, res, next) => {
@@ -223,6 +265,168 @@ router.delete("/delete/:user_id", middleware, (req, res, next) => {
     [user_id],
     function (err, results) {
       return res.json(results);
+    }
+  );
+});
+
+router.post("/detail/create", middleware, (req, res, next) => {
+  const data = req.body;
+  let user_id = data.user_id;
+  let location_id = data.location_id;
+  let country_id = data.country_id;
+  let verify_account = data.verify_account;
+  let total_zipcode = 0;
+  let total_country = 0;
+  con.query(
+    "SELECT id FROM app_zipcode_lao WHERE id = ? LIMIT 1",
+    [location_id],
+    (err, rows) => {
+      total_zipcode = rows?.length;
+    }
+  );
+  con.query(
+    "SELECT country_id FROM app_country WHERE country_id = ? LIMIT 1",
+    [country_id],
+    (err, rows) => {
+      total_country = rows?.length;
+    }
+  );
+
+  con.query(
+    "SELECT app_user.user_name ,app_user_detail.id FROM app_user LEFT JOIN app_user_detail ON app_user_detail.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
+    [user_id],
+    (err, rows) => {
+      if (rows.length <= 0 || total_zipcode <= 0 || total_country <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null", // error.sqlMessage
+        });
+      }
+      if (verify_account !== "n" && verify_account !== "y") {
+        return res.status(404).json({
+          status: 404,
+          message: "Invalid 'verify_account' ", // error.sqlMessage
+        });
+      }
+      let id_detail = rows[0]?.id;
+
+      if (id_detail === null || id_detail === 0) {
+        con.query(
+          "INSERT INTO app_user_detail (verify_account,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?)",
+          [
+            verify_account,
+            data.user_img,
+            data.user_birthday,
+            data.user_address,
+            location_id,
+            country_id,
+            data.user_id,
+          ],
+          function (err, result) {
+            if (err) throw err;
+            return res.json(result);
+          }
+        );
+      } else {
+        con.query(
+          "UPDATE  app_user_detail SET verify_account=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
+          [
+            verify_account,
+            data.user_img,
+            data.user_birthday,
+            data.user_address,
+            location_id,
+            country_id,
+            data.user_id,
+          ],
+          function (err, result) {
+            if (err) throw err;
+            // console.log("1 record inserted");
+            return res.json(result);
+          }
+        );
+      }
+    }
+  );
+});
+
+router.get("/otp/:user_id", middleware, (req, res, next) => {
+  const { user_id } = req.params;
+  const otp_code = Math.floor(100000 + Math.random() * 900000);
+  const otp_ref = functions.randomCode();
+
+  con.query(
+    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
+    [user_id],
+    (err, rows) => {
+      if (rows.length <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null", // error.sqlMessage
+        });
+      }
+      let user_phone = rows[0]?.user_phone;
+
+      let total_request =
+        rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
+      let total_request_set = total_request + 1;
+      if (total_request === null) {
+        con.query(
+          "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+          [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+        );
+      } else {
+        con.query(
+          "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
+          [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+        );
+      }
+      // SMS API
+      data = {
+        sender: "SMS PRO",
+        msisdn: [user_phone],
+        message: "Your OTP is " + otp_code + " REF:" + otp_ref,
+      };
+      var options = {
+        method: "POST",
+        body: data,
+        json: true,
+        url: "https://thsms.com/api/send-sms",
+        headers: {
+          Authorization:
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC90aHNtcy5jb21cL21hbmFnZVwvYXBpLWtleSIsImlhdCI6MTY5MTU2NDQ4MywibmJmIjoxNjkxNTY0NDgzLCJqdGkiOiJPRlExSE05eFdxTDVGVjRoIiwic3ViIjoxMTAyNzksInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c2x9187_1inuyNK8eUK_Q7i47yaE4lmgrIvAw3znr0g",
+        },
+      };
+      function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          console.log(body);
+        }
+      }
+      //call the request
+      request(options, callback);
+      return res.json({
+        otp_code: otp_code,
+        otp_ref: otp_ref,
+        total_request: total_request_set,
+      });
+    }
+  );
+});
+
+router.put("/verify_otp", middleware, (req, res, next) => {
+  const data = req.body;
+  let otp_code = data.otp_code;
+  let user_id = data.user_id;
+  con.query(
+    "SELECT user_id,  otp_code  FROM app_user_otp WHERE  user_id = ? AND otp_code=? LIMIT 1",
+    [user_id, otp_code],
+    function (err, results) {
+      if (results.length <= 0) {
+        return res.status(204).json({
+          access: false,
+        });
+      }
+      return res.json({ access: true });
     }
   );
 });
