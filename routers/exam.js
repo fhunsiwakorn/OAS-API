@@ -713,15 +713,109 @@ router.get("/time?", middleware, (req, res, next) => {
 });
 
 router.get("/history?", middleware, (req, res, next) => {
-  const em_id = req.query.em_id;
-  const user_id = req.query.user_id;
-  con.query(
-    " SELECT * FROM app_exam_result WHERE em_id = ? AND user_id = ? ORDER BY er_id DESC ",
-    [em_id, user_id],
-    (err, rs) => {
-      return res.json(rs);
-    }
-  );
+  const data = req.body;
+  const em_id = data.em_id;
+  let sql = `
+  SELECT
+  t1.*,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
+  FROM app_exam_result t1 WHERE t1.em_id = ? AND t1.user_id = ? ORDER BY t1.er_id DESC 
+  `;
+  con.query(sql, [em_id, user_id], (err, rs) => {
+    let obj = [];
+    rs.forEach((el) => {
+      // console.log(JSON.parse(el?.choices));
+      let out_user = JSON.parse(el?.out_user);
+      let out_em = JSON.parse(el?.out_em);
+      let newObj = {
+        er_id: el?.er_id,
+        er_score_total: el?.er_score_total,
+        er_question_total: el?.er_question_total,
+        crt_date: el?.crt_date,
+        udp_date: el?.udp_date,
+        user_id: el?.user_id,
+        em_id: el?.em_id,
+        out_user: out_user,
+        out_em: out_em,
+      };
+      obj.push(newObj);
+    });
+    return res.json(obj);
+  });
+});
+
+router.post("/history/:em_id", middleware, (req, res, next) => {
+  const { em_id } = req.params;
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const search = data.search;
+  const offset = (current_page - 1) * per_page;
+  let total = 0;
+  let total_filter = 0;
+  let search_param = [];
+  let param = [em_id];
+  let sql = `
+  SELECT
+  t1.*,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
+  FROM app_exam_result t1 
+  INNER JOIN app_user t4 ON t4.user_id = t1.user_id
+  WHERE t1.em_id = ?
+  `;
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_exam_result  t1 INNER JOIN app_user t4 ON t4.user_id = t1.user_id WHERE  t1.em_id=?  ";
+
+  con.query(sql_count, [em_id], (err, results) => {
+    let res = results[0];
+    total = res !== undefined ? res?.numRows : 0;
+  });
+  if (search !== "" || search.length > 0) {
+    let q = ` AND (t4.user_firstname  LIKE ? OR t4.user_lastname  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
+
+    search_param = [`%${search}%`, `%${search}%`];
+  }
+
+  con.query(sql_count, param.concat(search_param), (err, rows) => {
+    let res = rows[0];
+    total_filter = res !== undefined ? res?.numRows : 0;
+  });
+  sql += `  ORDER BY t1.er_id DESC LIMIT ${offset},${per_page} `;
+
+  con.query(sql, param.concat(search_param), (err, rs) => {
+    let obj = [];
+    rs.forEach((el) => {
+      let out_user = JSON.parse(el?.out_user);
+      let out_em = JSON.parse(el?.out_em);
+      let newObj = {
+        er_id: el?.er_id,
+        er_score_total: el?.er_score_total,
+        er_question_total: el?.er_question_total,
+        crt_date: el?.crt_date,
+        udp_date: el?.udp_date,
+        user_id: el?.user_id,
+        em_id: el?.em_id,
+        out_user: out_user,
+        out_em: out_em,
+      };
+      obj.push(newObj);
+    });
+    const response = {
+      total: total, // จำนวนรายการทั้งหมด
+      total_filter: total_filter, // จำนวนรายการทั้งหมด
+      current_page: current_page, // หน้าที่กำลังแสดงอยู่
+      limit_page: per_page, // limit data
+      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+      search: search, // คำค้นหา
+      data: obj, // รายการข้อมูล
+    };
+
+    return res.json(response);
+  });
 });
 
 module.exports = router;
