@@ -713,8 +713,8 @@ router.get("/time?", middleware, (req, res, next) => {
 });
 
 router.get("/history?", middleware, (req, res, next) => {
-  const data = req.body;
-  const em_id = data.em_id;
+  const em_id = req.query.em_id;
+  const user_id = req.query.user_id;
   let sql = `
   SELECT
   t1.*,
