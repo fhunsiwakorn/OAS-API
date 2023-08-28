@@ -161,48 +161,58 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
   let user_name = data.user_name;
   let user_phone = data.user_phone;
   let user_email = data.user_email;
-  let checkuser = 0;
   con.query(
-    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? LIMIT 1",
-    [user_name, user_email, user_phone, user_id],
-    (err, rows) => {
-      checkuser = rows.length;
-    }
-  );
-
-  bcrypt
-    .hash(data.user_password, numSaltRounds)
-    .then((hash) => {
-      // console.log(checkuser);
-      if (checkuser) {
+    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    [user_id],
+    (err, rs) => {
+      if (rs.length <= 0) {
         return res.status(204).json({
           status: 204,
           message: "Username Error", // error.sqlMessage
         });
       }
-      let userHash = hash;
+
       con.query(
-        "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
-        [
-          user_name,
-          userHash,
-          data.user_firstname,
-          data.user_lastname,
-          user_email,
-          user_phone,
-          data.user_type,
-          data.active,
-          localISOTime,
-          user_id,
-        ],
-        function (err, result) {
-          if (err) throw err;
-          // console.log("1 record inserted");
-          return res.json(result);
+        "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? LIMIT 1",
+        [user_name, user_email, user_phone, user_id],
+        (err, rows) => {
+          bcrypt
+            .hash(data.user_password, numSaltRounds)
+            .then((hash) => {
+              // console.log(checkuser);
+              if (rows.length >= 1) {
+                return res.status(204).json({
+                  status: 204,
+                  message: "Username Error", // error.sqlMessage
+                });
+              }
+              let userHash = hash;
+              con.query(
+                "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
+                [
+                  user_name,
+                  userHash,
+                  data.user_firstname,
+                  data.user_lastname,
+                  user_email,
+                  user_phone,
+                  data.user_type,
+                  data.active,
+                  localISOTime,
+                  user_id,
+                ],
+                function (err, result) {
+                  if (err) throw err;
+                  // console.log("1 record inserted");
+                  return res.json(result);
+                }
+              );
+            })
+            .catch((err) => console.error(err.message));
         }
       );
-    })
-    .catch((err) => console.error(err.message));
+    }
+  );
 });
 
 router.get("/get/:user_id", middleware, (req, res, next) => {
