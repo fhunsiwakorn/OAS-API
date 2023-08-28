@@ -153,7 +153,7 @@ router.put("/update/:ap_id", middleware, (req, res, next) => {
 
 router.get("/get/:ap_id", middleware, (req, res, next) => {
   const { ap_id } = req.params;
-  let sql = `SELECT t1.ap_learn_type,t1.ap_quota,t1.ap_date_start,t1.ap_date_end,t1.ap_remark,t1.dlt_code,t1.crt_date,t1.udp_date,
+  let sql = `SELECT t1.ap_id ,t1.ap_learn_type,t1.ap_quota,t1.ap_date_start,t1.ap_date_end,t1.ap_remark,t1.dlt_code,t1.crt_date,t1.udp_date,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_appointment t1 LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp WHERE t1.cancelled=1 AND t1.ap_id =?`;
 
@@ -204,10 +204,16 @@ router.post("/list", middleware, (req, res, next) => {
   //   console.log(check_start.getTime());
   //   console.log(check_end.getTime());
 
-  let sql = `SELECT t1.ap_learn_type,t1.ap_quota,t1.ap_date_start,t1.ap_date_end,t1.ap_remark,t1.dlt_code,t1.crt_date,t1.udp_date,
-  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-  FROM app_appointment t1 LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp WHERE t1.cancelled=1 AND
-  DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? ORDER BY t1.ap_id LIMIT 1000`;
+  let sql = `SELECT t1.ap_id ,t1.ap_learn_type,t1.ap_quota,t1.ap_date_start,t1.ap_date_end,t1.ap_remark,t1.dlt_code,t1.crt_date,t1.udp_date,
+  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update,
+  (SELECT COUNT(*) FROM app_appointment_reserve t2 WHERE t2.ap_id=t1.ap_id) AS  total_reserv
+  FROM app_appointment t1 
+  LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt 
+  LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp
+  WHERE t1.cancelled=1 AND
+  DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
+  ORDER BY t1.ap_id 
+  LIMIT 1000`;
 
   con.query(sql, [start_date, end_date], (err, results) => {
     if (err) {
