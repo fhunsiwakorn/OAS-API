@@ -8,3 +8,6 @@ ALTER TABLE `app_user` CHANGE `active` `active` INT(1) NOT NULL DEFAULT '1' AFTE
 ALTER TABLE `app_user_detail` ADD `country_id` INT NOT NULL COMMENT 'app_country.country_id' AFTER `location_id`;
 ALTER TABLE `app_user_detail` ADD `verify_account` CHAR(1) NOT NULL DEFAULT 'n' COMMENT 'n , y' AFTER `id`;
 ALTER TABLE `app_user_otp` ADD `otp_ref` VARCHAR(10) NOT NULL AFTER `otp_code`;
+
+28/08/2023
+ALTER TABLE `app_user_detail` ADD `identification_number` VARCHAR(24) NOT NULL AFTER `verify_account`;

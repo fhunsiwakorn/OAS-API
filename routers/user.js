@@ -219,7 +219,7 @@ router.get("/get/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   let sql = `SELECT 
   t1.* ,
-  (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'location_id', t2.location_id,'country_id',t2.country_id,
+  (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'identification_number', t2.identification_number,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'location_id', t2.location_id,'country_id',t2.country_id,
   'location', (SELECT   GROUP_CONCAT((JSON_OBJECT('zipcode', t3.zipcode,'zipcode_name', t3.zipcode_name , 'province_code', t3.province_code,'province_name', t3.province_name)))  FROM app_zipcode_lao t3  WHERE t3.id =  t2.location_id),
   'country', (SELECT   GROUP_CONCAT((JSON_OBJECT('country_name_eng', t4.country_name_eng,'country_official_name_eng', t4.country_official_name_eng , 'capital_name_eng', t4.capital_name_eng,'zone', t4.zone)))  FROM app_country t4  WHERE t4.country_id =  t2.country_id)
 
@@ -242,6 +242,7 @@ router.get("/get/:user_id", middleware, (req, res, next) => {
       let country = JSON.parse(detail?.country);
       set_detail = {
         verify_account: detail?.verify_account,
+        identification_number: detail?.identification_number,
         user_img: detail?.user_img,
         user_birthday: detail?.user_birthday,
         user_address: detail?.user_address,
@@ -285,8 +286,10 @@ router.post("/detail/create", middleware, (req, res, next) => {
   let location_id = data.location_id;
   let country_id = data.country_id;
   let verify_account = data.verify_account;
+  let identification_number = data.identification_number;
   let total_zipcode = 0;
   let total_country = 0;
+  let check_identification = 0;
   con.query(
     "SELECT id FROM app_zipcode_lao WHERE id = ? LIMIT 1",
     [location_id],
@@ -299,6 +302,14 @@ router.post("/detail/create", middleware, (req, res, next) => {
     [country_id],
     (err, rows) => {
       total_country = rows?.length;
+    }
+  );
+
+  con.query(
+    "SELECT identification_number FROM app_user_detail WHERE identification_number = ? AND user_id !=? LIMIT 1",
+    [identification_number, user_id],
+    (err, rows) => {
+      check_identification = rows?.length;
     }
   );
 
@@ -318,13 +329,21 @@ router.post("/detail/create", middleware, (req, res, next) => {
           message: "Invalid 'verify_account' ", // error.sqlMessage
         });
       }
+      if (check_identification >= 1) {
+        return res.status(404).json({
+          status: 404,
+          message: "Invalid 'identification_number' ", // error.sqlMessage
+        });
+      }
+
       let id_detail = rows[0]?.id;
 
       if (id_detail === null || id_detail === 0) {
         con.query(
-          "INSERT INTO app_user_detail (verify_account,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?)",
+          "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?)",
           [
             verify_account,
+            identification_number,
             data.user_img,
             data.user_birthday,
             data.user_address,
@@ -339,9 +358,10 @@ router.post("/detail/create", middleware, (req, res, next) => {
         );
       } else {
         con.query(
-          "UPDATE  app_user_detail SET verify_account=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
+          "UPDATE  app_user_detail SET verify_account=?,identification_number=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
           [
             verify_account,
+            identification_number,
             data.user_img,
             data.user_birthday,
             data.user_address,

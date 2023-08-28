@@ -718,7 +718,7 @@ router.get("/history?", middleware, (req, res, next) => {
   let sql = `
   SELECT
   t1.*,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
   FROM app_exam_result t1 WHERE t1.em_id = ? AND t1.user_id = ? ORDER BY t1.er_id DESC 
   `;
@@ -759,7 +759,7 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
   let sql = `
   SELECT
   t1.*,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
   FROM app_exam_result t1 
   INNER JOIN app_user t4 ON t4.user_id = t1.user_id
