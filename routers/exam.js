@@ -2,12 +2,17 @@ const express = require("express");
 const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
+const common = require("../common");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 
 router.post("/main/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
+  const obj = common.drivinglicense_type;
+  const result_filter = obj.filter(function (e) {
+    return e.dlt_code === data.dlt_code;
+  });
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
     [user_id],
@@ -17,6 +22,12 @@ router.post("/main/create", middleware, (req, res, next) => {
         return res.status(204).json({
           status: 204,
           message: "Username Error", // error.sqlMessage
+        });
+      }
+      if (result_filter.length <= 0) {
+        return res.status(404).json({
+          status: 404,
+          message: "Invalid 'drivinglicense_type' ",
         });
       }
       con.query(
@@ -47,6 +58,10 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
   const { em_id } = req.params;
   const data = req.body;
   const user_id = data.user_id;
+  const obj = common.drivinglicense_type;
+  const result_filter = obj.filter(function (e) {
+    return e.dlt_code === data.dlt_code;
+  });
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
     [user_id],
@@ -56,6 +71,12 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
         return res.status(204).json({
           status: 204,
           message: "Username Error", // error.sqlMessage
+        });
+      }
+      if (result_filter.length <= 0) {
+        return res.status(404).json({
+          status: 404,
+          message: "Invalid 'drivinglicense_type' ",
         });
       }
       con.query(
@@ -718,7 +739,7 @@ router.get("/history?", middleware, (req, res, next) => {
   let sql = `
   SELECT
   t1.*,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t2.user_id,'user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
   FROM app_exam_result t1 WHERE t1.em_id = ? AND t1.user_id = ? ORDER BY t1.er_id DESC 
   `;
@@ -759,7 +780,7 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
   let sql = `
   SELECT
   t1.*,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t2.user_id,'user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
   FROM app_exam_result t1 
   INNER JOIN app_user t4 ON t4.user_id = t1.user_id

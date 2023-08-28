@@ -11,4 +11,3 @@ ALTER TABLE `app_user_otp` ADD `otp_ref` VARCHAR(10) NOT NULL AFTER `otp_code`;
 
 28/08/2023
 ALTER TABLE `app_user_detail` ADD `identification_number` VARCHAR(24) NOT NULL AFTER `verify_account`;
-CREATE TABLE `oas`.`app_appointment` (`ap_id` INT NOT NULL AUTO_INCREMENT , `ap_quota` INT NOT NULL , `ap_date` DATETIME NOT NULL , `dlt_code` VARCHAR(3) NOT NULL , `crt_date` DATETIME NOT NULL , `udp_date` DATETIME NOT NULL , `cancelled` INT(1) NOT NULL DEFAULT '1' , `user_crt` INT NOT NULL COMMENT 'app_user.user_id' , `user_udp` INT NOT NULL COMMENT 'app_user.user_id ' , PRIMARY KEY (`ap_id`)) ENGINE = InnoDB;

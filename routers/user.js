@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const request = require("request");
 const router = express.Router();
 const con = require("../database");
+const common = require("../common");
 const middleware = require("../middleware");
 const functions = require("../functions");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
@@ -423,8 +424,7 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
         json: true,
         url: "https://thsms.com/api/send-sms",
         headers: {
-          Authorization:
-            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC90aHNtcy5jb21cL21hbmFnZVwvYXBpLWtleSIsImlhdCI6MTY5MTU2NDQ4MywibmJmIjoxNjkxNTY0NDgzLCJqdGkiOiJPRlExSE05eFdxTDVGVjRoIiwic3ViIjoxMTAyNzksInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c2x9187_1inuyNK8eUK_Q7i47yaE4lmgrIvAw3znr0g",
+          Authorization: common.sms_token,
         },
       };
       function callback(error, response, body) {

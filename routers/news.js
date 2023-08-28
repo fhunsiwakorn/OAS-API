@@ -233,7 +233,7 @@ router.post("/image/create", middleware, (req, res, next) => {
 router.delete("/image/delete/:ni_id", middleware, (req, res, next) => {
   const { ni_id } = req.params;
   con.query(
-    "DELETE FROM  app_news_image WHERE ni_id=? ",
+    " DELETE FROM  app_news_image WHERE ni_id=? ",
     [ni_id],
     function (err, result) {
       if (err) throw err;
