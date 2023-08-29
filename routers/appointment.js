@@ -16,8 +16,8 @@ router.post("/create", middleware, (req, res, next) => {
     return e.dlt_code === dlt_code;
   });
 
-  const check_start = new Date(data.ap_date_start);
-  const check_end = new Date(data.ap_date_end);
+  const check_start = new Date(data.ap_date_start).getTime();
+  const check_end = new Date(data.ap_date_end).getTime();
 
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
