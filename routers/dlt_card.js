@@ -77,6 +77,16 @@ router.put("/update/:id", middleware, (req, res, next) => {
   const result_filter = obj.filter(function (e) {
     return e.dlt_code === dlt_code;
   });
+  let _check_dlt_cadrd = 0;
+  con.query(
+    " SELECT id FROM app_dlt_card WHERE dlt_code = ? AND user_id=? AND id !=? LIMIT 1",
+    [dlt_code, user_id, id],
+    function (err, result) {
+      if (err) throw err;
+      _check_dlt_cadrd = result.length;
+    }
+  );
+
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
     [user_id],
@@ -92,6 +102,13 @@ router.put("/update/:id", middleware, (req, res, next) => {
         return res.status(404).json({
           status: 404,
           message: "Invalid 'dlt_code' ",
+        });
+      }
+      if (_check_dlt_cadrd >= 1) {
+        return res.status(404).json({
+          status: 404,
+          message:
+            "You have entered an dlt_code and user_id that already exists in this column. Only unique dlt_code and user_id are allowed.",
         });
       }
       con.query(
