@@ -201,7 +201,7 @@ router.post("/list", middleware, (req, res, next) => {
   const end_date = new Date(data.end_date);
   const check_start = start_date.getTime();
   const check_end = end_date.getTime();
-  //   (SELECT COUNT(*) FROM app_appointment_reserve t2 WHERE t2.ap_id=t1.ap_id) AS  total_reserv,
+
   let sql = `
 SELECT 
 DATE_FORMAT(t1.ap_date_start,"%Y-%m-%d") AS date,
@@ -216,35 +216,42 @@ GROUP BY date
 ORDER BY t1.ap_id 
 LIMIT 1000`;
 
-  con.query(sql, [start_date, end_date], (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request",
+  con.query(
+    sql,
+    [
+      start_date.toISOString().split("T")[0],
+      end_date.toISOString().split("T")[0],
+    ],
+    (err, results) => {
+      if (err) {
+        return res.status(400).json({
+          status: 400,
+          message: "Bad Request",
+        });
+      }
+      if (check_start > check_end || check_start === NaN || check_end === NaN) {
+        return res.status(404).json({
+          status: 404,
+          message: "Invalid 'start_date' , 'end_date' ",
+        });
+      }
+      let obj = [];
+      results.forEach((el) => {
+        // console.log(JSON.parse(el?.choices));
+        let events = JSON.parse(el?.events);
+        let newObj = {
+          date: el?.date,
+          total_reserv: el?.total_reserv,
+          user_create: el?.user_create,
+          user_update: el?.user_update,
+          events: events,
+        };
+        obj.push(newObj);
       });
-    }
-    if (check_start > check_end || check_start === NaN || check_end === NaN) {
-      return res.status(404).json({
-        status: 404,
-        message: "Invalid 'start_date' , 'end_date' ",
-      });
-    }
-    let obj = [];
-    results.forEach((el) => {
-      // console.log(JSON.parse(el?.choices));
-      let events = JSON.parse(el?.events);
-      let newObj = {
-        date: el?.date,
-        total_reserv: el?.total_reserv,
-        user_create: el?.user_create,
-        user_update: el?.user_update,
-        events: events,
-      };
-      obj.push(newObj);
-    });
 
-    return res.json(obj);
-  });
+      return res.json(obj);
+    }
+  );
 });
 
 router.post("/reserve/create", middleware, (req, res, next) => {
