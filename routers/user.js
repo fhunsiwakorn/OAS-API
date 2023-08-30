@@ -387,15 +387,16 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
   const otp_ref = functions.randomCode();
 
   con.query(
-    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
+    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user INNER JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? LIMIT 1",
     [user_id],
     (err, rows) => {
-      if (rows.length <= 0) {
+      if (rows?.length <= 0) {
         return res.status(204).json({
           status: 204,
           message: "Data is null", // error.sqlMessage
         });
       }
+      console.log(rows);
       let user_phone =
         rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
 
