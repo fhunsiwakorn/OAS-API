@@ -419,23 +419,20 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
         msisdn: [user_phone],
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
       };
-
-      //call the request
-      // request(options, callback);
-      request(
-        {
-          method: "POST",
-          body: data,
-          json: true,
-          url: "https://thsms.com/api/send-sms",
-          headers: {
-            Authorization: common.sms_token,
-          },
-        },
-        function (error, response, body) {
-          console.log(body);
-        }
-      );
+      // request(
+      //   {
+      //     method: "POST",
+      //     body: data,
+      //     json: true,
+      //     url: "https://thsms.com/api/send-sms",
+      //     headers: {
+      //       Authorization: common.sms_token,
+      //     },
+      //   },
+      //   function (error, response, body) {
+      //     console.log(body);
+      //   }
+      // );
       return res.json({
         otp_code: otp_code,
         otp_ref: otp_ref,
