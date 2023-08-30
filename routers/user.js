@@ -340,7 +340,7 @@ router.post("/detail/create", middleware, (req, res, next) => {
 
       let id_detail = rows[0]?.id === undefined ? 0 : rows[0]?.id;
 
-      if (id_detail === 0) {
+      if (id_detail <= 0) {
         con.query(
           "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?)",
           [
@@ -390,6 +390,7 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
   con.query(
     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? LIMIT 1",
     [user_id],
+
     (err, rows) => {
       let checkuser = rows.length;
       if (checkuser <= 0) {
@@ -405,7 +406,8 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
       let total_request =
         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
       let total_request_set = total_request + 1;
-      if (total_request === 0) {
+
+      if (total_request <= 0) {
         con.query(
           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
           [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
