@@ -396,8 +396,9 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
           message: "Data is null", // error.sqlMessage
         });
       }
-      let user_phone = rows[0]?.user_phone;
-
+      let user_phone =
+        rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
+      console.log(user_phone);
       let total_request =
         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
       let total_request_set = total_request + 1;
