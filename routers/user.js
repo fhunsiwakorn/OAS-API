@@ -385,65 +385,62 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   const otp_code = Math.floor(100000 + Math.random() * 900000);
   const otp_ref = functions.randomCode();
-  return res.json({
-    project_name: "Online Application System : OAS (สปป. ลาว)",
-  });
 
-  // con.query(
-  //   "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
-  //   [user_id],
-  //   (err, rows) => {
-  //     if (rows.length <= 0) {
-  //       return res.status(204).json({
-  //         status: 204,
-  //         message: "Data is null", // error.sqlMessage
-  //       });
-  //     }
-  //     let user_phone =
-  //       rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
-  //     console.log(user_phone);
-  //     let total_request =
-  //       rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
-  //     let total_request_set = total_request + 1;
-  //     if (total_request === null) {
-  //       con.query(
-  //         "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
-  //         [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
-  //       );
-  //     } else {
-  //       con.query(
-  //         "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
-  //         [otp_code, otp_ref, total_request_set, localISOTime, user_id]
-  //       );
-  //     }
-  //     // SMS API
-  //     data = {
-  //       sender: "SMS PRO",
-  //       msisdn: [user_phone],
-  //       message: "Your OTP is " + otp_code + " REF:" + otp_ref,
-  //     };
-  //     request(
-  //       {
-  //         method: "POST",
-  //         body: data,
-  //         json: true,
-  //         url: "https://thsms.com/api/send-sms",
-  //         headers: {
-  //           Authorization: common.sms_token,
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //       function (error, response, body) {
-  //         console.log(body);
-  //       }
-  //     );
-  //     return res.json({
-  //       otp_code: otp_code,
-  //       otp_ref: otp_ref,
-  //       total_request: total_request_set,
-  //     });
-  //   }
-  // );
+  con.query(
+    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
+    [user_id],
+    (err, rows) => {
+      if (rows.length <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null", // error.sqlMessage
+        });
+      }
+      let user_phone =
+        rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
+
+      let total_request =
+        rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
+      let total_request_set = total_request + 1;
+      // if (total_request === null) {
+      //   con.query(
+      //     "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+      //     [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+      //   );
+      // } else {
+      //   con.query(
+      //     "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
+      //     [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+      //   );
+      // }
+      // SMS API
+      data = {
+        sender: "SMS PRO",
+        msisdn: [user_phone],
+        message: "Your OTP is " + otp_code + " REF:" + otp_ref,
+      };
+      request(
+        {
+          method: "POST",
+          body: data,
+          json: true,
+          url: "https://thsms.com/api/send-sms",
+          headers: {
+            Authorization: common.sms_token,
+            "Content-Type": "application/json",
+          },
+        },
+        function (error, response, body) {
+          console.log(body);
+        }
+      );
+      return res.json({
+        otp_code: otp_code,
+        otp_ref: otp_ref,
+        total_request: total_request_set,
+      });
+    }
+  );
 });
 
 router.put("/verify_otp", middleware, (req, res, next) => {
