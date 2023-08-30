@@ -402,19 +402,19 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
       let total_request =
         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
       let total_request_set = total_request + 1;
-      // if (total_request === null) {
-      //   con.query(
-      //     "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
-      //     [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
-      //   );
-      // } else {
-      //   con.query(
-      //     "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
-      //     [otp_code, otp_ref, total_request_set, localISOTime, user_id]
-      //   );
-      // }
+      if (total_request === null) {
+        con.query(
+          "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+          [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+        );
+      } else {
+        con.query(
+          "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
+          [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+        );
+      }
       // SMS API
-      data = {
+      let data = {
         sender: "SMS PRO",
         msisdn: [user_phone],
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
