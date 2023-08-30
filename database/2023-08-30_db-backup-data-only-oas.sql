@@ -1,3 +1,19 @@
+-- Dumping data for table `app_appointment` 
+
+INSERT INTO `app_appointment` VALUES('1','2','120','2023-09-05 16:05:31','2023-09-05 17:05:31','Test','A','2023-08-28 21:44:31','2023-08-28 21:44:31','1','1','1');
+INSERT INTO `app_appointment` VALUES('2','1','120','2023-09-15 16:05:31','2023-09-15 19:05:31','สวย นะ','C1','2023-08-28 21:55:13','2023-08-28 21:59:25','1','1','1');
+INSERT INTO `app_appointment` VALUES('3','2','120','2023-10-17 16:05:31','2023-10-17 18:05:31','Test','A','2023-08-28 22:09:54','2023-08-28 22:09:54','1','1','1');
+INSERT INTO `app_appointment` VALUES('4','2','120','2023-09-15 19:05:31','2023-09-15 20:05:31','Test','A','2023-08-29 10:03:40','2023-08-29 10:03:40','1','1','1');
+
+
+
+-- Dumping data for table `app_appointment_reserve` 
+
+INSERT INTO `app_appointment_reserve` VALUES('1','1','7','2023-08-28 21:44:31');
+INSERT INTO `app_appointment_reserve` VALUES('2','1','6','2023-08-28 21:44:31');
+
+
+
 -- Dumping data for table `app_country` 
 
 INSERT INTO `app_country` VALUES('1','กัมพูชา','Cambodia','ราชอาณาจักรกัมพูชา','Kingdom of Cambodia','พนมเปญ','Phnom Penh','Asia');
@@ -211,6 +227,14 @@ INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:
 
 
 
+-- Dumping data for table `app_dlt_card` 
+
+INSERT INTO `app_dlt_card` VALUES('3','url/image','url/image','C','2023-08-29 11:12:19','2023-08-29 13:05:06','1');
+INSERT INTO `app_dlt_card` VALUES('4','url/image','url/image','A','2023-08-29 11:12:19','2023-08-29 11:12:19','1');
+INSERT INTO `app_dlt_card` VALUES('5','url/image','url/image','A1','2023-08-29 11:35:38','2023-08-29 11:35:38','1');
+
+
+
 -- Dumping data for table `app_exam_cache` 
 
 INSERT INTO `app_exam_cache` VALUES('144','1','1','1','1','2','1','2023-08-23 15:07:26');
@@ -232,6 +256,10 @@ INSERT INTO `app_exam_choice` VALUES('5','3','เมืองพลอยู่ 
 
 INSERT INTO `app_exam_main` VALUES('2','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','B','2023-08-05 16:05:31','2023-08-26 10:53:41','1','1','1');
 INSERT INTO `app_exam_main` VALUES('4','013','New Jean','url/image','ไม่มีอะไรเลย','50','00:59:00','A','2023-08-26 10:52:48','2023-08-26 10:52:48','1','1','1');
+INSERT INTO `app_exam_main` VALUES('5','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:56:52','2023-08-28 15:56:52','1','1','1');
+INSERT INTO `app_exam_main` VALUES('6','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
+INSERT INTO `app_exam_main` VALUES('7','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
+INSERT INTO `app_exam_main` VALUES('8','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','B','2023-08-28 15:57:50','2023-08-28 15:57:50','1','1','1');
 
 
 
@@ -256,6 +284,11 @@ INSERT INTO `app_exam_result` VALUES('4','1','2','2023-08-23 15:02:00','2023-08-
 -- Dumping data for table `app_exam_time` 
 
 INSERT INTO `app_exam_time` VALUES('2','00:25:00','2','1');
+
+
+
+-- Dumping data for table `app_main_result` 
+
 
 
 
@@ -285,7 +318,7 @@ INSERT INTO `app_news_image` VALUES('13','path','test','1');
 
 -- Dumping data for table `app_user` 
 
-INSERT INTO `app_user` VALUES('1','faii','$2b$08$sQQBSFKRNyqFm5V1CIlfOOaNTDKaCKYPL6kweMIq9Qo15AYoeczke','เจน','เป็นมงคล','test@gmail.com','0943906077','3','1','2023-07-07 15:15:23','2023-07-07 15:15:23','1');
+INSERT INTO `app_user` VALUES('1','faii','$2b$08$sQQBSFKRNyqFm5V1CIlfOOaNTDKaCKYPL6kweMIq9Qo15AYoeczke','เจน','เป็นมงคล','test@gmail.com','0943908077','3','1','2023-07-07 15:15:23','2023-07-07 15:15:23','1');
 INSERT INTO `app_user` VALUES('6','faii2','$2b$08$IYXlj1qutrNci..rPDPA9.8F6YpHB5HE9EuS03To.u8SuMSTGNxam','เจน','เป็นมงคล','test@gmail2.com','0943908076','3','1','2023-08-26 11:58:34','2023-08-26 11:58:34','1');
 INSERT INTO `app_user` VALUES('7','ppun','$2b$08$Oq0BE8l7m17j0jHqBOsGuuj0d1HHontaSCZrqRrtbkCKlnHGS..M6','ปั่น','ไอที','test2222@gmail.com','0833268813','3','1','2023-08-26 11:58:34','2023-08-28 10:22:21','1');
 
@@ -293,14 +326,15 @@ INSERT INTO `app_user` VALUES('7','ppun','$2b$08$Oq0BE8l7m17j0jHqBOsGuuj0d1HHont
 
 -- Dumping data for table `app_user_detail` 
 
-INSERT INTO `app_user_detail` VALUES('12','n','url/image','1993-03-19','365','2','1','7');
-INSERT INTO `app_user_detail` VALUES('14','n','url/image','1993-03-19','36s5','2','1','6');
+INSERT INTO `app_user_detail` VALUES('12','n','1101800590279','url/image','1993-03-19','365','2','1','7');
+INSERT INTO `app_user_detail` VALUES('14','n','1101800590277','url/image','1993-03-19','36s5','2','1','6');
 
 
 
 -- Dumping data for table `app_user_otp` 
 
-INSERT INTO `app_user_otp` VALUES('5','468345','u5fEHLzORi','8','2023-08-26 20:29:21','2023-08-28 09:03:27','7');
+INSERT INTO `app_user_otp` VALUES('6','441584','E08Yf3yZ3Q','3','2023-08-30 09:38:37','2023-08-30 09:39:58','1');
+INSERT INTO `app_user_otp` VALUES('7','717238','jkvQiN37v8','1','2023-08-30 09:39:58','2023-08-30 09:39:58','7');
 
 
 

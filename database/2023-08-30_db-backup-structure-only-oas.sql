@@ -1,3 +1,51 @@
+-- Table structure for table `app_appointment`; 
+
+DROP TABLE IF EXISTS `app_appointment`; 
+
+CREATE TABLE `app_appointment` (
+  `ap_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ap_learn_type` int(1) NOT NULL,
+  `ap_quota` int(11) NOT NULL,
+  `ap_date_start` datetime NOT NULL,
+  `ap_date_end` datetime NOT NULL,
+  `ap_remark` varchar(256) NOT NULL,
+  `dlt_code` varchar(3) NOT NULL,
+  `crt_date` datetime NOT NULL,
+  `udp_date` datetime NOT NULL,
+  `cancelled` int(1) NOT NULL DEFAULT 1,
+  `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
+  `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id	',
+  PRIMARY KEY (`ap_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_appointment_reserve`; 
+
+DROP TABLE IF EXISTS `app_appointment_reserve`; 
+
+CREATE TABLE `app_appointment_reserve` (
+  `ar_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ap_id` int(11) NOT NULL COMMENT 'app_appointment.ap_id',
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
+  `user_udp` datetime NOT NULL,
+  PRIMARY KEY (`ar_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_country`; 
+
+DROP TABLE IF EXISTS `app_country`; 
+
+CREATE TABLE `app_country` (
+  `country_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_name_th` varchar(128) DEFAULT NULL,
+  `country_name_eng` varchar(128) DEFAULT NULL,
+  `country_official_name_th` varchar(128) DEFAULT NULL,
+  `country_official_name_eng` varchar(128) DEFAULT NULL,
+  `capital_name_th` varchar(128) DEFAULT NULL,
+  `capital_name_eng` varchar(128) DEFAULT NULL,
+  `zone` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`country_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 -- Table structure for table `app_course`; 
 
 DROP TABLE IF EXISTS `app_course`; 
@@ -34,6 +82,21 @@ CREATE TABLE `app_course_lesson` (
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`cs_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_dlt_card`; 
+
+DROP TABLE IF EXISTS `app_dlt_card`; 
+
+CREATE TABLE `app_dlt_card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `front_img` varchar(128) NOT NULL,
+  `back_img` varchar(128) NOT NULL,
+  `dlt_code` varchar(3) NOT NULL,
+  `crt_date` datetime NOT NULL,
+  `udp_date` datetime NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_cache`; 
 
@@ -78,13 +141,14 @@ CREATE TABLE `app_exam_main` (
   `em_description` varchar(256) NOT NULL,
   `em_random_amount` int(11) NOT NULL,
   `em_time` time NOT NULL,
+  `dlt_code` varchar(3) NOT NULL,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `cancelled` int(11) NOT NULL DEFAULT 1,
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`em_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_question`; 
 
@@ -126,6 +190,21 @@ CREATE TABLE `app_exam_time` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_main_result`; 
+
+DROP TABLE IF EXISTS `app_main_result`; 
+
+CREATE TABLE `app_main_result` (
+  `mr_id` int(11) NOT NULL AUTO_INCREMENT,
+  `mr_score` double NOT NULL,
+  `mr_status` varchar(5) NOT NULL COMMENT 'pass . fail',
+  `dlt_code` varchar(3) NOT NULL,
+  `crt_date` datetime NOT NULL,
+  `udp_date` datetime NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  PRIMARY KEY (`mr_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_news`; 
 
@@ -170,11 +249,44 @@ CREATE TABLE `app_user` (
   `user_email` varchar(64) NOT NULL,
   `user_phone` varchar(64) NOT NULL,
   `user_type` int(1) NOT NULL,
+  `active` int(1) NOT NULL DEFAULT 1,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
-  `cancelled` int(11) NOT NULL DEFAULT 1,
+  `cancelled` int(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='ตาราง User';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='ตาราง User';
+
+-- Table structure for table `app_user_detail`; 
+
+DROP TABLE IF EXISTS `app_user_detail`; 
+
+CREATE TABLE `app_user_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `verify_account` char(1) NOT NULL DEFAULT 'n' COMMENT 'n , y',
+  `identification_number` varchar(24) NOT NULL,
+  `user_img` varchar(128) NOT NULL,
+  `user_birthday` date NOT NULL,
+  `user_address` varchar(128) NOT NULL,
+  `location_id` int(11) NOT NULL COMMENT 'app_zipcode_lao.id',
+  `country_id` int(11) NOT NULL COMMENT 'app_country.country_id',
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_user_otp`; 
+
+DROP TABLE IF EXISTS `app_user_otp`; 
+
+CREATE TABLE `app_user_otp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `otp_code` varchar(6) NOT NULL,
+  `otp_ref` varchar(10) NOT NULL,
+  `total_request` int(11) NOT NULL,
+  `crt_date` datetime NOT NULL,
+  `udp_date` datetime NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_zipcode_lao`; 
 

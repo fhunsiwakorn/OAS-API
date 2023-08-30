@@ -419,26 +419,23 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
         msisdn: [user_phone],
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
       };
-      var options = {
-        method: "POST",
-        body: data,
-        json: true,
-        url: "https://thsms.com/api/send-sms",
-        // headers: {
-        //   Authorization: common.sms_token,
-        // },
-        headers: {
-          Authorization:
-            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC90aHNtcy5jb21cL21hbmFnZVwvYXBpLWtleSIsImlhdCI6MTY5MTU2NDQ4MywibmJmIjoxNjkxNTY0NDgzLCJqdGkiOiJPRlExSE05eFdxTDVGVjRoIiwic3ViIjoxMTAyNzksInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c2x9187_1inuyNK8eUK_Q7i47yaE4lmgrIvAw3znr0g",
+
+      //call the request
+      // request(options, callback);
+      request(
+        {
+          method: "POST",
+          body: data,
+          json: true,
+          url: "https://thsms.com/api/send-sms",
+          headers: {
+            Authorization: common.sms_token,
+          },
         },
-      };
-      function callback(error, response, body) {
-        if (!error && response.statusCode == 200) {
+        function (error, response, body) {
           console.log(body);
         }
-      }
-      //call the request
-      request(options, callback);
+      );
       return res.json({
         otp_code: otp_code,
         otp_ref: otp_ref,
