@@ -383,8 +383,11 @@ router.post("/detail/create", middleware, (req, res, next) => {
 
 router.get("/otp/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
-  const otp_code = Math.floor(100000 + Math.random() * 900000);
-  const otp_ref = functions.randomCode();
+  // const otp_code = Math.floor(100000 + Math.random() * 900000);
+  // const otp_ref = functions.randomCode();
+
+  const otp_code = "65321";
+  const otp_ref = "IRENE";
 
   con.query(
     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
@@ -419,20 +422,21 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
         msisdn: [user_phone],
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
       };
-      // request(
-      //   {
-      //     method: "POST",
-      //     body: data,
-      //     json: true,
-      //     url: "https://thsms.com/api/send-sms",
-      //     headers: {
-      //       Authorization: common.sms_token,
-      //     },
-      //   },
-      //   function (error, response, body) {
-      //     console.log(body);
-      //   }
-      // );
+      request(
+        {
+          method: "POST",
+          body: data,
+          json: true,
+          url: "https://thsms.com/api/send-sms",
+          headers: {
+            Authorization: common.sms_token,
+            "Content-Type": "application/json",
+          },
+        },
+        function (error, response, body) {
+          console.log(body);
+        }
+      );
       return res.json({
         otp_code: otp_code,
         otp_ref: otp_ref,
