@@ -315,7 +315,7 @@ router.post("/detail/create", middleware, (req, res, next) => {
   );
 
   con.query(
-    "SELECT app_user.user_name ,app_user_detail.id FROM app_user LEFT JOIN app_user_detail ON app_user_detail.user_id  = app_user.user_id  WHERE app_user.user_id = ? GROUP BY app_user.user_id",
+    "SELECT app_user.user_name ,app_user_detail.id FROM app_user LEFT JOIN app_user_detail ON app_user_detail.user_id  = app_user.user_id  WHERE app_user.user_id = ? LIMIT 1",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
