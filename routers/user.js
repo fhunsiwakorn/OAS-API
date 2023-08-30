@@ -424,8 +424,12 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
         body: data,
         json: true,
         url: "https://thsms.com/api/send-sms",
+        // headers: {
+        //   Authorization: common.sms_token,
+        // },
         headers: {
-          Authorization: common.sms_token,
+          Authorization:
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC90aHNtcy5jb21cL21hbmFnZVwvYXBpLWtleSIsImlhdCI6MTY5MTU2NDQ4MywibmJmIjoxNjkxNTY0NDgzLCJqdGkiOiJPRlExSE05eFdxTDVGVjRoIiwic3ViIjoxMTAyNzksInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c2x9187_1inuyNK8eUK_Q7i47yaE4lmgrIvAw3znr0g",
         },
       };
       function callback(error, response, body) {
