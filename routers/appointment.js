@@ -215,7 +215,7 @@ WHERE t1.cancelled=1 AND
 t1.dlt_code = ? AND
 DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
 GROUP BY date_group
-ORDER BY t1.ap_date_start ASC `;
+ `;
 
   con.query(
     sql,
@@ -225,12 +225,12 @@ ORDER BY t1.ap_date_start ASC `;
       end_date.toISOString().split("T")[0],
     ],
     (err, results) => {
-      if (err) {
-        return res.status(400).json({
-          status: 400,
-          message: "Bad Request",
-        });
-      }
+      // if (err) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message: "Bad Request",
+      //   });
+      // }
       console.log(results);
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
