@@ -245,7 +245,6 @@ ORDER BY t1.ap_date_start ASC
         let events = JSON.parse(el?.events);
         let newObj = {
           date_group: el?.date_group,
-          total_reserv: el?.total_reserv,
           events: events,
         };
         obj.push(newObj);
