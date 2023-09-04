@@ -215,6 +215,7 @@ WHERE t1.cancelled=1 AND
 t1.dlt_code = ? AND
 DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
 GROUP BY date_group
+ORDER BY t1.ap_date_start ASC
  `;
 
   con.query(
@@ -225,13 +226,13 @@ GROUP BY date_group
       end_date.toISOString().split("T")[0],
     ],
     (err, results) => {
-      // if (err) {
-      //   return res.status(400).json({
-      //     status: 400,
-      //     message: "Bad Request",
-      //   });
-      // }
-      console.log(results);
+      if (err) {
+        return res.status(400).json({
+          status: 400,
+          message: "Bad Request",
+        });
+      }
+      // console.log(results);
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
           status: 404,
@@ -245,8 +246,6 @@ GROUP BY date_group
         let newObj = {
           date_group: el?.date_group,
           total_reserv: el?.total_reserv,
-          user_create: el?.user_create,
-          user_update: el?.user_update,
           events: events,
         };
         obj.push(newObj);
