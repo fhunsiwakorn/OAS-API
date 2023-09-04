@@ -240,17 +240,16 @@ ORDER BY t1.ap_date_start ASC
         });
       }
       let obj = [];
-      // results.forEach((el) => {
-      //   // console.log(JSON.parse(el?.choices));
-      //   let events = JSON.parse(el?.events);
-      //   let newObj = {
-      //     date_group: el?.date_group,
-      //     events: events,
-      //   };
-      //   obj.push(newObj);
-      // });
+      results.forEach((el) => {
+        let events = JSON.parse(new Object(el?.events));
+        let newObj = {
+          date_group: el?.date_group,
+          events: events,
+        };
+        obj.push(newObj);
+      });
 
-      return res.json(results);
+      return res.json(obj);
     }
   );
 });
