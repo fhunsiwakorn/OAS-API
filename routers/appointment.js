@@ -215,7 +215,7 @@ WHERE t1.cancelled=1 AND
 t1.dlt_code = ? AND
 DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
 GROUP BY date_group
-ORDER BY t1.ap_id 
+ORDER BY t1.ap_date_start ASC 
 LIMIT 1000`;
 
   con.query(
