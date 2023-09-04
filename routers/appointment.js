@@ -232,7 +232,7 @@ ORDER BY t1.ap_date_start ASC
           message: "Bad Request",
         });
       }
-      // console.log(results);
+      console.log(results);
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
           status: 404,
@@ -240,17 +240,17 @@ ORDER BY t1.ap_date_start ASC
         });
       }
       let obj = [];
-      results.forEach((el) => {
-        // console.log(JSON.parse(el?.choices));
-        let events = JSON.parse(el?.events);
-        let newObj = {
-          date_group: el?.date_group,
-          events: events,
-        };
-        obj.push(newObj);
-      });
+      // results.forEach((el) => {
+      //   // console.log(JSON.parse(el?.choices));
+      //   let events = JSON.parse(el?.events);
+      //   let newObj = {
+      //     date_group: el?.date_group,
+      //     events: events,
+      //   };
+      //   obj.push(newObj);
+      // });
 
-      return res.json(obj);
+      return res.json(results);
     }
   );
 });
