@@ -226,12 +226,12 @@ LIMIT 1000`;
       end_date.toISOString().split("T")[0],
     ],
     (err, results) => {
-      if (err) {
-        return res.status(400).json({
-          status: 400,
-          message: "Bad Request",
-        });
-      }
+      // if (err) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message: "Bad Request",
+      //   });
+      // }
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
           status: 404,
