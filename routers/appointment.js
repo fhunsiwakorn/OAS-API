@@ -199,26 +199,29 @@ router.post("/list", middleware, (req, res, next) => {
   const data = req.body;
   const start_date = new Date(data.start_date);
   const end_date = new Date(data.end_date);
+  const dlt_code = data.dlt_code;
   const check_start = start_date.getTime();
   const check_end = end_date.getTime();
 
   let sql = `
 SELECT 
-DATE_FORMAT(t1.ap_date_start,"%Y-%m-%d") AS date,
+DATE_FORMAT(t1.ap_date_start,"%Y-%m-%d") AS date_group,
 IFNULL(CONCAT('[',(SELECT   GROUP_CONCAT((JSON_OBJECT('ap_id', t3.ap_id,'ap_learn_type', t3.ap_learn_type,'ap_quota', t3.ap_quota , 'ap_date_start', t3.ap_date_start,'ap_date_end', t3.ap_date_end,'ap_remark', t3.ap_remark,'dlt_code', t3.dlt_code,'total_reserv', (SELECT COUNT(*) FROM app_appointment_reserve t4 WHERE t4.ap_id=t3.ap_id) ))) 
-FROM app_appointment t3  WHERE DATE(t3.ap_date_start) = date AND t3.cancelled=1 ORDER BY t3.ap_date_start ASC ) ,']'),'[]') AS events
+FROM app_appointment t3  WHERE t3.dlt_code = t1.dlt_code AND DATE(t3.ap_date_start) = date_group AND t3.cancelled=1 ORDER BY t3.ap_date_start ASC ) ,']'),'[]') AS events
 FROM app_appointment t1 
 LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt 
 LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp
 WHERE t1.cancelled=1 AND
+t1.dlt_code = ? AND
 DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
-GROUP BY date
+GROUP BY date_group
 ORDER BY t1.ap_id 
 LIMIT 1000`;
 
   con.query(
     sql,
     [
+      dlt_code,
       start_date.toISOString().split("T")[0],
       end_date.toISOString().split("T")[0],
     ],
@@ -240,7 +243,7 @@ LIMIT 1000`;
         // console.log(JSON.parse(el?.choices));
         let events = JSON.parse(el?.events);
         let newObj = {
-          date: el?.date,
+          date_group: el?.date_group,
           total_reserv: el?.total_reserv,
           user_create: el?.user_create,
           user_update: el?.user_update,
