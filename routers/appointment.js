@@ -206,8 +206,8 @@ router.post("/list", middleware, (req, res, next) => {
   let sql = `
 SELECT 
 DATE_FORMAT(t1.ap_date_start,"%Y-%m-%d") AS date_group,
-IFNULL(CONCAT('[',(SELECT GROUP_CONCAT((JSON_OBJECT('ap_id', t3.ap_id,'ap_learn_type', t3.ap_learn_type,'ap_quota', t3.ap_quota , 'ap_date_start', t3.ap_date_start,'ap_date_end', t3.ap_date_end,'ap_remark', t3.ap_remark,'dlt_code', t3.dlt_code,'total_reserv', (SELECT COUNT(*) FROM app_appointment_reserve t4 WHERE t4.ap_id=t3.ap_id) ))) 
-FROM app_appointment t3  WHERE t3.dlt_code = t1.dlt_code AND DATE(t3.ap_date_start) = date_group AND t3.cancelled=1 ORDER BY t3.ap_date_start ASC ) ,']'),'[]') AS events
+CONCAT('[',(SELECT GROUP_CONCAT((JSON_OBJECT('ap_id', t3.ap_id,'ap_learn_type', t3.ap_learn_type,'ap_quota', t3.ap_quota , 'ap_date_start', t3.ap_date_start,'ap_date_end', t3.ap_date_end,'ap_remark', t3.ap_remark,'dlt_code', t3.dlt_code,'total_reserv', (SELECT COUNT(*) FROM app_appointment_reserve t4 WHERE t4.ap_id=t3.ap_id) ))) 
+FROM app_appointment t3  WHERE t3.dlt_code = t1.dlt_code AND DATE(t3.ap_date_start) = date_group AND t3.cancelled=1 ORDER BY t3.ap_date_start ASC ) ,']') AS events
 FROM app_appointment t1 
 WHERE t1.cancelled=1 AND
 t1.dlt_code = ? AND
@@ -230,7 +230,7 @@ ORDER BY t1.ap_date_start ASC
           message: "Bad Request",
         });
       }
-      console.log(results);
+      // console.log(results);
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
           status: 404,
@@ -238,16 +238,29 @@ ORDER BY t1.ap_date_start ASC
         });
       }
       let obj = [];
-      results.forEach((el) => {
-        let events = JSON.parse(el?.events);
-        let newObj = {
-          date_group: el?.date_group,
-          events: events,
-        };
-        obj.push(newObj);
+      new Promise((resolve, reject) => {
+        for (let i = 0; i < results.length; i++) {
+          let el = results[i];
+          // console.log(el);
+          let events = JSON.parse(el?.events);
+          let newObj = {
+            date_group: el?.date_group,
+            events: events,
+          };
+          obj.push(newObj);
+        }
       });
 
-      return res.json(obj);
+      // results.forEach((el) => {
+      //   let events = JSON.parse(el?.events);
+      //   let newObj = {
+      //     date_group: el?.date_group,
+      //     events: events,
+      //   };
+      //   obj.push(newObj);
+      // });
+
+      return res.send(obj);
     }
   );
 });
