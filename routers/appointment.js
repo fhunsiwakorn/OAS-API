@@ -230,7 +230,7 @@ ORDER BY t1.ap_date_start ASC
           message: "Bad Request",
         });
       }
-      // console.log(results);
+      console.log(results);
       if (check_start > check_end || check_start === NaN || check_end === NaN) {
         return res.status(404).json({
           status: 404,
