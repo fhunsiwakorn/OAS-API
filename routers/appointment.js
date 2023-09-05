@@ -197,32 +197,29 @@ router.delete("/delete/:ap_id", middleware, (req, res, next) => {
 
 router.post("/list", middleware, (req, res, next) => {
   const data = req.body;
-  const start_date = new Date(data.start_date);
-  const end_date = new Date(data.end_date);
+  const date_event = new Date(data.date_event);
+  const ap_learn_type = data.ap_learn_type;
   const dlt_code = data.dlt_code;
-  const check_start = start_date.getTime();
-  const check_end = end_date.getTime();
 
   let sql = `
 SELECT 
-DATE_FORMAT(t1.ap_date_start,"%Y-%m-%d") AS date_group,
-CONCAT('[',(SELECT GROUP_CONCAT((JSON_OBJECT('ap_id', t3.ap_id,'ap_learn_type', t3.ap_learn_type,'ap_quota', t3.ap_quota , 'ap_date_start', t3.ap_date_start,'ap_date_end', t3.ap_date_end,'ap_remark', t3.ap_remark,'dlt_code', t3.dlt_code,'total_reserv', (SELECT COUNT(*) FROM app_appointment_reserve t4 WHERE t4.ap_id=t3.ap_id) ))) 
-FROM app_appointment t3  WHERE t3.dlt_code = t1.dlt_code AND DATE(t3.ap_date_start) = date_group AND t3.cancelled=1 ORDER BY t3.ap_date_start ASC ) ,']') AS events
+t1.*,
+CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
+CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
 FROM app_appointment t1 
-WHERE t1.cancelled=1 AND
+LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt  
+LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp
+WHERE 
+t1.cancelled=1 AND
 t1.dlt_code = ? AND
-DATE(t1.ap_date_start) >= ? AND  DATE(t1.ap_date_end) <= ? 
-GROUP BY date_group
+DATE(t1.ap_date_start) = ?  AND
+t1.ap_learn_type = ? 
 ORDER BY t1.ap_date_start ASC
  `;
-
+  // console.log(date_event);
   con.query(
     sql,
-    [
-      dlt_code,
-      start_date.toISOString().split("T")[0],
-      end_date.toISOString().split("T")[0],
-    ],
+    [dlt_code, date_event.toISOString().split("T")[0], ap_learn_type],
     (err, results) => {
       if (err) {
         return res.status(400).json({
@@ -230,37 +227,22 @@ ORDER BY t1.ap_date_start ASC
           message: "Bad Request",
         });
       }
-      // console.log(results);
-      if (check_start > check_end || check_start === NaN || check_end === NaN) {
-        return res.status(404).json({
-          status: 404,
-          message: "Invalid 'start_date' , 'end_date' ",
-        });
-      }
-      let obj = [];
-      new Promise((resolve, reject) => {
-        for (let i = 0; i < results.length; i++) {
-          let el = results[i];
-          // console.log(el);
-          let events = JSON.parse(el?.events);
-          let newObj = {
-            date_group: el?.date_group,
-            events: events,
-          };
-          obj.push(newObj);
-        }
-      });
 
-      // results.forEach((el) => {
-      //   let events = JSON.parse(el?.events);
-      //   let newObj = {
-      //     date_group: el?.date_group,
-      //     events: events,
-      //   };
-      //   obj.push(newObj);
+      // let obj = [];
+      // new Promise((resolve, reject) => {
+      //   for (let i = 0; i < results.length; i++) {
+      //     let el = results[i];
+      //     // console.log(el);
+      //     let events = JSON.parse(el?.events);
+      //     let newObj = {
+      //       date_group: el?.date_group,
+      //       events: events,
+      //     };
+      //     obj.push(newObj);
+      //   }
       // });
 
-      return res.json(obj);
+      return res.json(results);
     }
   );
 });
