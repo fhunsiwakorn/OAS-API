@@ -223,7 +223,7 @@ ORDER BY t1.ap_date_start ASC
       start_date.toISOString().split("T")[0],
       end_date.toISOString().split("T")[0],
     ],
-    (err, results) => {
+    async (err, results) => {
       if (err) {
         return res.status(400).json({
           status: 400,
@@ -238,7 +238,7 @@ ORDER BY t1.ap_date_start ASC
         });
       }
       let obj = [];
-      new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         for (let i = 0; i < results.length; i++) {
           let el = results[i];
           // console.log(el);
