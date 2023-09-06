@@ -154,6 +154,7 @@ router.put("/update/:ap_id", middleware, (req, res, next) => {
 router.get("/get/:ap_id", middleware, (req, res, next) => {
   const { ap_id } = req.params;
   let sql = `SELECT t1.ap_id ,t1.ap_learn_type,t1.ap_quota,t1.ap_date_start,t1.ap_date_end,t1.ap_remark,t1.dlt_code,t1.crt_date,t1.udp_date,
+  (SELECT Count(*) FROM app_appointment_reserve WHERE ap_id=t1.ap_id) AS total_reserve,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_appointment t1 LEFT JOIN  app_user u1 ON u1.user_id = t1.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = t1.user_udp WHERE t1.cancelled=1 AND t1.ap_id =?`;
 
@@ -212,6 +213,7 @@ t1.ap_remark,
 t1.dlt_code,
 t1.crt_date,
 t1.udp_date,
+(SELECT Count(*) FROM app_appointment_reserve WHERE ap_id=t1.ap_id) AS total_reserve,
 CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
 CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
 FROM app_appointment t1 
