@@ -307,7 +307,7 @@ router.post("/reserve/create", middleware, (req, res, next) => {
       }
 
       con.query(
-        "INSERT INTO app_appointment_reserve (ap_id,user_id,user_udp) VALUES (?,?,?)",
+        "INSERT INTO app_appointment_reserve (ap_id,user_id,udp_date) VALUES (?,?,?)",
         [ap_id, user_id, localISOTime],
         function (err, result) {
           if (err) throw err;
