@@ -357,7 +357,7 @@ router.get("/reserve/get/:user_id", middleware, (req, res, next) => {
         ar_id: el?.ar_id,
         ap_id: el?.ap_id,
         user_id: el?.user_id,
-        user_udp: el?.user_udp,
+        udp_date: el?.udp_date,
         appointment_detail: appointment_detail,
       };
       obj.push(newObj);
@@ -416,7 +416,7 @@ router.post("/reserve/get/:ap_id", middleware, (req, res, next) => {
         ar_id: el?.ar_id,
         ap_id: el?.ap_id,
         user_id: el?.user_id,
-        user_udp: el?.user_udp,
+        udp_date: el?.udp_date,
         user_reserve: user_reserve,
         appointment_detail: appointment_detail,
       };
