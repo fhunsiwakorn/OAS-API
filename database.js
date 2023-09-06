@@ -5,7 +5,8 @@ const connection = mysql.createConnection({
   port: "3306",
   password: "",
   database: "oas",
-  timezone: "Asia/Bangkok",
+  // timezone: "Asia/Bangkok",
+  timezone: "+00:00",
 });
 
 connection.connect(function (err) {
