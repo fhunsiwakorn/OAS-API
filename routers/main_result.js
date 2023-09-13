@@ -8,7 +8,7 @@ const common = require("../common");
 
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
-  const user_id = data.user_id;
+  const identification_number = data.identification_number;
   const dlt_code = data.dlt_code;
   const mr_status = data.mr_status;
   const obj = common.drivinglicense_type;
@@ -16,8 +16,8 @@ router.post("/create", middleware, (req, res, next) => {
     return e.dlt_code === dlt_code;
   });
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
-    [user_id],
+    "SELECT user_id FROM app_user_detail WHERE identification_number = ? LIMIT 1",
+    [identification_number],
     (err, rows) => {
       let checkuser = rows.length;
       if (checkuser <= 0) {
@@ -38,7 +38,7 @@ router.post("/create", middleware, (req, res, next) => {
           message: "Invalid 'mr_status' ",
         });
       }
-
+      let user_id = rows[0]?.user_id;
       con.query(
         "INSERT INTO app_main_result (mr_score,mr_learn_type,mr_status,dlt_code,crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?,?)",
         [
@@ -62,7 +62,7 @@ router.post("/create", middleware, (req, res, next) => {
 router.put("/update/:mr_id", middleware, (req, res, next) => {
   const { mr_id } = req.params;
   const data = req.body;
-  const user_id = data.user_id;
+  const identification_number = data.identification_number;
   const dlt_code = data.dlt_code;
   const mr_status = data.mr_status;
   const obj = common.drivinglicense_type;
@@ -71,8 +71,8 @@ router.put("/update/:mr_id", middleware, (req, res, next) => {
   });
 
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
-    [user_id],
+    "SELECT user_id FROM app_user_detail WHERE identification_number = ? LIMIT 1",
+    [identification_number],
     (err, rows) => {
       let checkuser = rows.length;
       if (checkuser <= 0) {
@@ -93,15 +93,16 @@ router.put("/update/:mr_id", middleware, (req, res, next) => {
           message: "Invalid 'mr_status' ",
         });
       }
-
+      let user_id = rows[0]?.user_id;
       con.query(
-        "UPDATE  app_main_result SET mr_score=?,mr_learn_type=?,mr_status=?,dlt_code=?,udp_date=? WHERE mr_id=?",
+        "UPDATE  app_main_result SET mr_score=?,mr_learn_type=?,mr_status=?,dlt_code=?,udp_date=? ,user_id=? WHERE mr_id=?",
         [
           data.mr_score,
           data.mr_learn_type,
           mr_status,
           dlt_code,
           localISOTime,
+          user_id,
           mr_id,
         ],
         function (err, result) {
