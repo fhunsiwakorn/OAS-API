@@ -16,7 +16,7 @@ CREATE TABLE `app_appointment` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id	',
   PRIMARY KEY (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_appointment_reserve`; 
 
@@ -26,9 +26,9 @@ CREATE TABLE `app_appointment_reserve` (
   `ar_id` int(11) NOT NULL AUTO_INCREMENT,
   `ap_id` int(11) NOT NULL COMMENT 'app_appointment.ap_id',
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
-  `user_udp` datetime NOT NULL,
+  `udp_date` datetime NOT NULL,
   PRIMARY KEY (`ar_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_country`; 
 
