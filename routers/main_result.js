@@ -156,7 +156,8 @@ router.get("/list/option/?", middleware, (req, res, next) => {
   const present_day = new Date(req.query.present_day);
   let sql = `
   SELECT  t1.* ,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t2.user_id,'user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone,'identification_number', t3.identification_number)))  FROM app_user t2   LEFT JOIN app_user_detail t3 ON t3.user_id = t2.user_id WHERE t2.user_id =  t1.user_id) AS user_detail
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t2.user_id,'user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone,'identification_number', t3.identification_number
+  )))  FROM app_user t2   INNER JOIN app_user_detail t3 ON t3.user_id = t2.user_id WHERE t2.user_id =  t1.user_id) AS user_detail
   FROM app_main_result t1 WHERE t1.dlt_code  = ? AND t1.mr_learn_type=? ORDER BY t1.mr_id DESC 
   `;
   con.query(

@@ -5,6 +5,11 @@ const middleware = require("../middleware");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const common = require("../common");
+const moment = require("moment-timezone");
+
+format_date_tz = (date) => {
+  return moment(date).tz("Asia/Bangkok").format();
+};
 
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
@@ -200,7 +205,19 @@ router.post("/list", middleware, (req, res, next) => {
   const data = req.body;
   const date_event = new Date(data.date_event);
   const ap_learn_type = data.ap_learn_type;
+  const user_id = data.user_id;
   const dlt_code = data.dlt_code;
+
+  // ตรวจสอบว่านักเรียนสอบผ่านหรือยัง ถ้าผ่านแล้วจบ Process
+  let _check_user = 0;
+  con.query(
+    " SELECT user_id FROM app_main_result WHERE dlt_code = ? AND mr_learn_type = ? AND user_id=? AND mr_status ='pass' ",
+    [dlt_code, ap_learn_type, user_id],
+    function (err, result) {
+      if (err) throw err;
+      _check_user = result.length;
+    }
+  );
 
   let sql = `
 SELECT 
@@ -235,6 +252,12 @@ ORDER BY t1.ap_date_start ASC
         return res.status(400).json({
           status: 400,
           message: "Bad Request",
+        });
+      }
+      if (_check_user >= 1) {
+        return res.status(404).json({
+          status: 404,
+          message: "User is successfully.",
         });
       }
 
@@ -434,5 +457,64 @@ router.post("/reserve/get/:ap_id", middleware, (req, res, next) => {
     return res.json(response);
   });
 });
+
+router.get("/reserve/list?", middleware, (req, res, next) => {
+  const dlt_code = req.query.dlt_code;
+  const ap_learn_type = req.query.ap_learn_type;
+  const present_day = new Date(req.query.present_day);
+  let sql = `
+  SELECT t1.*, 
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t3.user_id,'user_firstname', t3.user_firstname,'user_lastname', t3.user_lastname , 'user_email', t3.user_email,
+  'user_phone', t3.user_phone,'identification_number', t7.identification_number,'user_img', t7.user_img,'user_birthday', t7.user_birthday,'user_address', t7.user_address,
+  'user_location',(SELECT   GROUP_CONCAT( (JSON_OBJECT('zipcode', t4.zipcode,'zipcode_name', t4.zipcode_name,'amphur_name', t4.amphur_name,'province_name', t4.province_name   ) ))   FROM app_zipcode_lao t4 WHERE t4.id = t7.location_id )
+  ))) 
+   FROM app_user t3   INNER JOIN app_user_detail t7 ON t7.user_id = t3.user_id WHERE t3.user_id =  t1.user_id) AS user_reserve,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('ap_id', t5.ap_id,'ap_learn_type', t5.ap_learn_type,'ap_quota', t5.ap_quota , 'ap_date_start', t5.ap_date_start,'ap_date_end', t5.ap_date_end,'ap_remark', t5.ap_remark,'dlt_code', t5.dlt_code)))  FROM app_appointment t5  WHERE t5.ap_id =  t1.ap_id ) AS appointment_detail
+  FROM app_appointment_reserve t1  INNER JOIN app_appointment t2 ON t2.ap_id = t1.ap_id AND t2.cancelled=1 AND t2.dlt_code = ? AND t2.ap_learn_type = ? AND DATE(t1.udp_date) = ? 
+  `;
+  con.query(
+    sql,
+    [dlt_code, ap_learn_type, present_day.toISOString().split("T")[0]],
+    function (err, result) {
+      if (err) throw err;
+      let obj = [];
+      result.forEach((el) => {
+        let user_reserve = JSON.parse(el?.user_reserve);
+        let appointment_detail = JSON.parse(el?.appointment_detail);
+        let newObj = {
+          ar_id: el?.ar_id,
+          ap_id: el?.ap_id,
+          user_id: el?.user_id,
+          udp_date: el?.udp_date,
+          user_reserve: {
+            user_id: user_reserve?.user_id,
+            user_firstname: user_reserve?.user_firstname,
+            user_lastname: user_reserve?.user_lastname,
+            user_email: user_reserve?.user_id,
+            user_phone: user_reserve?.user_phone,
+            identification_number: user_reserve?.identification_number,
+            user_img: user_reserve?.user_img,
+            user_birthday: user_reserve?.user_birthday,
+            user_address: user_reserve?.user_address,
+            user_location: JSON.parse(user_reserve?.user_location),
+          },
+          appointment_detail: {
+            ap_id: appointment_detail?.ap_id,
+            ap_learn_type: appointment_detail?.ap_learn_type,
+            ap_quota: appointment_detail?.ap_quota,
+            ap_date_start: format_date_tz(appointment_detail?.ap_date_start),
+            ap_date_end: format_date_tz(appointment_detail?.ap_date_end),
+            ap_remark: appointment_detail?.ap_remark,
+            dlt_code: appointment_detail?.dlt_code,
+          },
+        };
+        obj.push(newObj);
+      });
+
+      return res.json(obj);
+    }
+  );
+});
+//
 
 module.exports = router;
