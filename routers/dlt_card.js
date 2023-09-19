@@ -50,11 +50,13 @@ router.post("/create", middleware, (req, res, next) => {
       }
 
       con.query(
-        "INSERT INTO app_dlt_card (front_img,back_img,dlt_code,crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+        "INSERT INTO app_dlt_card (front_img,back_img,dlt_code,issue_date,expiry_date,crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?,?,?)",
         [
           data.front_img,
           data.back_img,
           dlt_code,
+          data.issue_date,
+          data.expiry_date,
           localISOTime,
           localISOTime,
           user_id,
@@ -112,8 +114,16 @@ router.put("/update/:id", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "UPDATE  app_dlt_card SET front_img=?,back_img=?,dlt_code=?,udp_date=? WHERE id=?",
-        [data.front_img, data.back_img, dlt_code, localISOTime, id],
+        "UPDATE  app_dlt_card SET front_img=?,back_img=?,dlt_code=?,issue_date=? , expiry_date=? ,udp_date=? WHERE id=?",
+        [
+          data.front_img,
+          data.back_img,
+          dlt_code,
+          data.issue_date,
+          data.expiry_date,
+          localISOTime,
+          id,
+        ],
         function (err, result) {
           if (err) throw err;
           return res.json(result);

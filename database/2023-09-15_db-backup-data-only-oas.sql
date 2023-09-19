@@ -309,6 +309,9 @@ INSERT INTO `app_main_result` VALUES('2','49','2','pass','A1','2023-09-13 09:47:
 INSERT INTO `app_main_result` VALUES('3','49','2','fail','A2','2023-09-13 09:48:46','2023-09-13 09:48:46','1');
 INSERT INTO `app_main_result` VALUES('4','49','2','fail','A2','2023-09-13 10:18:13','2023-09-13 10:18:13','7');
 INSERT INTO `app_main_result` VALUES('5','49','2','pass','A1','2023-09-13 10:40:12','2023-09-13 10:40:12','7');
+INSERT INTO `app_main_result` VALUES('6','59','2','fail','A1','2023-09-13 13:10:19','2023-09-13 13:10:19','7');
+INSERT INTO `app_main_result` VALUES('7','49','2','fail','A2','2023-09-13 13:10:19','2023-09-13 13:13:46','7');
+INSERT INTO `app_main_result` VALUES('8','49','2','fail','A2','2023-09-15 09:29:21','2023-09-15 09:29:21','7');
 
 
 

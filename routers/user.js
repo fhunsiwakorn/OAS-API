@@ -79,7 +79,7 @@ router.post("/list?", middleware, (req, res, next) => {
 router.post("/login", middleware, (req, res, next) => {
   const data = req.body;
   con.query(
-    "SELECT * FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
+    "SELECT user_id,user_name,user_firstname,user_lastname,user_email,user_phone,user_type,active FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
     [data.user_name, data.user_name, data.user_name],
     function (err, response) {
       bcrypt

@@ -198,13 +198,14 @@ DROP TABLE IF EXISTS `app_main_result`;
 CREATE TABLE `app_main_result` (
   `mr_id` int(11) NOT NULL AUTO_INCREMENT,
   `mr_score` double NOT NULL,
-  `mr_status` varchar(5) NOT NULL COMMENT 'pass . fail',
+  `mr_learn_type` int(1) NOT NULL,
+  `mr_status` varchar(4) NOT NULL COMMENT 'pass , fail',
   `dlt_code` varchar(3) NOT NULL,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`mr_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_news`; 
 
@@ -271,7 +272,7 @@ CREATE TABLE `app_user_detail` (
   `country_id` int(11) NOT NULL COMMENT 'app_country.country_id',
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_user_otp`; 
 
