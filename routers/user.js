@@ -78,18 +78,32 @@ router.post("/list?", middleware, (req, res, next) => {
 
 router.post("/login", middleware, (req, res, next) => {
   const data = req.body;
+
   con.query(
-    "SELECT user_id,user_name,user_firstname,user_lastname,user_email,user_phone,user_type,active FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
+    "SELECT * FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
     [data.user_name, data.user_name, data.user_name],
     function (err, response) {
       bcrypt
         .compare(data.user_password, response[0]?.user_password)
         .then((result) => {
           if (result === true) {
-            return res.json(response[0]);
+            const r = response[0];
+            const js = {
+              user_id: r?.user_id,
+              user_name: r?.user_name,
+              user_firstname: r?.user_firstname,
+              user_lastname: r?.user_lastname,
+              user_email: r?.user_email,
+              user_phone: r?.user_phone,
+              user_type: r?.user_type,
+              active: r?.active,
+              crt_date: r?.crt_date,
+              udp_date: r?.udp_date,
+            };
+            return res.json(js);
           } else {
-            return res.status(204).json({
-              status: 204,
+            return res.status(400).json({
+              status: 400,
               message:
                 "Invalid Credentials Error With Correct Username/Password", // error.sqlMessage
             });
