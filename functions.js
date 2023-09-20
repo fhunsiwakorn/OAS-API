@@ -12,5 +12,12 @@ f.randomCode = () => {
     .join("");
   return randomstring;
 };
-
+f.urlFriendly = (value) => {
+  return value == undefined
+    ? ""
+    : value
+        .replace(/[\s+]+/gi, "-")
+        .replace(/^-|-$/g, "")
+        .toLowerCase();
+};
 module.exports = f;

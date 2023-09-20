@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
+const functions = require("../functions");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
-
+  const news_friendly = functions.urlFriendly(data.news_title);
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
     [user_id],
@@ -22,12 +23,13 @@ router.post("/create", middleware, (req, res, next) => {
       }
 
       con.query(
-        "INSERT INTO app_news (news_cover,news_title,news_description,news_type,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_news (news_cover,news_title,news_description,news_type,news_friendly,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?)",
         [
           data.news_cover,
           data.news_title,
           data.news_description,
           data.news_type,
+          news_friendly,
           localISOTime,
           localISOTime,
           user_id,
@@ -45,7 +47,7 @@ router.post("/create", middleware, (req, res, next) => {
 router.put("/update/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
   const data = req.body;
-
+  const news_friendly = functions.urlFriendly(data.news_title);
   const user_id = data.user_id;
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
@@ -60,12 +62,13 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
       }
 
       con.query(
-        "UPDATE  app_news SET news_cover=? , news_title=? ,news_description=? ,news_type=?,udp_date=? , user_udp=? WHERE news_id=? ",
+        "UPDATE  app_news SET news_cover=? , news_title=? ,news_description=? ,news_type=?,news_friendly=?,udp_date=? , user_udp=? WHERE news_id=? ",
         [
           data.news_cover,
           data.news_title,
           data.news_description,
           data.news_type,
+          news_friendly,
           localISOTime,
           user_id,
           news_id,
@@ -82,7 +85,7 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
 
 router.get("/get/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
-  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
+  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly, app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1 AND app_news.news_id=?`;
 
@@ -152,7 +155,7 @@ router.post("/list", middleware, (req, res, next) => {
   let search_param = [];
   let u = "";
 
-  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.crt_date,app_news.udp_date ,
+  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly,app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1`;
   let sql_count =
