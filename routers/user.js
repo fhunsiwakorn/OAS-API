@@ -396,6 +396,24 @@ router.post("/detail/create", middleware, (req, res, next) => {
   );
 });
 
+router.get("/only/detail/:user_param", middleware, (req, res, next) => {
+  const { user_param } = req.params;
+  con.query(
+    "SELECT t1.*,t2.user_firstname,t2.user_lastname,t2.user_email,t2.user_phone FROM app_user_detail t1 INNER JOIN app_user t2 ON  t2.user_id = t1.user_id  WHERE t1.user_id = ? OR t1.identification_number = ? OR t2.user_email = ? OR t2.user_phone = ?",
+    [user_param, user_param, user_param, user_param],
+    function (err, results) {
+      let checkuser = results.length;
+      if (checkuser <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null", // error.sqlMessage
+        });
+      }
+      return res.json(results);
+    }
+  );
+});
+
 router.get("/otp/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   const otp_code = Math.floor(100000 + Math.random() * 900000);
