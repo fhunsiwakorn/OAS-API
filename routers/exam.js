@@ -547,8 +547,8 @@ FROM
     [em_id]
   );
   let em_random_amount =
-    random_amount[0].em_random_amount !== undefined
-      ? random_amount[0].em_random_amount
+    random_amount[0]?.em_random_amount !== undefined
+      ? random_amount[0]?.em_random_amount
       : 0;
 
   // ถ้าจำนวนการ Random เท่ากับ 0 ให้หยุดการทำงาน
