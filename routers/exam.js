@@ -497,9 +497,8 @@ router.post("/start/render", middleware, async (req, res, next) => {
   let total_cache = 0;
   let total_cache_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
   let exam_complete = 0;
+  // --IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
   let sql_question = `
-  SET @@group_concat_max_len = 4096;
-  SET @sql = NULL;
   SELECT
   t0.ec_score,
   t0.is_complete,
@@ -508,8 +507,7 @@ router.post("/start/render", middleware, async (req, res, next) => {
   t1.eq_name, 
   t1.eq_image, 
   t1.eq_answer, 
-  t1.em_id,
-  IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
+  t1.em_id
 FROM
   app_exam_cache t0
   INNER JOIN  app_exam_question t1 ON t1.eq_id = t0.eq_id  AND  t1.cancelled = 1
@@ -576,11 +574,15 @@ FROM
 
   let getQuestion = await runQuery(sql_question, [em_id, user_id]);
   let obj = [];
-  console.log(getQuestion);
+  // console.log(getQuestion);
   for (let i = 0; i < getQuestion.length; i++) {
     let el = getQuestion[i];
     // console.log(el);
     // let choices = JSON.parse(el?.choices);
+    let choices = await runQuery(
+      "SELECT * FROM `app_exam_choice` WHERE eq_id = ?",
+      [el?.eq_id]
+    );
     let newObj = {
       user_id: user_id,
       ec_score: el?.ec_score,
@@ -591,7 +593,7 @@ FROM
       eq_answer: el?.eq_answer,
       em_id: em_id,
       ec_id: el?.ec_id,
-      choices: el?.choices,
+      choices: choices,
     };
     obj.push(newObj);
   }
