@@ -497,7 +497,10 @@ router.post("/start/render", middleware, async (req, res, next) => {
   let total_cache = 0;
   let total_cache_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
   let exam_complete = 0;
-  let sql_question = `SELECT
+  let sql_question = `
+  SET @@group_concat_max_len = 4096;
+  SET @sql = NULL;
+  SELECT
   t0.ec_score,
   t0.is_complete,
   t0.ec_id,
