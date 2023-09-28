@@ -253,7 +253,7 @@ router.put("/question/update/:eq_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/question/:em_id/list", middleware, (req, res, next) => {
+router.post("/question/:em_id/list", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
   const { em_id } = req.params;
@@ -268,8 +268,7 @@ router.post("/question/:em_id/list", middleware, (req, res, next) => {
 	t1.eq_name, 
 	t1.eq_image, 
 	t1.eq_answer, 
-	t1.em_id,
-	IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
+	t1.em_id
 FROM
 	app_exam_question t1
 	WHERE
@@ -300,44 +299,37 @@ FROM
   sql += `  ORDER BY t1.eq_id DESC LIMIT ${offset},${per_page} `;
 
   // query ข้อมูล
-  con.query(sql, param1.concat(search_param), (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request", // error.sqlMessage
-      });
-    }
-    let obj = [];
-    results.forEach((el) => {
-      // console.log(JSON.parse(el?.choices));
-      let eq_id = el?.eq_id;
-      let eq_name = el?.eq_name;
-      let eq_image = el?.eq_image;
-      let eq_answer = el?.eq_answer;
-      let em_id = el?.em_id;
-      let choices = JSON.parse(el?.choices);
-      let newObj = {
-        eq_id: eq_id,
-        eq_name: eq_name,
-        eq_image: eq_image,
-        eq_answer: eq_answer,
-        em_id: em_id,
-        choices: choices,
-      };
-      obj.push(newObj);
-    });
-
-    const response = {
-      total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการที่ค้นหา
-      current_page: current_page, // หน้าที่กำลังแสดงอยู่
-      limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
-      search: search, // คำค้นหา
-      data: obj, // รายการข้อมูล
+  let getQuestion = await runQuery(sql, param1.concat(search_param));
+  let obj = [];
+  for (let i = 0; i < getQuestion.length; i++) {
+    let el = getQuestion[i];
+    // console.log(el);
+    // let choices = JSON.parse(el?.choices);
+    let choices = await runQuery(
+      "SELECT * FROM `app_exam_choice` WHERE eq_id = ?",
+      [el?.eq_id]
+    );
+    let newObj = {
+      eq_id: el?.eq_id,
+      eq_name: el?.eq_name,
+      eq_image: el?.eq_image,
+      eq_answer: el?.eq_answer,
+      em_id: em_id,
+      choices: choices,
     };
-    return res.json(response);
-  });
+    obj.push(newObj);
+  }
+
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการที่ค้นหา
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: obj, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.delete("/question/delete/:eq_id", middleware, (req, res, next) => {

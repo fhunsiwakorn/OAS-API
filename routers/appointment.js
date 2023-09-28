@@ -261,20 +261,6 @@ ORDER BY t1.ap_date_start ASC
         });
       }
 
-      // let obj = [];
-      // new Promise((resolve, reject) => {
-      //   for (let i = 0; i < results.length; i++) {
-      //     let el = results[i];
-      //     // console.log(el);
-      //     let events = JSON.parse(el?.events);
-      //     let newObj = {
-      //       date_group: el?.date_group,
-      //       events: events,
-      //     };
-      //     obj.push(newObj);
-      //   }
-      // });
-
       return res.json(results);
     }
   );
