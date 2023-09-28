@@ -573,7 +573,7 @@ FROM
 
   let getQuestion = await runQuery(sql_question, [em_id, user_id]);
   let obj = [];
-
+  console.log(getQuestion);
   for (let i = 0; i < getQuestion.length; i++) {
     let el = getQuestion[i];
     // console.log(el);
