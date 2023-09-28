@@ -655,7 +655,7 @@ router.post("/result/render", middleware, (req, res, next) => {
 
   // เช็คคำตอบที่ถุกกำหนดในคำถาม
   con.query(
-    " SELECT SUM(ec_score) AS sum_score, COUNT(*) AS total_question FROM app_exam_cache WHERE em_id	 = ? AND  user_id=? LIMIT 1 ",
+    " SELECT SUM(ec_score) AS sum_score, COUNT(*) AS total_question FROM app_exam_cache WHERE em_id	 = ? AND  user_id=? GROUP BY user_id",
     [em_id, user_id],
     (err, rs) => {
       // if (err) throw err;
