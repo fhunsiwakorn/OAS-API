@@ -577,7 +577,7 @@ FROM
   for (let i = 0; i < getQuestion.length; i++) {
     let el = getQuestion[i];
     // console.log(el);
-    let choices = JSON.parse(el?.choices);
+    // let choices = JSON.parse(el?.choices);
     let newObj = {
       user_id: user_id,
       ec_score: el?.ec_score,
@@ -588,7 +588,7 @@ FROM
       eq_answer: el?.eq_answer,
       em_id: em_id,
       ec_id: el?.ec_id,
-      choices: choices,
+      choices: el?.choices,
     };
     obj.push(newObj);
   }
