@@ -559,37 +559,40 @@ FROM
           [em_id, em_random_amount]
         );
       }
+      new Promise((resolve, reject) => {
+        con.query(sql_question, [em_id, user_id], (err, rows_question) => {
+          if (err) {
+            return reject(err);
+          }
+          // let obj = [];
+          // rows_question.forEach((el) => {
+          //   // console.log(JSON.parse(el?.choices));
+          //   let ec_score = el?.ec_score;
+          //   let is_complete = el?.is_complete;
+          //   let eq_id = el?.eq_id;
+          //   let eq_name = el?.eq_name;
+          //   let eq_image = el?.eq_image;
+          //   let eq_answer = el?.eq_answer;
+          //   let ec_id = el?.ec_id;
+          //   let em_id = el?.em_id;
+          //   let choices = JSON.parse(el?.choices);
+          //   let newObj = {
+          //     user_id: user_id,
+          //     ec_score: ec_score,
+          //     is_complete: is_complete,
+          //     eq_id: eq_id,
+          //     eq_name: eq_name,
+          //     eq_image: eq_image,
+          //     eq_answer: eq_answer,
+          //     em_id: em_id,
+          //     ec_id: ec_id,
+          //     choices: choices,
+          //   };
+          //   obj.push(newObj);
+          // });
 
-      con.query(sql_question, [em_id, user_id], function (err, rows_question) {
-        // let obj = [];
-        // rows_question.forEach((el) => {
-        //   // console.log(JSON.parse(el?.choices));
-        //   let ec_score = el?.ec_score;
-        //   let is_complete = el?.is_complete;
-        //   let eq_id = el?.eq_id;
-        //   let eq_name = el?.eq_name;
-        //   let eq_image = el?.eq_image;
-        //   let eq_answer = el?.eq_answer;
-        //   let ec_id = el?.ec_id;
-        //   let em_id = el?.em_id;
-        //   let choices = JSON.parse(el?.choices);
-        //   let newObj = {
-        //     user_id: user_id,
-        //     ec_score: ec_score,
-        //     is_complete: is_complete,
-        //     eq_id: eq_id,
-        //     eq_name: eq_name,
-        //     eq_image: eq_image,
-        //     eq_answer: eq_answer,
-        //     em_id: em_id,
-        //     ec_id: ec_id,
-        //     choices: choices,
-        //   };
-        //   obj.push(newObj);
-        // });
+          let obj = [];
 
-        let obj = [];
-        new Promise((resolve, reject) => {
           for (let i = 0; i < rows_question.length; i++) {
             let el = rows_question[i];
             // console.log(el);
@@ -608,19 +611,19 @@ FROM
             };
             obj.push(newObj);
           }
-        });
 
-        // console.log(total_cach_complete);
-        // console.log(total_cach);
-        const response = {
-          total: total_cach, // จำนวนรายการทั้งหมด
-          current_page: current_page, // หน้าที่กำลังแสดงอยู่
-          limit_page: per_page, // limit data
-          total_page: Math.ceil(total_cach / per_page), // จำนวนหน้าทั้งหมด
-          exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
-          data: obj, // รายการข้อมูล
-        };
-        return res.json(response);
+          // console.log(total_cach_complete);
+          // console.log(total_cach);
+          const response = {
+            total: total_cach, // จำนวนรายการทั้งหมด
+            current_page: current_page, // หน้าที่กำลังแสดงอยู่
+            limit_page: per_page, // limit data
+            total_page: Math.ceil(total_cach / per_page), // จำนวนหน้าทั้งหมด
+            exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
+            data: obj, // รายการข้อมูล
+          };
+          return res.json(response);
+        });
       });
     }
   );
