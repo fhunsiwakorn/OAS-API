@@ -550,7 +550,10 @@ FROM
         });
       }
 
-      let em_random_amount = results[0]?.em_random_amount;
+      let em_random_amount =
+        results[0]?.em_random_amount !== undefined
+          ? results[0]?.em_random_amount
+          : 0;
       // ตรวจสอบว่าทำข้อสอบเสร้จหมดทุกข้อยัง
       if (total_cach_complete >= total_cach && clear_cach !== 1) {
         exam_complete = 1;
