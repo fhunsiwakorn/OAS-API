@@ -1,10 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const con = require("../database");
+let con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
+async function runQuery(sql, param) {
+  return new Promise((resolve, reject) => {
+    // setTimeout(() => {
+    //   resolve(con.query(sql, param));
+    // }, 1000);
+    resolve(con.query(sql, param));
+  });
+}
 
 router.post("/main/create", middleware, (req, res, next) => {
   const data = req.body;
@@ -479,7 +487,6 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
 });
 
 router.post("/start/render", middleware, async (req, res, next) => {
-  // const { em_id, user_id } = req.params;
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -487,8 +494,8 @@ router.post("/start/render", middleware, async (req, res, next) => {
   const em_id = data.em_id;
   const user_id = data.user_id;
   const offset = (current_page - 1) * per_page;
-  let total_cach = 0;
-  let total_cach_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
+  let total_cache = 0;
+  let total_cache_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
   let exam_complete = 0;
   let sql_question = `SELECT
   t0.ec_score,
@@ -510,123 +517,90 @@ FROM
   ORDER BY t0.id ASC
   LIMIT  ${offset},${per_page}
   `;
-
-  con.query(
-    "SELECT COUNT(*) AS total_cach FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
-    [em_id, user_id],
-    (err, rows) => {
-      total_cach = rows[0]?.total_cach !== undefined ? rows[0]?.total_cach : 0;
-    }
+  if (clear_cach === 1) {
+    await runQuery(
+      "DELETE  FROM app_exam_cache WHERE em_id = ? AND user_id =?",
+      [em_id, user_id]
+    );
+  }
+  // จำนวน Cache
+  let count_cache = await runQuery(
+    "SELECT COUNT(*) AS total_cache FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
+    [em_id, user_id]
   );
+  total_cache =
+    count_cache[0]?.total_cache !== undefined ? count_cache[0]?.total_cache : 0;
 
-  con.query(
-    "SELECT COUNT(*) AS total_cach_complete FROM app_exam_cache WHERE em_id = ? AND user_id =? AND is_complete=1",
-    [em_id, user_id],
-    (err, rows) => {
-      total_cach_complete =
-        rows[0]?.total_cach_complete !== undefined
-          ? rows[0]?.total_cach_complete
-          : 0;
-    }
+  // จำนวน Cache ข้อสอบที่ทำเสร็จ
+  let count_cache_complete = await runQuery(
+    "SELECT COUNT(*) AS total_cache_complete FROM app_exam_cache WHERE em_id = ? AND user_id =? AND is_complete=1",
+    [em_id, user_id]
   );
+  total_cache_complete =
+    count_cache_complete[0]?.total_cache_complete !== undefined
+      ? count_cache_complete[0]?.total_cache_complete
+      : 0;
 
-  con.query(
+  // ดึงข้อมูลจำนวนการ Random จากฐานข้อมูลหลักสูตร
+  let random_amount = await runQuery(
     "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?",
-    [em_id],
-    (err, results) => {
-      if (err) throw err;
-      let _check_data = results.length;
-
-      if (_check_data <= 0) {
-        return res.status(400).json({
-          status: 400,
-          message: "Error Transaction",
-        });
-      }
-
-      let em_random_amount =
-        results[0]?.em_random_amount !== undefined
-          ? results[0]?.em_random_amount
-          : 0;
-      // ตรวจสอบว่าทำข้อสอบเสร้จหมดทุกข้อยัง
-      if (total_cach_complete >= total_cach && clear_cach !== 1) {
-        exam_complete = 1;
-      }
-      // console.log(total_cach);
-      if (total_cach < 1) {
-        con.query(
-          `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id) SELECT IF(em_id >=1,'0','0') AS c1 ,eq_id,em_id ,IF(em_id >=1,${user_id},'0') AS c2 FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
-          [em_id, em_random_amount]
-        );
-      }
-      new Promise((resolve, reject) => {
-        con.query(sql_question, [em_id, user_id], (err, rows_question) => {
-          if (err) {
-            return reject(err);
-          }
-          // let obj = [];
-          // rows_question.forEach((el) => {
-          //   // console.log(JSON.parse(el?.choices));
-          //   let ec_score = el?.ec_score;
-          //   let is_complete = el?.is_complete;
-          //   let eq_id = el?.eq_id;
-          //   let eq_name = el?.eq_name;
-          //   let eq_image = el?.eq_image;
-          //   let eq_answer = el?.eq_answer;
-          //   let ec_id = el?.ec_id;
-          //   let em_id = el?.em_id;
-          //   let choices = JSON.parse(el?.choices);
-          //   let newObj = {
-          //     user_id: user_id,
-          //     ec_score: ec_score,
-          //     is_complete: is_complete,
-          //     eq_id: eq_id,
-          //     eq_name: eq_name,
-          //     eq_image: eq_image,
-          //     eq_answer: eq_answer,
-          //     em_id: em_id,
-          //     ec_id: ec_id,
-          //     choices: choices,
-          //   };
-          //   obj.push(newObj);
-          // });
-
-          let obj = [];
-
-          for (let i = 0; i < rows_question.length; i++) {
-            let el = rows_question[i];
-            // console.log(el);
-            let choices = JSON.parse(el?.choices);
-            let newObj = {
-              user_id: user_id,
-              ec_score: el?.ec_score,
-              is_complete: el?.is_complete,
-              eq_id: el?.eq_id,
-              eq_name: el?.eq_name,
-              eq_image: el?.eq_image,
-              eq_answer: el?.eq_answer,
-              em_id: em_id,
-              ec_id: el?.ec_id,
-              choices: choices,
-            };
-            obj.push(newObj);
-          }
-
-          // console.log(total_cach_complete);
-          // console.log(total_cach);
-          const response = {
-            total: total_cach, // จำนวนรายการทั้งหมด
-            current_page: current_page, // หน้าที่กำลังแสดงอยู่
-            limit_page: per_page, // limit data
-            total_page: Math.ceil(total_cach / per_page), // จำนวนหน้าทั้งหมด
-            exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
-            data: obj, // รายการข้อมูล
-          };
-          return res.json(response);
-        });
-      });
-    }
+    [em_id]
   );
+  let em_random_amount =
+    random_amount[0].em_random_amount !== undefined
+      ? random_amount[0].em_random_amount
+      : 0;
+
+  // ถ้าจำนวนการ Random เท่ากับ 0 ให้หยุดการทำงาน
+  if (em_random_amount <= 0) {
+    return res.status(400).json({
+      status: 400,
+      message: "Error Transaction",
+    });
+  }
+
+  // ตรวจสอบว่าทำข้อสอบเสร้จหมดทุกข้อยัง
+  if (total_cache_complete >= total_cache && clear_cach !== 1) {
+    exam_complete = 1;
+  }
+  // console.log(total_cache);
+  if (total_cache < 1) {
+    await runQuery(
+      `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id) SELECT IF(em_id >=1,'0','0') AS c1 ,eq_id,em_id ,IF(em_id >=1,${user_id},'0') AS c2 FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
+      [em_id, em_random_amount]
+    );
+  }
+
+  let getQuestion = await runQuery(sql_question, [em_id, user_id]);
+  let obj = [];
+
+  for (let i = 0; i < getQuestion.length; i++) {
+    let el = getQuestion[i];
+    // console.log(el);
+    let choices = JSON.parse(el?.choices);
+    let newObj = {
+      user_id: user_id,
+      ec_score: el?.ec_score,
+      is_complete: el?.is_complete,
+      eq_id: el?.eq_id,
+      eq_name: el?.eq_name,
+      eq_image: el?.eq_image,
+      eq_answer: el?.eq_answer,
+      em_id: em_id,
+      ec_id: el?.ec_id,
+      choices: choices,
+    };
+    obj.push(newObj);
+  }
+  const response = {
+    total: total_cache, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total_cache / per_page), // จำนวนหน้าทั้งหมด
+    exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
+    data: obj, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.post("/send/render", middleware, (req, res, next) => {
