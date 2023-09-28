@@ -299,42 +299,24 @@ FROM
         message: "Bad Request", // error.sqlMessage
       });
     }
-    // let obj = [];
-    // results.forEach((el) => {
-    //   // console.log(JSON.parse(el?.choices));
-    //   let eq_id = el?.eq_id;
-    //   let eq_name = el?.eq_name;
-    //   let eq_image = el?.eq_image;
-    //   let eq_answer = el?.eq_answer;
-    //   let em_id = el?.em_id;
-    //   let choices = JSON.parse(el?.choices);
-    // let newObj = {
-    //   eq_id: eq_id,
-    //   eq_name: eq_name,
-    //   eq_image: eq_image,
-    //   eq_answer: eq_answer,
-    //   em_id: em_id,
-    //   choices: choices,
-    // };
-    //   obj.push(newObj);
-    // });
-
     let obj = [];
-    new Promise((resolve, reject) => {
-      for (let i = 0; i < results.length; i++) {
-        let el = results[i];
-        // console.log(el);
-        let choices = JSON.parse(el?.choices);
-        let newObj = {
-          eq_id: el?.eq_id,
-          eq_name: el?.eq_name,
-          eq_image: el?.eq_image,
-          eq_answer: el?.eq_answer,
-          em_id: em_id,
-          choices: choices,
-        };
-        obj.push(newObj);
-      }
+    results.forEach((el) => {
+      // console.log(JSON.parse(el?.choices));
+      let eq_id = el?.eq_id;
+      let eq_name = el?.eq_name;
+      let eq_image = el?.eq_image;
+      let eq_answer = el?.eq_answer;
+      let em_id = el?.em_id;
+      let choices = JSON.parse(el?.choices);
+      let newObj = {
+        eq_id: eq_id,
+        eq_name: eq_name,
+        eq_image: eq_image,
+        eq_answer: eq_answer,
+        em_id: em_id,
+        choices: choices,
+      };
+      obj.push(newObj);
     });
 
     const response = {
@@ -582,32 +564,55 @@ FROM
       }
 
       con.query(sql_question, [em_id, user_id], function (err, rows_question) {
+        // let obj = [];
+        // rows_question.forEach((el) => {
+        //   // console.log(JSON.parse(el?.choices));
+        //   let ec_score = el?.ec_score;
+        //   let is_complete = el?.is_complete;
+        //   let eq_id = el?.eq_id;
+        //   let eq_name = el?.eq_name;
+        //   let eq_image = el?.eq_image;
+        //   let eq_answer = el?.eq_answer;
+        //   let ec_id = el?.ec_id;
+        //   let em_id = el?.em_id;
+        //   let choices = JSON.parse(el?.choices);
+        //   let newObj = {
+        //     user_id: user_id,
+        //     ec_score: ec_score,
+        //     is_complete: is_complete,
+        //     eq_id: eq_id,
+        //     eq_name: eq_name,
+        //     eq_image: eq_image,
+        //     eq_answer: eq_answer,
+        //     em_id: em_id,
+        //     ec_id: ec_id,
+        //     choices: choices,
+        //   };
+        //   obj.push(newObj);
+        // });
+
         let obj = [];
-        rows_question.forEach((el) => {
-          // console.log(JSON.parse(el?.choices));
-          let ec_score = el?.ec_score;
-          let is_complete = el?.is_complete;
-          let eq_id = el?.eq_id;
-          let eq_name = el?.eq_name;
-          let eq_image = el?.eq_image;
-          let eq_answer = el?.eq_answer;
-          let ec_id = el?.ec_id;
-          let em_id = el?.em_id;
-          let choices = JSON.parse(el?.choices);
-          let newObj = {
-            user_id: user_id,
-            ec_score: ec_score,
-            is_complete: is_complete,
-            eq_id: eq_id,
-            eq_name: eq_name,
-            eq_image: eq_image,
-            eq_answer: eq_answer,
-            em_id: em_id,
-            ec_id: ec_id,
-            choices: choices,
-          };
-          obj.push(newObj);
+        new Promise((resolve, reject) => {
+          for (let i = 0; i < results.length; i++) {
+            let el = results[i];
+            // console.log(el);
+            let choices = JSON.parse(el?.choices);
+            let newObj = {
+              user_id: user_id,
+              ec_score: el?.ec_score,
+              is_complete: el?.is_complete,
+              eq_id: el?.eq_id,
+              eq_name: el?.eq_name,
+              eq_image: el?.eq_image,
+              eq_answer: el?.eq_answer,
+              em_id: em_id,
+              ec_id: el?.ec_id,
+              choices: choices,
+            };
+            obj.push(newObj);
+          }
         });
+
         // console.log(total_cach_complete);
         // console.log(total_cach);
         const response = {
