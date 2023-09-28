@@ -603,46 +603,35 @@ FROM
   return res.json(response);
 });
 
-router.post("/send/render", middleware, (req, res, next) => {
+router.post("/send/render", middleware, async (req, res, next) => {
   const data = req.body;
   const ec_id = data.ec_id;
   const user_id = data.user_id;
-
+  let score = 0;
   // เช็คคำตอบที่ถุกกำหนดในคำถาม
-  con.query(
+  let chkQuestion = await runQuery(
     " SELECT * FROM app_exam_choice WHERE ec_id = ?",
-    [ec_id],
-    (err, rows_choice) => {
-      if (err) throw err;
-      let eq_id =
-        rows_choice[0]?.eq_id !== undefined ? rows_choice[0]?.eq_id : 0;
-      let em_id =
-        rows_choice[0]?.em_id !== undefined ? rows_choice[0]?.em_id : 0;
-      let ec_index = rows_choice[0]?.ec_index;
-      let score = 0;
-
-      //นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
-      con.query(
-        "SELECT eq_answer FROM app_exam_question WHERE eq_id = ?",
-        [eq_id],
-        (err, rows_question) => {
-          let eq_answer = rows_question[0]?.eq_answer;
-          if (eq_answer === ec_index) {
-            score = 1;
-          }
-          // Update คำตอบและให้คะแนน
-          con.query(
-            "UPDATE  app_exam_cache SET ec_score=?,is_complete=?,ec_id=? WHERE eq_id=? AND em_id=?  AND user_id=? ",
-            [score, 1, ec_id, eq_id, em_id, user_id],
-            function (err, result) {
-              if (err) throw err;
-              return res.json(result);
-            }
-          );
-        }
-      );
-    }
+    [ec_id]
   );
+  let eq_id = chkQuestion[0]?.eq_id !== undefined ? chkQuestion[0]?.eq_id : 0;
+  let em_id = chkQuestion[0]?.em_id !== undefined ? chkQuestion[0]?.em_id : 0;
+  let ec_index =
+    chkQuestion[0]?.ec_index !== undefined ? chkQuestion[0]?.ec_index : 0;
+
+  let chkAnswer = await runQuery(
+    "SELECT eq_answer FROM app_exam_question WHERE eq_id = ?",
+    [eq_id]
+  );
+  let eq_answer =
+    chkAnswer[0]?.eq_answer !== undefined ? chkAnswer[0]?.eq_answer : 0;
+  if (eq_answer === ec_index) {
+    score = 1;
+  }
+  let result = await runQuery(
+    "UPDATE  app_exam_cache SET ec_score=?,is_complete=?,ec_id=? WHERE eq_id=? AND em_id=?  AND user_id=? ",
+    [score, 1, ec_id, eq_id, em_id, user_id]
+  );
+  return res.json(result);
 });
 
 router.post("/result/render", middleware, (req, res, next) => {
