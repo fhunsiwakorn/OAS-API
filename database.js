@@ -1,17 +1,44 @@
 const mysql = require("mysql2");
-const connection = mysql.createConnection({
+const util = require("util");
+// const connection = mysql.createConnection({
+//   host: "127.0.0.1",
+//   user: "root",
+//   port: "3306",
+//   // password: "",
+//   password: "@P@SS.W0rd",
+//   database: "oas",
+//   // timezone: "Asia/Bangkok",
+//   // timezone: "+016:00",
+// });
+const pool = mysql.createPool({
   host: "127.0.0.1",
   user: "root",
   port: "3306",
-  // password: "",
-  password: "@P@SS.W0rd",
+  password: "",
+  // password: "@P@SS.W0rd",
   database: "oas",
   // timezone: "Asia/Bangkok",
   // timezone: "+016:00",
 });
 
-connection.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
+pool.getConnection((err, connection) => {
+  if (err) {
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      console.error("Database connection was closed.");
+    }
+    if (err.code === "ER_CON_COUNT_ERROR") {
+      console.error("Database has too many connections.");
+    }
+    if (err.code === "ECONNREFUSED") {
+      console.error("Database connection was refused.");
+    }
+  }
+
+  if (connection) connection.release();
+
+  return;
 });
-module.exports = connection;
+
+pool.query = util.promisify(pool.query);
+
+module.exports = pool;

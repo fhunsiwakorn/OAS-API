@@ -478,7 +478,7 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/start/render", middleware, (req, res, next) => {
+router.post("/start/render", middleware, async (req, res, next) => {
   // const { em_id, user_id } = req.params;
   const data = req.body;
   const current_page = data.page;
@@ -510,12 +510,6 @@ FROM
   ORDER BY t0.id ASC
   LIMIT  ${offset},${per_page}
   `;
-  if (clear_cach === 1) {
-    con.query("DELETE  FROM app_exam_cache WHERE em_id = ? AND user_id =?", [
-      em_id,
-      user_id,
-    ]);
-  }
 
   con.query(
     "SELECT COUNT(*) AS total_cach FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
