@@ -11,11 +11,12 @@ const util = require("util");
 //   // timezone: "+016:00",
 // });
 const pool = mysql.createPool({
+  connectionLimit: 20,
   host: "127.0.0.1",
   user: "root",
   port: "3306",
-  password: "",
-  // password: "@P@SS.W0rd",
+  // password: "",
+  password: "@P@SS.W0rd",
   database: "oas",
   // timezone: "Asia/Bangkok",
   // timezone: "+016:00",
