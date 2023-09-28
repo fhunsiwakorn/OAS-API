@@ -593,8 +593,8 @@ FROM
 
         let obj = [];
         new Promise((resolve, reject) => {
-          for (let i = 0; i < results.length; i++) {
-            let el = results[i];
+          for (let i = 0; i < rows_question.length; i++) {
+            let el = rows_question[i];
             // console.log(el);
             let choices = JSON.parse(el?.choices);
             let newObj = {
