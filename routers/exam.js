@@ -537,7 +537,7 @@ FROM
   );
 
   con.query(
-    "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?  LIMIT 1",
+    "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?",
     [em_id],
     (err, results) => {
       if (err) throw err;
@@ -613,7 +613,7 @@ router.post("/send/render", middleware, (req, res, next) => {
 
   // เช็คคำตอบที่ถุกกำหนดในคำถาม
   con.query(
-    " SELECT * FROM app_exam_choice WHERE ec_id = ? LIMIT 1 ",
+    " SELECT * FROM app_exam_choice WHERE ec_id = ?",
     [ec_id],
     (err, rows_choice) => {
       if (err) throw err;
@@ -626,7 +626,7 @@ router.post("/send/render", middleware, (req, res, next) => {
 
       //นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
       con.query(
-        "SELECT eq_answer FROM app_exam_question WHERE eq_id = ?  LIMIT 1",
+        "SELECT eq_answer FROM app_exam_question WHERE eq_id = ?",
         [eq_id],
         (err, rows_question) => {
           let eq_answer = rows_question[0]?.eq_answer;
