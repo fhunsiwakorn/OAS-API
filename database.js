@@ -20,6 +20,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 100,
   queueLimit: 0,
+  dateStrings: true,
 });
 
 pool.getConnection((err, connection) => {

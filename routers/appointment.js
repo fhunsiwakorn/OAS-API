@@ -7,6 +7,12 @@ const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const common = require("../common");
 const moment = require("moment-timezone");
 
+async function runQuery(sql, param) {
+  return new Promise((resolve, reject) => {
+    resolve(con.query(sql, param));
+  });
+}
+
 format_date_tz = (date) => {
   return moment(date).tz("Asia/Bangkok").format();
 };
@@ -25,7 +31,7 @@ router.post("/create", middleware, (req, res, next) => {
   const check_end = new Date(data.ap_date_end).getTime();
 
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -100,7 +106,7 @@ router.put("/update/:ap_id", middleware, (req, res, next) => {
   );
 
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -201,7 +207,7 @@ router.delete("/delete/:ap_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/list", middleware, (req, res, next) => {
+router.post("/list", middleware, async (req, res, next) => {
   const data = req.body;
   const date_event = new Date(data.date_event);
   const ap_learn_type = data.ap_learn_type;
@@ -209,15 +215,17 @@ router.post("/list", middleware, (req, res, next) => {
   const dlt_code = data.dlt_code;
 
   // ตรวจสอบว่านักเรียนสอบผ่านหรือยัง ถ้าผ่านแล้วจบ Process
-  let _check_user = 0;
-  con.query(
-    " SELECT user_id FROM app_main_result WHERE dlt_code = ? AND mr_learn_type = ? AND user_id=? AND mr_status ='pass' ",
-    [dlt_code, ap_learn_type, user_id],
-    function (err, result) {
-      if (err) throw err;
-      _check_user = result.length;
-    }
+  let getUser = await runQuery(
+    "SELECT user_id FROM app_main_result WHERE dlt_code = ? AND mr_learn_type = ? AND user_id=? AND mr_status ='pass'",
+    [dlt_code, ap_learn_type, user_id]
   );
+
+  if (getUser.length >= 1) {
+    return res.status(404).json({
+      status: 404,
+      message: "User is successfully.",
+    });
+  }
 
   let sql = `
 SELECT 
@@ -254,77 +262,65 @@ ORDER BY t1.ap_date_start ASC
           message: "Bad Request",
         });
       }
-      if (_check_user >= 1) {
-        return res.status(404).json({
-          status: 404,
-          message: "User is successfully.",
-        });
-      }
 
       return res.json(results);
     }
   );
 });
 
-router.post("/reserve/create", middleware, (req, res, next) => {
+router.post("/reserve/create", middleware, async (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
   const ap_id = data.ap_id;
   let _check_reserve = 0;
   let _check_appointment = 0;
-
-  con.query(
-    " SELECT user_id FROM app_appointment_reserve WHERE ap_id = ? AND user_id=? LIMIT 1 ",
-    [ap_id, user_id],
-    function (err, result) {
-      if (err) throw err;
-      _check_reserve = result.length;
-    }
-  );
-  con.query(
-    " SELECT ap_id FROM app_appointment WHERE ap_id = ? LIMIT 1",
-    [ap_id],
-    function (err, result) {
-      if (err) throw err;
-      _check_appointment = result.length;
-    }
+  // ตรวจสอบวาามี User ในระบบหรือไม่
+  let getUser = await runQuery(
+    "SELECT user_id FROM app_user WHERE user_id = ?",
+    [user_id]
   );
 
-  con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
-    [user_id],
-    (err, rows) => {
-      if (rows.length <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Username Error", // error.sqlMessage
-        });
-      }
+  if (getUser.length <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Username Error", // error.sqlMessage
+    });
+  }
 
-      if (_check_appointment <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null", // error.sqlMessage
-        });
-      }
-      if (_check_reserve >= 1) {
-        return res.status(404).json({
-          status: 404,
-          message:
-            "You have entered an ap_id and user_id that already exists in this column. Only unique ap_id and user_id are allowed.",
-        });
-      }
-
-      con.query(
-        "INSERT INTO app_appointment_reserve (ap_id,user_id,udp_date) VALUES (?,?,?)",
-        [ap_id, user_id, localISOTime],
-        function (err, result) {
-          if (err) throw err;
-          return res.json(result);
-        }
-      );
-    }
+  // ตรวจสอบว่าเคยจองมาหรือไม่
+  let getMyReserve = await runQuery(
+    "SELECT user_id FROM app_appointment_reserve WHERE ap_id = ? AND user_id=?",
+    [ap_id, user_id]
   );
+  _check_reserve = getMyReserve.length;
+
+  // ตรวจสอบว่ารหัสนัดหมายนี้มีหรือไม่
+  let getAppointment = await runQuery(
+    "SELECT ap_id FROM app_appointment WHERE ap_id = ?",
+    [ap_id]
+  );
+  _check_appointment = getAppointment.length;
+
+  if (_check_appointment <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Data is null", // error.sqlMessage
+    });
+  }
+
+  if (_check_reserve >= 1) {
+    return res.status(404).json({
+      status: 404,
+      message:
+        "You have entered an ap_id and user_id that already exists in this column. Only unique ap_id and user_id are allowed.",
+    });
+  }
+  // บันทึกการนัดหมาย
+  let _content = await runQuery(
+    "INSERT INTO app_appointment_reserve (ap_id,user_id,udp_date) VALUES (?,?,?)",
+    [ap_id, user_id, localISOTime]
+  );
+  return res.json(_content);
 });
 router.delete("/reserve/delete/:ar_id", middleware, (req, res, next) => {
   const { ar_id } = req.params;
