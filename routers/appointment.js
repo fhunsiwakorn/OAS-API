@@ -5,17 +5,12 @@ const middleware = require("../middleware");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const common = require("../common");
-const moment = require("moment-timezone");
 
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
   });
 }
-
-format_date_tz = (date) => {
-  return moment(date).tz("Asia/Bangkok").format();
-};
 
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
@@ -252,20 +247,12 @@ t1.ap_learn_type = ?
 ORDER BY t1.ap_date_start ASC
  `;
   // console.log(date_event);
-  con.query(
-    sql,
-    [dlt_code, date_event.toISOString().split("T")[0], ap_learn_type],
-    (err, results) => {
-      if (err) {
-        return res.status(400).json({
-          status: 400,
-          message: "Bad Request",
-        });
-      }
-
-      return res.json(results);
-    }
-  );
+  let getAppointment = await runQuery(sql, [
+    dlt_code,
+    date_event.toISOString().split("T")[0],
+    ap_learn_type,
+  ]);
+  return res.json(getAppointment);
 });
 
 router.post("/reserve/create", middleware, async (req, res, next) => {
@@ -484,8 +471,8 @@ router.get("/reserve/list?", middleware, (req, res, next) => {
             ap_id: appointment_detail?.ap_id,
             ap_learn_type: appointment_detail?.ap_learn_type,
             ap_quota: appointment_detail?.ap_quota,
-            ap_date_start: format_date_tz(appointment_detail?.ap_date_start),
-            ap_date_end: format_date_tz(appointment_detail?.ap_date_end),
+            ap_date_start: appointment_detail?.ap_date_start,
+            ap_date_end: appointment_detail?.ap_date_end,
             ap_remark: appointment_detail?.ap_remark,
             dlt_code: appointment_detail?.dlt_code,
           },
