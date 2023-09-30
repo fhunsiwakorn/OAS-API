@@ -208,6 +208,16 @@ router.post("/list", middleware, async (req, res, next) => {
   const ap_learn_type = data.ap_learn_type;
   const user_id = data.user_id;
   const dlt_code = data.dlt_code;
+  const obj = common.drivinglicense_type;
+  const result_filter = obj.filter(function (e) {
+    return e.dlt_code === dlt_code;
+  });
+  if (result_filter.length <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid 'dlt_code' ",
+    });
+  }
 
   // ตรวจสอบว่านักเรียนสอบผ่านหรือยัง ถ้าผ่านแล้วจบ Process
   let getUser = await runQuery(
