@@ -265,6 +265,19 @@ ORDER BY t1.ap_date_start ASC
   return res.json(getAppointment);
 });
 
+router.get("/event", middleware, (req, res, next) => {
+  let ap_learn_type = req.query.ap_learn_type;
+  const present_day = new Date().toISOString().split("T")[0];
+  // console.log(present_day);
+  con.query(
+    "SELECT  ap_date_start  FROM app_appointment WHERE ap_learn_type  = ? AND DATE(ap_date_start) >= ? ORDER BY ap_date_start ASC LIMIT 0,30",
+    [ap_learn_type, present_day],
+    (err, result) => {
+      return res.json(result);
+    }
+  );
+});
+
 router.post("/reserve/create", middleware, async (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;

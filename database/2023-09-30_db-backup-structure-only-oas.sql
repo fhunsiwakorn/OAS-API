@@ -28,7 +28,7 @@ CREATE TABLE `app_appointment_reserve` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`ar_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_country`; 
 
@@ -114,7 +114,7 @@ CREATE TABLE `app_exam_cache` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_choice`; 
 
@@ -179,7 +179,7 @@ CREATE TABLE `app_exam_result` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
   `em_id` int(11) NOT NULL COMMENT 'app_exam_main.em_id',
   PRIMARY KEY (`er_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_time`; 
 

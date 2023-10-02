@@ -27,6 +27,7 @@ INSERT INTO `app_appointment` VALUES('19','2','120','2023-09-05 12:05:31','2023-
 INSERT INTO `app_appointment_reserve` VALUES('1','1','7','2023-08-28 21:44:31');
 INSERT INTO `app_appointment_reserve` VALUES('2','1','6','2023-08-28 21:44:31');
 INSERT INTO `app_appointment_reserve` VALUES('3','3','1','2023-09-06 16:41:16');
+INSERT INTO `app_appointment_reserve` VALUES('4','19','7','2023-09-29 20:06:53');
 
 
 
@@ -253,6 +254,12 @@ INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08',
 
 INSERT INTO `app_exam_cache` VALUES('144','1','1','1','1','2','1','2023-08-23 15:07:26');
 INSERT INTO `app_exam_cache` VALUES('145','0','1','0','2','2','1','2023-08-23 15:07:26');
+INSERT INTO `app_exam_cache` VALUES('149','0','0','0','1','2','7','2023-09-28 15:53:27');
+INSERT INTO `app_exam_cache` VALUES('150','0','0','0','2','2','7','2023-09-28 15:53:27');
+INSERT INTO `app_exam_cache` VALUES('173','0','1','2','1','2','2','2023-09-28 19:03:30');
+INSERT INTO `app_exam_cache` VALUES('174','0','1','3','2','2','2','2023-09-28 19:03:30');
+INSERT INTO `app_exam_cache` VALUES('176','0','0','0','2','2','6','2023-09-28 19:12:36');
+INSERT INTO `app_exam_cache` VALUES('177','0','0','0','1','2','6','2023-09-28 19:12:36');
 
 
 
@@ -292,6 +299,7 @@ INSERT INTO `app_exam_result` VALUES('1','1','2','2023-08-23 12:55:26','2023-08-
 INSERT INTO `app_exam_result` VALUES('2','0','2','2023-08-23 14:39:01','2023-08-23 14:39:01','1','2');
 INSERT INTO `app_exam_result` VALUES('3','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','1','2');
 INSERT INTO `app_exam_result` VALUES('4','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','1','2');
+INSERT INTO `app_exam_result` VALUES('5','1','2','2023-09-28 19:27:26','2023-09-28 19:27:26','1','2');
 
 
 
@@ -306,9 +314,6 @@ INSERT INTO `app_exam_time` VALUES('2','00:25:00','2','1');
 INSERT INTO `app_main_result` VALUES('2','49','2','pass','A1','2023-09-13 09:47:22','2023-09-13 09:47:22','1');
 INSERT INTO `app_main_result` VALUES('3','49','2','fail','A2','2023-09-13 09:48:46','2023-09-13 09:48:46','1');
 INSERT INTO `app_main_result` VALUES('4','49','2','fail','A2','2023-09-13 10:18:13','2023-09-13 10:18:13','7');
-INSERT INTO `app_main_result` VALUES('5','49','2','pass','A1','2023-09-13 10:40:12','2023-09-13 10:40:12','7');
-INSERT INTO `app_main_result` VALUES('6','59','2','fail','A1','2023-09-13 13:10:19','2023-09-13 13:10:19','7');
-INSERT INTO `app_main_result` VALUES('7','49','2','fail','A2','2023-09-13 13:10:19','2023-09-13 13:13:46','7');
 INSERT INTO `app_main_result` VALUES('8','49','2','fail','A2','2023-09-15 09:29:21','2023-09-15 09:29:21','7');
 
 
