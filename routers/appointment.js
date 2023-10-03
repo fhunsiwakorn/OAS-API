@@ -305,26 +305,41 @@ router.post("/reserve/create", middleware, async (req, res, next) => {
     });
   }
 
-  // ตรวจสอบว่าเคยจองมาหรือไม่
-  let getMyReserve = await runQuery(
-    "SELECT user_id FROM app_appointment_reserve WHERE ap_id = ? AND user_id=?",
-    [ap_id, user_id]
-  );
-  _check_reserve = getMyReserve.length;
-
   // ตรวจสอบว่ารหัสนัดหมายนี้มีหรือไม่
   let getAppointment = await runQuery(
-    "SELECT ap_id FROM app_appointment WHERE ap_id = ?",
+    "SELECT * FROM app_appointment WHERE ap_id = ?",
     [ap_id]
   );
   _check_appointment = getAppointment.length;
-
   if (_check_appointment <= 0) {
     return res.status(404).json({
       status: 404,
       message: "Data is null", // error.sqlMessage
     });
   }
+  // ตรวจสอบว่าเต็มโควต้ายัง
+  let ap_quota =
+    getAppointment[0]?.ap_quota !== undefined ? getAppointment[0]?.ap_quota : 0;
+  let geTotalReserve = await runQuery(
+    "SELECT user_id FROM app_appointment_reserve WHERE ap_id = ? ",
+    [ap_id]
+  );
+  if (geTotalReserve.length >= ap_quota) {
+    return res.status(404).json({
+      status: 404,
+      message: "Limit data", // error.sqlMessage
+    });
+  }
+  // ตรวจสอบว่าเคยจองมาหรือไม่
+  let dlt_code =
+    getAppointment[0]?.dlt_code !== undefined
+      ? getAppointment[0]?.dlt_code
+      : "";
+  let getMyReserve = await runQuery(
+    "SELECT user_id FROM app_appointment_reserve WHERE dlt_code = ? AND user_id=?",
+    [dlt_code, user_id]
+  );
+  _check_reserve = getMyReserve.length;
 
   if (_check_reserve >= 1) {
     return res.status(404).json({

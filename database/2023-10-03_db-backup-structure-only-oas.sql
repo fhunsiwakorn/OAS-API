@@ -16,7 +16,7 @@ CREATE TABLE `app_appointment` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id	',
   PRIMARY KEY (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_appointment_reserve`; 
 
