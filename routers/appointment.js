@@ -271,7 +271,7 @@ router.get("/event", middleware, (req, res, next) => {
   const present_day = new Date().toISOString().split("T")[0];
 
   con.query(
-    "SELECT  DATE_FORMAT(ap_date_start,'%Y-%m-%d') AS event   FROM app_appointment WHERE ap_learn_type  = ? AND dlt_code = ? AND DATE(ap_date_start) >= ? GROUP BY ap_date_start ORDER BY ap_date_start ASC LIMIT 0,30",
+    "SELECT  DATE_FORMAT(ap_date_start,'%Y-%m-%d') AS event   FROM app_appointment WHERE ap_learn_type  = ? AND dlt_code = ? AND DATE(ap_date_start) >= ? GROUP BY event ORDER BY event ASC LIMIT 0,30",
     [ap_learn_type, dlt_code, present_day],
     (err, result) => {
       if (err) {
