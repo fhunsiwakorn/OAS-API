@@ -267,10 +267,11 @@ ORDER BY t1.ap_date_start ASC
 
 router.get("/event", middleware, (req, res, next) => {
   let ap_learn_type = req.query.ap_learn_type;
-  const present_day = new Date().toISOString().split("T")[0];
+  // const present_day = new Date().toISOString().split("T")[0];
+  const present_day = "2023-09-05";
   // console.log(present_day);
   con.query(
-    "SELECT  DATE_FORMAT(ap_date_start,'%Y-%m-%d') AS ap_date_start   FROM app_appointment WHERE ap_learn_type  = ? AND DATE(ap_date_start) >= ? GROUP BY ap_date_start ORDER BY ap_date_start ASC LIMIT 0,30",
+    "SELECT  DATE_FORMAT(ap_date_start,'%Y-%m-%d') AS ap_date_start   FROM app_appointment WHERE ap_learn_type  = ? AND DATE(ap_date_start) >= ? GROUP BY DATE(ap_date_start) ORDER BY ap_date_start ASC LIMIT 0,30",
     [ap_learn_type, present_day],
     (err, result) => {
       return res.json(result);
