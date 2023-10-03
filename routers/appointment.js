@@ -335,9 +335,13 @@ router.post("/reserve/create", middleware, async (req, res, next) => {
     getAppointment[0]?.dlt_code !== undefined
       ? getAppointment[0]?.dlt_code
       : "";
+  let ap_learn_type =
+    getAppointment[0]?.ap_learn_type !== undefined
+      ? getAppointment[0]?.ap_learn_type
+      : 0;
   let getMyReserve = await runQuery(
-    "SELECT user_id FROM app_appointment_reserve WHERE dlt_code = ? AND user_id=?",
-    [dlt_code, user_id]
+    "SELECT t1.user_id FROM app_appointment_reserve t1 INNER JOIN app_appointment t2 ON t2.ap_id=t1.ap_id AND t2.dlt_code = ? AND ap_learn_type =?  WHERE  t1.user_id=?",
+    [dlt_code, ap_learn_type, user_id]
   );
   _check_reserve = getMyReserve.length;
 
