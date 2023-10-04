@@ -280,7 +280,7 @@ router.get("/event", middleware, (req, res, next) => {
           message: "Bad Request", // error.sqlMessage
         });
       }
-      console.log(result);
+      // console.log(result);
       return res.json(result);
     }
   );

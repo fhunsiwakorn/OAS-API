@@ -10,6 +10,12 @@ const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in millisecond
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 const numSaltRounds = 8;
 
+async function runQuery(sql, param) {
+  return new Promise((resolve, reject) => {
+    resolve(con.query(sql, param));
+  });
+}
+
 router.post("/list?", middleware, (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
@@ -230,58 +236,62 @@ router.put("/update/:user_id", middleware, (req, res, next) => {
   );
 });
 
-router.get("/get/:user_id", middleware, (req, res, next) => {
+router.get("/get/:user_id", middleware, async (req, res, next) => {
   const { user_id } = req.params;
   let sql = `SELECT 
   t1.* ,
   (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'identification_number', t2.identification_number,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'location_id', t2.location_id,'country_id',t2.country_id,
   'location', (SELECT   GROUP_CONCAT((JSON_OBJECT('zipcode', t3.zipcode,'zipcode_name', t3.zipcode_name , 'province_code', t3.province_code,'province_name', t3.province_name)))  FROM app_zipcode_lao t3  WHERE t3.id =  t2.location_id),
   'country', (SELECT   GROUP_CONCAT((JSON_OBJECT('country_name_eng', t4.country_name_eng,'country_official_name_eng', t4.country_official_name_eng , 'capital_name_eng', t4.capital_name_eng,'zone', t4.zone)))  FROM app_country t4  WHERE t4.country_id =  t2.country_id)
-
-  )))  FROM app_user_detail t2  WHERE t2.user_id =  t1.user_id ) AS detail
+  )))  FROM app_user_detail t2  WHERE t2.user_id =  t1.user_id ) AS detail,
+ (   (SELECT   GROUP_CONCAT((JSON_OBJECT('idcard_front', t5.idcard_front,'idcard_back', t5.idcard_back)))  FROM app_user_idcard t5 WHERE t5.user_id =  t1.user_id)) AS card
   FROM app_user t1 
-  WHERE  t1.user_id = ? LIMIT 1
+  WHERE  t1.user_id = ? 
   `;
-  con.query(sql, [user_id], function (err, results) {
-    if (results.length <= 0) {
-      return res.status(204).json({
-        status: 204,
-        message: "Data is null", // error.sqlMessage
-      });
-    }
-    let data = results[0];
-    let detail = data?.detail !== undefined ? JSON.parse(data?.detail) : {};
-    let set_detail = {};
-    if (detail != undefined) {
-      let location = JSON.parse(detail?.location);
-      let country = JSON.parse(detail?.country);
-      set_detail = {
-        verify_account: detail?.verify_account,
-        identification_number: detail?.identification_number,
-        user_img: detail?.user_img,
-        user_birthday: detail?.user_birthday,
-        user_address: detail?.user_address,
-        location_id: detail?.location_id,
-        country_id: detail?.country_id,
-        location: location,
-        country: country,
-      };
-    }
-    const response = {
-      user_id: data?.user_id,
-      user_name: data?.user_name,
-      user_firstname: data?.user_firstname,
-      user_lastname: data?.user_lastname,
-      user_email: data?.user_email,
-      user_phone: data?.user_phone,
-      user_type: data?.user_type,
-      active: data?.active,
-      crt_date: data?.crt_date,
-      udp_date: data?.udp_date,
-      detail: set_detail,
+
+  let getUserMain = await runQuery(sql, [user_id]);
+  if (getUserMain.length <= 0) {
+    return res.status(204).json({
+      status: 204,
+      message: "Data is null",
+    });
+  }
+
+  let data = getUserMain[0];
+  let detail = data?.detail !== undefined ? JSON.parse(data?.detail) : {};
+  let card = data?.card !== undefined ? JSON.parse(data?.card) : {};
+  let set_detail = {};
+  if (detail != undefined) {
+    let location = JSON.parse(detail?.location);
+    let country = JSON.parse(detail?.country);
+
+    set_detail = {
+      verify_account: detail?.verify_account,
+      identification_number: detail?.identification_number,
+      user_img: detail?.user_img,
+      user_birthday: detail?.user_birthday,
+      user_address: detail?.user_address,
+      location_id: detail?.location_id,
+      country_id: detail?.country_id,
+      location: location,
+      country: country,
     };
-    return res.json(response);
-  });
+  }
+  const response = {
+    user_id: data?.user_id,
+    user_name: data?.user_name,
+    user_firstname: data?.user_firstname,
+    user_lastname: data?.user_lastname,
+    user_email: data?.user_email,
+    user_phone: data?.user_phone,
+    user_type: data?.user_type,
+    active: data?.active,
+    crt_date: data?.crt_date,
+    udp_date: data?.udp_date,
+    detail: set_detail,
+    card: card,
+  };
+  return res.json(response);
 });
 
 router.delete("/delete/:user_id", middleware, (req, res, next) => {
@@ -295,105 +305,126 @@ router.delete("/delete/:user_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/detail/create", middleware, (req, res, next) => {
+router.post("/detail/create", middleware, async (req, res, next) => {
   const data = req.body;
   let user_id = data.user_id;
   let location_id = data.location_id;
   let country_id = data.country_id;
   let verify_account = data.verify_account;
   let identification_number = data.identification_number;
-  let total_zipcode = 0;
-  let total_country = 0;
-  let check_identification = 0;
-  con.query(
-    "SELECT id FROM app_zipcode_lao WHERE id = ? LIMIT 1",
-    [location_id],
-    (err, rows) => {
-      total_zipcode = rows?.length;
-    }
-  );
-  con.query(
-    "SELECT country_id FROM app_country WHERE country_id = ? LIMIT 1",
-    [country_id],
-    (err, rows) => {
-      total_country = rows?.length;
-    }
-  );
 
-  con.query(
-    "SELECT identification_number FROM app_user_detail WHERE identification_number = ? AND user_id !=? LIMIT 1",
-    [identification_number, user_id],
-    (err, rows) => {
-      check_identification = rows?.length;
-    }
+  // ตรวจสอบว่ามีรหัสที่อยู่นี้หรือไม่
+  let getLocation = await runQuery(
+    "SELECT id FROM app_zipcode_lao WHERE id = ?",
+    [location_id]
   );
+  if (getLocation.length <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Data is null", // error.sqlMessage
+    });
+  }
 
-  con.query(
-    "SELECT app_user.user_name ,app_user_detail.id FROM app_user LEFT JOIN app_user_detail ON app_user_detail.user_id  = app_user.user_id  WHERE app_user.user_id = ? LIMIT 1",
-    [user_id],
-    (err, rows) => {
-      let checkuser = rows.length;
-      if (checkuser <= 0 || total_zipcode <= 0 || total_country <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null", // error.sqlMessage
-        });
-      }
-      if (verify_account !== "n" && verify_account !== "y") {
-        return res.status(404).json({
-          status: 404,
-          message: "Invalid 'verify_account' ", // error.sqlMessage
-        });
-      }
-      if (check_identification >= 1) {
-        return res.status(404).json({
-          status: 404,
-          message: "Invalid 'identification_number' ", // error.sqlMessage
-        });
-      }
-
-      let id_detail = rows[0]?.id === undefined ? 0 : rows[0]?.id;
-
-      if (id_detail <= 0) {
-        con.query(
-          "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?)",
-          [
-            verify_account,
-            identification_number,
-            data.user_img,
-            data.user_birthday,
-            data.user_address,
-            location_id,
-            country_id,
-            data.user_id,
-          ],
-          function (err, result) {
-            if (err) throw err;
-            return res.json(result);
-          }
-        );
-      } else {
-        con.query(
-          "UPDATE  app_user_detail SET verify_account=?,identification_number=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
-          [
-            verify_account,
-            identification_number,
-            data.user_img,
-            data.user_birthday,
-            data.user_address,
-            location_id,
-            country_id,
-            data.user_id,
-          ],
-          function (err, result) {
-            if (err) throw err;
-            // console.log("1 record inserted");
-            return res.json(result);
-          }
-        );
-      }
-    }
+  // ตรวจสอบว่ามีรหัสประเทศนี้หรือไม่
+  let getCountry = await runQuery(
+    "SELECT country_id FROM app_country WHERE country_id = ?",
+    [country_id]
   );
+  if (getCountry.length <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Data is null", // error.sqlMessage
+    });
+  }
+
+  // ตรวจสอบว่ามีรหัสบัตรคนนี้ในระบบหรือไม่
+  let checkUser = await runQuery(
+    "SELECT identification_number FROM app_user_detail WHERE identification_number = ? AND user_id !=?",
+    [identification_number, user_id]
+  );
+  if (checkUser.length >= 1) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid 'identification_number'", // error.sqlMessage
+    });
+  }
+
+  let getUser = await runQuery(
+    "SELECT app_user.user_name ,app_user_detail.id FROM app_user LEFT JOIN app_user_detail ON app_user_detail.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
+    [user_id]
+  );
+  let id_detail = getUser[0]?.id === undefined ? 0 : getUser[0]?.id;
+  if (
+    verify_account !== "unactive" &&
+    verify_account !== "phone_active" &&
+    verify_account !== "phone_unactive" &&
+    verify_account !== "system_active" &&
+    verify_account !== "system_unactive"
+  ) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid 'verify_account' ", // error.sqlMessage
+    });
+  }
+  // บันทึก
+
+  if (id_detail <= 0) {
+    let result = await runQuery(
+      "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?)",
+      [
+        verify_account,
+        identification_number,
+        data.user_img,
+        data.user_birthday,
+        data.user_address,
+        location_id,
+        country_id,
+        data.user_id,
+      ]
+    );
+    return res.json(result);
+  } else {
+    let result = await runQuery(
+      "UPDATE  app_user_detail SET verify_account=?,identification_number=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
+      [
+        verify_account,
+        identification_number,
+        data.user_img,
+        data.user_birthday,
+        data.user_address,
+        location_id,
+        country_id,
+        data.user_id,
+      ]
+    );
+    return res.json(result);
+  }
+});
+
+router.post("/idcard/create", middleware, async (req, res, next) => {
+  const data = req.body;
+  let user_id = data.user_id;
+  let idcard_front = data.idcard_front;
+  let idcard_back = data.idcard_back;
+  let getUser = await runQuery(
+    "SELECT app_user.user_name ,app_user_idcard.id FROM app_user LEFT JOIN app_user_idcard ON app_user_idcard.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
+    [user_id]
+  );
+  let id_detail = getUser[0]?.id === undefined ? 0 : getUser[0]?.id;
+  // บันทึก
+  if (id_detail <= 0) {
+    let result = await runQuery(
+      "INSERT INTO app_user_idcard (idcard_front,idcard_back,user_id) VALUES (?,?,?)",
+      [idcard_front, idcard_back, user_id]
+    );
+    return res.json(result);
+  } else {
+    let result = await runQuery(
+      "UPDATE  app_user_idcard SET idcard_front=?,idcard_back=? WHERE user_id=? ",
+      [idcard_front, idcard_back, user_id]
+    );
+    return res.json(result);
+  }
 });
 
 router.get("/only/detail/:user_param", middleware, (req, res, next) => {
@@ -485,7 +516,7 @@ router.put("/verify_otp", middleware, (req, res, next) => {
   let otp_code = data.otp_code;
   let user_id = data.user_id;
   con.query(
-    "SELECT user_id,  otp_code  FROM app_user_otp WHERE  user_id = ? AND otp_code=? LIMIT 1",
+    "SELECT user_id,  otp_code  FROM app_user_otp WHERE  user_id = ? AND otp_code=?",
     [user_id, otp_code],
     function (err, results) {
       if (results.length <= 0) {
