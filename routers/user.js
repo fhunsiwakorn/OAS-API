@@ -176,64 +176,85 @@ router.post("/create", middleware, (req, res, next) => {
     })
     .catch((err) => console.error(err.message));
 });
-router.put("/update/:user_id", middleware, (req, res, next) => {
+router.put("/update/:user_id", middleware, async (req, res, next) => {
   const { user_id } = req.params;
   const data = req.body;
   let user_name = data.user_name;
+  let user_password = data.user_password;
   let user_phone = data.user_phone;
   let user_email = data.user_email;
-  con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
-    [user_id],
-    (err, rs) => {
-      if (rs.length <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Username Error", // error.sqlMessage
-        });
-      }
 
-      con.query(
-        "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? LIMIT 1",
-        [user_name, user_email, user_phone, user_id],
-        (err, rows) => {
-          bcrypt
-            .hash(data.user_password, numSaltRounds)
-            .then((hash) => {
-              // console.log(checkuser);
-              if (rows.length >= 1) {
-                return res.status(204).json({
-                  status: 204,
-                  message: "Username Error", // error.sqlMessage
-                });
-              }
-              let userHash = hash;
-              con.query(
-                "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
-                [
-                  user_name,
-                  userHash,
-                  data.user_firstname,
-                  data.user_lastname,
-                  user_email,
-                  user_phone,
-                  data.user_type,
-                  data.active,
-                  localISOTime,
-                  user_id,
-                ],
-                function (err, result) {
-                  if (err) throw err;
-                  // console.log("1 record inserted");
-                  return res.json(result);
-                }
-              );
-            })
-            .catch((err) => console.error(err.message));
-        }
-      );
-    }
+  // ตรวจสอบว่ามี  user_id อยู่นี้หรือไม่
+  let _check_user = await runQuery(
+    "SELECT user_id FROM app_user WHERE user_id = ?",
+    [user_id]
   );
+
+  if (_check_user.length <= 0) {
+    return res.status(204).json({
+      status: 204,
+      message: "Username Error", // error.sqlMessage
+    });
+  }
+
+  // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
+  let _check_users = await runQuery(
+    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ?",
+    [user_name, user_email, user_phone, user_id]
+  );
+  if (_check_users.length >= 1) {
+    return res.status(404).json({
+      status: 404,
+      message: "Username Error", // error.sqlMessage
+    });
+  }
+
+  if (user_password !== "") {
+    bcrypt
+      .hash(user_password, numSaltRounds)
+      .then((hash) => {
+        let passHash = hash;
+        con.query(
+          "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
+          [
+            user_name,
+            passHash,
+            data.user_firstname,
+            data.user_lastname,
+            user_email,
+            user_phone,
+            data.user_type,
+            data.active,
+            localISOTime,
+            user_id,
+          ],
+          function (err, result) {
+            if (err) throw err;
+            return res.json(result);
+          }
+        );
+      })
+      .catch((err) => console.error(err.message));
+  } else {
+    con.query(
+      "UPDATE  app_user SET user_name=? , user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
+      [
+        user_name,
+        data.user_firstname,
+        data.user_lastname,
+        user_email,
+        user_phone,
+        data.user_type,
+        data.active,
+        localISOTime,
+        user_id,
+      ],
+      function (err, result) {
+        if (err) throw err;
+        return res.json(result);
+      }
+    );
+  }
 });
 
 router.get("/get/:user_id", middleware, async (req, res, next) => {
