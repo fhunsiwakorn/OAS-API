@@ -86,7 +86,7 @@ router.post("/login", middleware, (req, res, next) => {
   const data = req.body;
 
   con.query(
-    "SELECT * FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?) LIMIT 1",
+    "SELECT * FROM app_user WHERE active = 1 AND cancelled=1 AND (user_name = ? OR user_email=? OR user_phone=?)",
     [data.user_name, data.user_name, data.user_name],
     function (err, response) {
       bcrypt
@@ -134,7 +134,7 @@ router.post("/create", middleware, (req, res, next) => {
   let checkuser = 0;
 
   con.query(
-    "SELECT user_name FROM app_user WHERE user_name = ? OR user_email=? OR user_phone=? LIMIT 1",
+    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND  user_email != '' ",
     [user_name, user_email, user_phone],
     (err, rows) => {
       checkuser = rows.length;
@@ -199,7 +199,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
 
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
   let _check_users = await runQuery(
-    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ?",
+    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? AND user_email != '' ",
     [user_name, user_email, user_phone, user_id]
   );
   if (_check_users.length >= 1) {
