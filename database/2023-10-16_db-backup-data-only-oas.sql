@@ -243,7 +243,17 @@ INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแ�
 
 -- Dumping data for table `app_course_lesson` 
 
-INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','0','1','1','1');
+INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1','1');
+INSERT INTO `app_course_lesson` VALUES('2','url/image','6789','-','-','2023-10-12 19:33:01','2023-10-12 19:33:01','1','1','1','1');
+
+
+
+-- Dumping data for table `app_course_log` 
+
+INSERT INTO `app_course_log` VALUES('1','1','7','2023-10-12 19:13:06');
+INSERT INTO `app_course_log` VALUES('2','1','7','2023-10-12 19:13:06');
+INSERT INTO `app_course_log` VALUES('3','1','7','2023-10-12 19:33:01');
+INSERT INTO `app_course_log` VALUES('4','2','7','2023-10-12 19:33:01');
 
 
 
@@ -350,7 +360,7 @@ INSERT INTO `app_news_image` VALUES('13','path','test','1');
 -- Dumping data for table `app_user` 
 
 INSERT INTO `app_user` VALUES('1','faii','$2b$08$sQQBSFKRNyqFm5V1CIlfOOaNTDKaCKYPL6kweMIq9Qo15AYoeczke','เจน','เป็นมงคล','test@gmail.com','0943908077','3','1','2023-07-07 15:15:23','2023-07-07 15:15:23','1');
-INSERT INTO `app_user` VALUES('6','faii2','$2b$08$IYXlj1qutrNci..rPDPA9.8F6YpHB5HE9EuS03To.u8SuMSTGNxam','เจน','เป็นมงคล','test@gmail2.com','0943908076','3','1','2023-08-26 11:58:34','2023-08-26 11:58:34','1');
+INSERT INTO `app_user` VALUES('6','fhun','$2b$08$kgMXXclzI6S5u1.RS9M38OzejKCkhrKh9k0zu5RZdK0i1D7jXSH3O','ประยุทธิ์','จันทร์โอชา','siwakorn167@gmail.com','0987654321','3','1','2023-08-26 11:58:34','2023-10-10 11:22:51','1');
 INSERT INTO `app_user` VALUES('7','ppun','$2b$08$Oq0BE8l7m17j0jHqBOsGuuj0d1HHontaSCZrqRrtbkCKlnHGS..M6','ปั่น','ไอที','test2222@gmail.com','0833268813','3','1','2023-08-26 11:58:34','2023-08-28 10:22:21','1');
 
 

@@ -306,7 +306,7 @@ FROM
     // console.log(el);
     // let choices = JSON.parse(el?.choices);
     let choices = await runQuery(
-      "SELECT * FROM `app_exam_choice` WHERE eq_id = ?",
+      "SELECT * FROM `app_exam_choice` WHERE eq_id = ? AND cancelled =1",
       [el?.eq_id]
     );
     let newObj = {
@@ -335,7 +335,7 @@ FROM
 router.delete("/question/delete/:eq_id", middleware, (req, res, next) => {
   const { eq_id } = req.params;
   con.query(
-    "SELECT eq_id FROM app_exam_question WHERE eq_id = ? LIMIT 1",
+    "SELECT eq_id FROM app_exam_question WHERE eq_id = ?",
     [eq_id],
     (err, rows) => {
       let _content = rows.length;
@@ -367,7 +367,7 @@ router.post("/choice/create", middleware, (req, res, next) => {
   //   const em_id = data.em_id;
   let em_id;
   con.query(
-    "SELECT em_id FROM app_exam_question WHERE eq_id = ? AND cancelled=1 LIMIT 1",
+    "SELECT em_id FROM app_exam_question WHERE eq_id = ? AND cancelled=1 ",
     [eq_id],
     (err, rows) => {
       if (err) throw err;
@@ -416,7 +416,7 @@ router.put("/choice/update/:ec_id", middleware, (req, res, next) => {
   //   const em_id = data.em_id;
   let em_id;
   con.query(
-    "SELECT em_id FROM app_exam_question WHERE eq_id = ?  LIMIT 1",
+    "SELECT em_id FROM app_exam_question WHERE eq_id = ? ",
     [eq_id],
     (err, rows) => {
       let checkuser = rows.length;

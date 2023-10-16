@@ -243,7 +243,17 @@ INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแ�
 
 -- Dumping data for table `app_course_lesson` 
 
-INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','0','1','1','1');
+INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1','1');
+INSERT INTO `app_course_lesson` VALUES('2','url/image','6789','-','-','2023-10-12 19:33:01','2023-10-12 19:33:01','1','1','1','1');
+
+
+
+-- Dumping data for table `app_course_log` 
+
+INSERT INTO `app_course_log` VALUES('1','1','7','2023-10-12 19:13:06');
+INSERT INTO `app_course_log` VALUES('2','1','7','2023-10-12 19:13:06');
+INSERT INTO `app_course_log` VALUES('3','1','7','2023-10-12 19:33:01');
+INSERT INTO `app_course_log` VALUES('4','2','7','2023-10-12 19:33:01');
 
 
 

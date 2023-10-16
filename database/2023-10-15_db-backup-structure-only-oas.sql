@@ -81,7 +81,19 @@ CREATE TABLE `app_course_lesson` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`cs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_course_log`; 
+
+DROP TABLE IF EXISTS `app_course_log`; 
+
+CREATE TABLE `app_course_log` (
+  `cl_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cs_id` int(11) NOT NULL COMMENT 'app_course_lesson.cs_id',
+  `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  `udp_date` datetime NOT NULL,
+  PRIMARY KEY (`cl_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_dlt_card`; 
 

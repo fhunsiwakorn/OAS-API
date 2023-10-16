@@ -361,9 +361,10 @@ router.post("/reserve/create", middleware, async (req, res, next) => {
 });
 router.delete("/reserve/delete/:ar_id", middleware, (req, res, next) => {
   const { ar_id } = req.params;
+  const present_day = new Date().toISOString().split("T")[0];
   con.query(
-    "SELECT ar_id FROM app_appointment_reserve WHERE ar_id = ? LIMIT 1",
-    [ar_id],
+    "SELECT ar_id FROM app_appointment_reserve WHERE ar_id = ? AND DATE(udp_date) > ?",
+    [ar_id, present_day],
     (err, rows) => {
       if (rows.length <= 0) {
         return res.status(204).json({
