@@ -179,7 +179,7 @@ router.get("/get/:ap_id", middleware, (req, res, next) => {
 router.delete("/delete/:ap_id", middleware, (req, res, next) => {
   const { ap_id } = req.params;
   con.query(
-    "SELECT ap_id  FROM app_appointment WHERE ap_id  = ? LIMIT 1",
+    "SELECT ap_id  FROM app_appointment WHERE ap_id  = ?",
     [ap_id],
     (err, rows) => {
       let _content = rows.length;
@@ -363,10 +363,10 @@ router.delete("/reserve/delete/:ar_id", middleware, (req, res, next) => {
   const { ar_id } = req.params;
   const present_day = new Date().toISOString().split("T")[0];
   con.query(
-    "SELECT ar_id FROM app_appointment_reserve WHERE ar_id = ? AND DATE(udp_date) > ?",
+    "SELECT t1.ar_id FROM app_appointment_reserve t1  INNER JOIN app_appointment t2 ON t2.ap_id = t1.ap_id  WHERE ar_id = ? AND DATE(t2.ap_date_start) > ?",
     [ar_id, present_day],
     (err, rows) => {
-      if (rows.length <= 0) {
+      if (rows?.length <= 0) {
         return res.status(204).json({
           status: 204,
           message: "Data is null", // error.sqlMessage
