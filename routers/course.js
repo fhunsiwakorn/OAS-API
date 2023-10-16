@@ -415,4 +415,30 @@ router.get(
   }
 );
 
+router.get(
+  "/log/course/:course_id/:year?",
+  middleware,
+  async (req, res, next) => {
+    const { course_id, year } = req.params;
+    const user_id = req.query.user_id;
+    let obj = [];
+    for (let i = 1; i <= 12; i++) {
+      let getLog = await runQuery(
+        `SELECT COUNT(t1.cs_id) AS total 
+        FROM app_course_log t1  
+        INNER JOIN  app_course_lesson t2 ON t2.cs_id = t1.cs_id   
+        INNER JOIN  app_course t3 ON t3.course_id = t2.course_id AND  t3.course_id = ?
+        WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND user_id = ?`,
+        [course_id, i, year, user_id]
+      );
+      let newObj = {
+        month: i,
+        total: getLog[0]?.total,
+      };
+      obj.push(newObj);
+    }
+    return res.json(obj);
+  }
+);
+
 module.exports = router;
