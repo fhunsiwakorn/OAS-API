@@ -344,6 +344,37 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
   });
 });
 
+router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
+  const { cs_id } = req.params;
+  con.query(
+    "SELECT * FROM app_course_lesson WHERE cs_id = ?",
+    [cs_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+
+      const reslut = rows[0];
+      const response = {
+        cs_id: reslut?.cs_id,
+        cs_cover: reslut?.cs_cover,
+        cs_name: reslut?.cs_name,
+        cs_video: reslut?.cs_video,
+        cs_description: reslut?.cs_description,
+        crt_date: reslut?.crt_date,
+        udp_date: reslut?.udp_date,
+        course_id: reslut?.course_id,
+      };
+      return res.json(response);
+    }
+  );
+});
+
 router.post("/log/create", middleware, (req, res, next) => {
   const data = req.body;
   const cs_id = data.cs_id;
