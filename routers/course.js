@@ -428,7 +428,7 @@ router.get(
         FROM app_course_log t1  
         INNER JOIN  app_course_lesson t2 ON t2.cs_id = t1.cs_id   
         INNER JOIN  app_course t3 ON t3.course_id = t2.course_id AND  t3.course_id = ?
-        WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND user_id = ?`,
+        WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t1.user_id = ?`,
         [course_id, i, year, user_id]
       );
       let newObj = {
