@@ -349,17 +349,16 @@ router.post("/log/create", middleware, (req, res, next) => {
   const cs_id = data.cs_id;
   const user_id = data.user_id;
   con.query(
-    "SELECT cs_id FROM app_course_lesson WHERE cs_id = ?",
+    "SELECT * FROM app_course_lesson WHERE cs_id = ?",
     [cs_id],
     (err, rows) => {
-      let checkuser = rows.length;
+      let checkuser = rows?.length;
       if (checkuser <= 0) {
         return res.status(204).json({
           status: 204,
           message: "Username Error", // error.sqlMessage
         });
       }
-
       con.query(
         "INSERT INTO app_course_log (cs_id,user_id,udp_date) VALUES (?,?,?)",
         [cs_id, user_id, localISOTime],
