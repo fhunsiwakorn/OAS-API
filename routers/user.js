@@ -472,7 +472,7 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
   const otp_ref = functions.randomCode();
 
   con.query(
-    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ? LIMIT 1",
+    "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
     [user_id],
 
     (err, rows) => {

@@ -11,7 +11,7 @@ router.post("/create", middleware, (req, res, next) => {
   const user_id = data.user_id;
   const news_friendly = functions.urlFriendly(data.news_title);
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -119,7 +119,7 @@ router.get("/get/:news_id", middleware, (req, res, next) => {
 router.delete("/delete/:news_id", middleware, (req, res, next) => {
   const { news_id } = req.params;
   con.query(
-    "SELECT news_id FROM app_news WHERE news_id = ? LIMIT 1",
+    "SELECT news_id FROM app_news WHERE news_id = ?",
     [news_id],
     (err, rows) => {
       let _content = rows.length;
@@ -209,7 +209,7 @@ router.post("/image/create", middleware, (req, res, next) => {
   const data = req.body;
   const news_id = data.news_id;
   con.query(
-    "SELECT news_id FROM app_news WHERE news_id = ? LIMIT 1",
+    "SELECT news_id FROM app_news WHERE news_id = ?",
     [news_id],
     (err, rows) => {
       let _content = rows.length;

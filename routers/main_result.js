@@ -16,7 +16,7 @@ router.post("/create", middleware, (req, res, next) => {
     return e.dlt_code === dlt_code;
   });
   con.query(
-    "SELECT user_id FROM app_user_detail WHERE identification_number = ? LIMIT 1",
+    "SELECT user_id FROM app_user_detail WHERE identification_number = ?",
     [identification_number],
     (err, rows) => {
       let checkuser = rows.length;
@@ -71,7 +71,7 @@ router.put("/update/:mr_id", middleware, (req, res, next) => {
   });
 
   con.query(
-    "SELECT user_id FROM app_user_detail WHERE identification_number = ? LIMIT 1",
+    "SELECT user_id FROM app_user_detail WHERE identification_number = ?",
     [identification_number],
     (err, rows) => {
       let checkuser = rows.length;
@@ -117,7 +117,7 @@ router.put("/update/:mr_id", middleware, (req, res, next) => {
 router.delete("/delete/:mr_id", middleware, (req, res, next) => {
   const { mr_id } = req.params;
   con.query(
-    "SELECT mr_id  FROM app_main_result WHERE mr_id  = ? LIMIT 1",
+    "SELECT mr_id  FROM app_main_result WHERE mr_id  = ?",
     [mr_id],
     (err, rows) => {
       let _content = rows.length;

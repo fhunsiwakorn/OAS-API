@@ -16,7 +16,7 @@ router.post("/create", middleware, (req, res, next) => {
   });
   let _check_dlt_cadrd = 0;
   con.query(
-    " SELECT id FROM app_dlt_card WHERE dlt_code = ? AND user_id=? LIMIT 1",
+    " SELECT id FROM app_dlt_card WHERE dlt_code = ? AND user_id=?",
     [dlt_code, user_id],
     function (err, result) {
       if (err) throw err;
@@ -25,7 +25,7 @@ router.post("/create", middleware, (req, res, next) => {
   );
 
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -81,7 +81,7 @@ router.put("/update/:id", middleware, (req, res, next) => {
   });
   let _check_dlt_cadrd = 0;
   con.query(
-    " SELECT id FROM app_dlt_card WHERE dlt_code = ? AND user_id=? AND id !=? LIMIT 1",
+    " SELECT id FROM app_dlt_card WHERE dlt_code = ? AND user_id=? AND id !=?",
     [dlt_code, user_id, id],
     function (err, result) {
       if (err) throw err;
@@ -90,7 +90,7 @@ router.put("/update/:id", middleware, (req, res, next) => {
   );
 
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -135,28 +135,24 @@ router.put("/update/:id", middleware, (req, res, next) => {
 
 router.delete("/delete/:id", middleware, (req, res, next) => {
   const { id } = req.params;
-  con.query(
-    "SELECT id  FROM app_dlt_card WHERE id  = ? LIMIT 1",
-    [id],
-    (err, rows) => {
-      let _content = rows.length;
+  con.query("SELECT id  FROM app_dlt_card WHERE id  = ?", [id], (err, rows) => {
+    let _content = rows.length;
 
-      if (_content <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null",
-        });
-      }
-      con.query(
-        "   DELETE FROM  app_dlt_card WHERE id=? ",
-        [id],
-        function (err, result) {
-          if (err) throw err;
-          return res.json(result);
-        }
-      );
+    if (_content <= 0) {
+      return res.status(204).json({
+        status: 204,
+        message: "Data is null",
+      });
     }
-  );
+    con.query(
+      "   DELETE FROM  app_dlt_card WHERE id=? ",
+      [id],
+      function (err, result) {
+        if (err) throw err;
+        return res.json(result);
+      }
+    );
+  });
 });
 
 router.get("/list?", middleware, (req, res, next) => {

@@ -22,7 +22,7 @@ router.post("/main/create", middleware, (req, res, next) => {
     return e.dlt_code === data.dlt_code;
   });
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -71,7 +71,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
     return e.dlt_code === data.dlt_code;
   });
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -173,7 +173,7 @@ router.post("/main/list", middleware, (req, res, next) => {
 router.delete("/main/delete/:em_id", middleware, (req, res, next) => {
   const { em_id } = req.params;
   con.query(
-    "SELECT em_id FROM app_exam_main WHERE em_id = ? LIMIT 1",
+    "SELECT em_id FROM app_exam_main WHERE em_id = ?",
     [em_id],
     (err, rows) => {
       let _content = rows.length;
@@ -202,7 +202,7 @@ router.post("/question/create", middleware, (req, res, next) => {
   const data = req.body;
   const em_id = data.em_id;
   con.query(
-    "SELECT em_id FROM app_exam_main WHERE em_id = ? LIMIT 1",
+    "SELECT em_id FROM app_exam_main WHERE em_id = ?",
     [em_id],
     (err, rows) => {
       let checkuser = rows.length;
@@ -230,7 +230,7 @@ router.put("/question/update/:eq_id", middleware, (req, res, next) => {
   const em_id = data.em_id;
 
   con.query(
-    "SELECT em_id FROM app_exam_main WHERE em_id = ? LIMIT 1",
+    "SELECT em_id FROM app_exam_main WHERE em_id = ?",
     [em_id],
     (err, rows) => {
       let checkuser = rows.length;

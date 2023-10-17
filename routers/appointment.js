@@ -92,7 +92,7 @@ router.put("/update/:ap_id", middleware, (req, res, next) => {
 
   let _check_appointment = 0;
   con.query(
-    " SELECT ap_id FROM app_appointment WHERE ap_id = ? LIMIT 1",
+    " SELECT ap_id FROM app_appointment WHERE ap_id = ?",
     [ap_id],
     function (err, result) {
       if (err) throw err;
