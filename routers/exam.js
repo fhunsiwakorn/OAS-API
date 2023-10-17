@@ -479,6 +479,7 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
 });
 
 router.post("/start/render", middleware, async (req, res, next) => {
+  const present_day = new Date().getDate();
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -510,9 +511,15 @@ FROM
   ORDER BY t0.id ASC
   LIMIT  ${offset},${per_page}
   `;
+
+  // ลบแคชของวันที่ผ่านมาออก
+  await runQuery("DELETE FROM app_exam_cache WHERE DAY(udp_date) < ? ", [
+    present_day,
+  ]);
+
   if (clear_cach === 1) {
     await runQuery(
-      "DELETE  FROM app_exam_cache WHERE em_id = ? AND user_id =?",
+      "DELETE FROM app_exam_cache WHERE em_id = ? AND user_id =?",
       [em_id, user_id]
     );
   }
@@ -572,7 +579,7 @@ FROM
     // console.log(el);
     // let choices = JSON.parse(el?.choices);
     let choices = await runQuery(
-      "SELECT * FROM `app_exam_choice` WHERE eq_id = ?",
+      "SELECT * FROM `app_exam_choice` WHERE eq_id = ? AND cancelled =1",
       [el?.eq_id]
     );
     let newObj = {
