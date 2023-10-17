@@ -169,10 +169,10 @@ router.post("/list", middleware, (req, res, next) => {
 });
 
 router.get("/get/:course_id", middleware, (req, res, next) => {
-  const { cs_id } = req.params;
+  const { course_id } = req.params;
   con.query(
-    "SELECT * FROM app_course WHERE course_id = ?",
-    [cs_id],
+    "SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1",
+    [course_id],
     (err, rows) => {
       let _content = rows.length;
 
@@ -376,7 +376,7 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
 router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   con.query(
-    "SELECT * FROM app_course_lesson WHERE cs_id = ?",
+    "SELECT * FROM app_course_lesson WHERE cs_id = ? AND cancelled = 1",
     [cs_id],
     (err, rows) => {
       let _content = rows.length;
