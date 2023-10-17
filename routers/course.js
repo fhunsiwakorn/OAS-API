@@ -168,6 +168,35 @@ router.post("/list", middleware, (req, res, next) => {
   });
 });
 
+router.get("/get/:course_id", middleware, (req, res, next) => {
+  const { cs_id } = req.params;
+  con.query(
+    "SELECT * FROM app_course WHERE course_id = ?",
+    [cs_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+
+      const reslut = rows[0];
+      const response = {
+        course_id: reslut?.course_id,
+        course_cover: reslut?.course_cover,
+        course_code: reslut?.course_code,
+        course_name: reslut?.course_name,
+        course_description: reslut?.course_description,
+        crt_date: reslut?.crt_date,
+        udp_date: reslut?.udp_date,
+      };
+      return res.json(response);
+    }
+  );
+});
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
