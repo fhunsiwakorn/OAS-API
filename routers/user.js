@@ -131,30 +131,35 @@ router.post("/create", middleware, async (req, res, next) => {
   let user_name = data.user_name;
   let user_phone = data.user_phone;
   let user_email = data.user_email;
-  let checkuser = 0;
 
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
-  let _check_users = await runQuery(
-    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND  user_email != '' ",
-    [user_name, user_email, user_phone]
-  );
-  if (_check_users.length >= 1) {
-    return res.status(404).json({
-      status: 404,
-      message: "Username Error", // error.sqlMessage
-    });
+  if (user_email !== "") {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND  user_email != '' ",
+      [user_name, user_email, user_phone]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
+  } else {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE user_name = ?  OR user_phone=?",
+      [user_name, user_phone]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
   }
 
   bcrypt
     .hash(data.user_password, numSaltRounds)
     .then((hash) => {
-      if (checkuser >= 1) {
-        return res.status(204).json({
-          status: 204,
-          message: "Username Error", // error.sqlMessage
-        });
-      }
-
       let userHash = hash;
       // console.log("Hash ", hash);
       con.query(
@@ -202,15 +207,28 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
   }
 
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
-  let _check_users = await runQuery(
-    "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? AND user_email != '' ",
-    [user_name, user_email, user_phone, user_id]
-  );
-  if (_check_users.length >= 1) {
-    return res.status(404).json({
-      status: 404,
-      message: "Username Error", // error.sqlMessage
-    });
+  if (user_email !== "") {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? AND  user_email != '' ",
+      [user_name, user_email, user_phone, user_id]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
+  } else {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE user_name = ?  OR user_phone=? AND user_id != ?",
+      [user_name, user_phone, user_id]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
   }
 
   if (user_password !== "") {
