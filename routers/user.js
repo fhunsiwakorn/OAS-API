@@ -135,7 +135,7 @@ router.post("/create", middleware, async (req, res, next) => {
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
   if (user_email !== "") {
     let _check_users = await runQuery(
-      "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND  user_email != '' ",
+      "SELECT user_name FROM app_user WHERE user_name = ? OR user_email=? OR user_phone=? ",
       [user_name, user_email, user_phone]
     );
     if (_check_users.length >= 1) {
@@ -209,7 +209,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
   if (user_email !== "") {
     let _check_users = await runQuery(
-      "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ? AND  user_email != '' ",
+      "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ?  ",
       [user_name, user_email, user_phone, user_id]
     );
     if (_check_users.length >= 1) {
@@ -220,7 +220,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
     }
   } else {
     let _check_users = await runQuery(
-      "SELECT user_name FROM app_user WHERE user_name = ?  OR user_phone=? AND user_id != ?",
+      "SELECT user_name FROM app_user WHERE (user_name = ?  OR user_phone=?) AND user_id != ?",
       [user_name, user_phone, user_id]
     );
     if (_check_users.length >= 1) {
