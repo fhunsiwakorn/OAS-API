@@ -22,7 +22,7 @@ router.post("/sms/laotel/send", middleware, (req, res, next) => {
     message: message,
   };
 
-  request(
+  return request(
     {
       method: "POST",
       body: post,
@@ -37,7 +37,7 @@ router.post("/sms/laotel/send", middleware, (req, res, next) => {
       console.log(body);
     }
   );
-  return res.json({ msg: "success" });
+  //   return res.json({ msg: "success" });
 });
 
 module.exports = router;
