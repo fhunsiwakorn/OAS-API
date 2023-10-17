@@ -50,7 +50,7 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
   const news_friendly = functions.urlFriendly(data.news_title);
   const user_id = data.user_id;
   con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ? LIMIT 1",
+    "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
     (err, rows) => {
       let checkuser = rows.length;
