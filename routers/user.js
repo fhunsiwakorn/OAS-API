@@ -126,20 +126,24 @@ router.post("/login", middleware, (req, res, next) => {
   );
 });
 
-router.post("/create", middleware, (req, res, next) => {
+router.post("/create", middleware, async (req, res, next) => {
   const data = req.body;
   let user_name = data.user_name;
   let user_phone = data.user_phone;
   let user_email = data.user_email;
   let checkuser = 0;
 
-  con.query(
+  // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
+  let _check_users = await runQuery(
     "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND  user_email != '' ",
-    [user_name, user_email, user_phone],
-    (err, rows) => {
-      checkuser = rows.length;
-    }
+    [user_name, user_email, user_phone]
   );
+  if (_check_users.length >= 1) {
+    return res.status(404).json({
+      status: 404,
+      message: "Username Error", // error.sqlMessage
+    });
+  }
 
   bcrypt
     .hash(data.user_password, numSaltRounds)

@@ -14,9 +14,19 @@ router.post("/sms/laotel/send", middleware, (req, res, next) => {
   const header = data.header;
   const phoneNumber = data.phoneNumber;
   const message = data.message;
+  const genNumber = Math.floor(100 + Math.random() * 100);
+  const date = new Date();
+  const dateText =
+    date.getFullYear() +
+    ("0" + (date.getMonth() + 1)).slice(-2) +
+    ("0" + date.getDate()).slice(-2) +
+    ("0" + date.getHours()).slice(-2) +
+    ("0" + date.getMinutes()).slice(-2) +
+    ("0" + date.getSeconds()).slice(-2);
+
   // SMS API
   let post = {
-    transaction_id: functions.randomCode(),
+    transaction_id: "DTC" + dateText + genNumber.toString(),
     header: header,
     phoneNumber: phoneNumber,
     message: message,
