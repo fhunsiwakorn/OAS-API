@@ -488,10 +488,85 @@ router.get("/only/detail/:user_param", middleware, (req, res, next) => {
   );
 });
 
+// router.get("/otp/:user_id", middleware, (req, res, next) => {
+//   const { user_id } = req.params;
+//   const otp_code = Math.floor(100000 + Math.random() * 900000);
+//   const otp_ref = functions.randomCode();
+
+//   con.query(
+//     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
+//     [user_id],
+
+//     (err, rows) => {
+//       let checkuser = rows.length;
+//       if (checkuser <= 0) {
+//         return res.status(204).json({
+//           status: 204,
+//           message: "Data is null", // error.sqlMessage
+//         });
+//       }
+
+//       let user_phone =
+//         rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
+
+//       let total_request =
+//         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
+//       let total_request_set = total_request + 1;
+
+//       if (total_request <= 0) {
+//         con.query(
+//           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+//           [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+//         );
+//       } else {
+//         con.query(
+//           "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
+//           [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+//         );
+//       }
+//       // SMS API
+//       let data = {
+//         sender: "SMS PRO",
+//         msisdn: [user_phone],
+//         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
+//       };
+//       request(
+//         {
+//           method: "POST",
+//           body: data,
+//           json: true,
+//           url: "https://thsms.com/api/send-sms",
+//           headers: {
+//             Authorization: common.sms_token,
+//             "Content-Type": "application/json",
+//           },
+//         },
+//         function (error, response, body) {
+//           console.log(body);
+//         }
+//       );
+//       return res.json({
+//         otp_code: otp_code,
+//         otp_ref: otp_ref,
+//         total_request: total_request_set,
+//       });
+//     }
+//   );
+// });
 router.get("/otp/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   const otp_code = Math.floor(100000 + Math.random() * 900000);
   const otp_ref = functions.randomCode();
+
+  const genNumber = Math.floor(100 + Math.random() * 100);
+  const date = new Date();
+  const dateText =
+    date.getFullYear() +
+    ("0" + (date.getMonth() + 1)).slice(-2) +
+    ("0" + date.getDate()).slice(-2) +
+    ("0" + date.getHours()).slice(-2) +
+    ("0" + date.getMinutes()).slice(-2) +
+    ("0" + date.getSeconds()).slice(-2);
 
   con.query(
     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
@@ -526,8 +601,9 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
       }
       // SMS API
       let data = {
-        sender: "SMS PRO",
-        msisdn: [user_phone],
+        transaction_id: "DTC" + dateText + genNumber.toString(),
+        header: "DOT",
+        phoneNumber: user_phone,
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
       };
       request(
@@ -535,9 +611,9 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
           method: "POST",
           body: data,
           json: true,
-          url: "https://thsms.com/api/send-sms",
+          url: "https://ltcapi-uat.laotel.com:9443/api/sms_center/submit_sms",
           headers: {
-            Authorization: common.sms_token,
+            Apikey: "1JMr6JLXfRonSIhmPLjYGHcTj0rAwPgK",
             "Content-Type": "application/json",
           },
         },
