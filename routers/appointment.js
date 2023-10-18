@@ -363,7 +363,7 @@ router.delete("/reserve/delete/:ar_id", middleware, (req, res, next) => {
   const { ar_id } = req.params;
   const present_day = new Date().toISOString().split("T")[0];
   con.query(
-    "SELECT t1.ar_id FROM app_appointment_reserve t1  INNER JOIN app_appointment t2 ON t2.ap_id = t1.ap_id  WHERE ar_id = ? AND DATE(t2.ap_date_start) > ?",
+    "SELECT t1.ar_id FROM app_appointment_reserve t1  INNER JOIN app_appointment t2 ON t2.ap_id = t1.ap_id  WHERE t1.ar_id = ? AND DATE(t2.ap_date_start) > ?",
     [ar_id, present_day],
     (err, rows) => {
       if (rows?.length <= 0) {
