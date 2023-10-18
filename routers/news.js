@@ -5,7 +5,11 @@ const middleware = require("../middleware");
 const functions = require("../functions");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
 const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
-
+async function runQuery(sql, param) {
+  return new Promise((resolve, reject) => {
+    resolve(con.query(sql, param));
+  });
+}
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
@@ -144,7 +148,7 @@ router.delete("/delete/:news_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/list", middleware, (req, res, next) => {
+router.post("/list", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -168,41 +172,32 @@ router.post("/list", middleware, (req, res, next) => {
     sql += u;
   }
 
-  con.query(sql_count + u, (err, results) => {
-    let res = results[0];
-    total = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountAll = await runQuery(sql_count + u);
+  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
   if (search !== "" || search.length > 0) {
-    sql += ` AND (app_news.news_title  LIKE ? OR app_news.news_description  LIKE  ?)`; //
+    let q = ` AND (app_news.news_title  LIKE ? OR app_news.news_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
     search_param = [`%${search}%`, `%${search}%`];
   }
 
-  con.query(sql_count + u, search_param, (err, rows) => {
-    let res = rows[0];
-    total_filter = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountFilter = await runQuery(sql_count + u, search_param);
+  total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY app_news.news_id DESC LIMIT ${offset},${per_page} `;
 
-  // query ข้อมูล
-  con.query(sql, search_param, (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request", // error.sqlMessage
-      });
-    }
-
-    const response = {
-      total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
-      current_page: current_page, // หน้าที่กำลังแสดงอยู่
-      limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
-      search: search, // คำค้นหา
-      data: results, // รายการข้อมูล
-    };
-    return res.json(response);
-  });
+  let getContent = await runQuery(sql, search_param);
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.post("/image/create", middleware, (req, res, next) => {

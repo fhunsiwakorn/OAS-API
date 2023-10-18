@@ -113,7 +113,7 @@ router.delete("/delete/:course_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/list", middleware, (req, res, next) => {
+router.post("/list", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -128,10 +128,10 @@ router.post("/list", middleware, (req, res, next) => {
 
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
-  con.query(sql_count, (err, results) => {
-    let res = results[0];
-    total = res !== undefined ? res?.numRows : 0;
-  });
+
+  let getCountAll = await runQuery(sql_count);
+  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
   if (search !== "" || search.length > 0) {
     let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
     sql += q;
@@ -139,33 +139,23 @@ router.post("/list", middleware, (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  con.query(sql_count, search_param, (err, rows) => {
-    let res = rows[0];
-    total_filter = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountFilter = await runQuery(sql_count, search_param);
+  total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
   sql += `  ORDER BY app_course.course_id DESC LIMIT ${offset},${per_page} `;
 
-  // query ข้อมูล
-  con.query(sql, search_param, (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request", // error.sqlMessage
-      });
-    }
-
-    const response = {
-      total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
-      current_page: current_page, // หน้าที่กำลังแสดงอยู่
-      limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
-      search: search, // คำค้นหา
-      data: results, // รายการข้อมูล
-    };
-    return res.json(response);
-  });
+  let getContent = await runQuery(sql, search_param);
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.get("/get/:course_id", middleware, (req, res, next) => {
@@ -315,7 +305,7 @@ router.delete("/lesson/delete/:cs_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
+router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
   const data = req.body;
   const current_page = data.page;
@@ -332,10 +322,9 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
 
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.course_id =? ";
-  con.query(sql_count, p, (err, results) => {
-    let res = results[0];
-    total = res !== undefined ? res?.numRows : 0;
-  });
+
+  let getCountAll = await runQuery(sql_count, p);
+  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
@@ -344,33 +333,22 @@ router.post("/lesson/list/:course_id", middleware, (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`];
   }
 
-  con.query(sql_count, p.concat(search_param), (err, rows) => {
-    let res = rows[0];
-    total_filter = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
   sql += `  ORDER BY app_course_lesson.cs_id DESC LIMIT ${offset},${per_page} `;
-
-  // query ข้อมูล
-  con.query(sql, p.concat(search_param), (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request", // error.sqlMessage
-      });
-    }
-
-    const response = {
-      total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
-      current_page: current_page, // หน้าที่กำลังแสดงอยู่
-      limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
-      search: search, // คำค้นหา
-      data: results, // รายการข้อมูล
-    };
-    return res.json(response);
-  });
+  let getContent = await runQuery(sql, p.concat(search_param));
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {

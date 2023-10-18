@@ -11,7 +11,9 @@ const dlt_card = require("./routers/dlt_card");
 const main_result = require("./routers/main_result");
 const master_data = require("./routers/master_data");
 const media_file = require("./routers/media_file");
+const report = require("./routers/report");
 const general = require("./routers/general");
+
 // const http = require("http");
 const os = require("os");
 const cluster = require("cluster");
@@ -31,6 +33,7 @@ app.use("/dlt_card", dlt_card);
 app.use("/main_result", main_result);
 app.use("/master_data", master_data);
 app.use("/media_file", media_file);
+app.use("/report", report);
 app.use("/general", general);
 // ทำงานทุก request ที่เข้ามา
 app.use(function (req, res, next) {

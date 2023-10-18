@@ -16,7 +16,7 @@ async function runQuery(sql, param) {
   });
 }
 
-router.post("/list?", middleware, (req, res, next) => {
+router.post("/list?", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -34,12 +34,11 @@ router.post("/list?", middleware, (req, res, next) => {
     u = " AND user_type =  " + user_type; // ประเภท User
     sql += u;
   }
+
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_user WHERE  cancelled=1 ";
-  con.query(sql_count + u, (err, results) => {
-    let res = results[0];
-    total = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountAll = await runQuery(sql_count + u);
+  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     // sql += ` AND (user_name  LIKE  '%${search}%' OR user_firstname  LIKE  '%${search}%' OR user_lastname  LIKE  '%${search}%' OR user_email  LIKE  '%${search}%' OR user_phone  LIKE  '%${search}%')`; //
@@ -55,31 +54,22 @@ router.post("/list?", middleware, (req, res, next) => {
     ];
   }
 
-  con.query(sql_count + u, search_param, (err, rows) => {
-    let res = rows[0];
-    total_filter = res !== undefined ? res?.numRows : 0;
-  });
+  let getCountFilter = await runQuery(sql_count + u, search_param);
+  total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
   sql += `  ORDER BY user_id DESC LIMIT ${offset},${per_page} `;
-  // query ข้อมูล
-  con.query(sql, search_param, (err, results) => {
-    if (err) {
-      return res.status(400).json({
-        status: 400,
-        message: "Bad Request", // error.sqlMessage
-      });
-    }
-    const response = {
-      total: total, // จำนวนรายการทั้งหมด
-      total_filter: total_filter, // จำนวนรายการทั้งหมด
-      current_page: current_page, // หน้าที่กำลังแสดงอยู่
-      limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
-      search: search, // คำค้นหา
-      data: results, // รายการข้อมูล
-    };
-    return res.json(response);
-  });
+  let getContent = await runQuery(sql, search_param);
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
 });
 
 router.post("/login", middleware, (req, res, next) => {
@@ -488,85 +478,10 @@ router.get("/only/detail/:user_param", middleware, (req, res, next) => {
   );
 });
 
-// router.get("/otp/:user_id", middleware, (req, res, next) => {
-//   const { user_id } = req.params;
-//   const otp_code = Math.floor(100000 + Math.random() * 900000);
-//   const otp_ref = functions.randomCode();
-
-//   con.query(
-//     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
-//     [user_id],
-
-//     (err, rows) => {
-//       let checkuser = rows.length;
-//       if (checkuser <= 0) {
-//         return res.status(204).json({
-//           status: 204,
-//           message: "Data is null", // error.sqlMessage
-//         });
-//       }
-
-//       let user_phone =
-//         rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
-
-//       let total_request =
-//         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
-//       let total_request_set = total_request + 1;
-
-//       if (total_request <= 0) {
-//         con.query(
-//           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
-//           [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
-//         );
-//       } else {
-//         con.query(
-//           "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
-//           [otp_code, otp_ref, total_request_set, localISOTime, user_id]
-//         );
-//       }
-//       // SMS API
-//       let data = {
-//         sender: "SMS PRO",
-//         msisdn: [user_phone],
-//         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
-//       };
-//       request(
-//         {
-//           method: "POST",
-//           body: data,
-//           json: true,
-//           url: "https://thsms.com/api/send-sms",
-//           headers: {
-//             Authorization: common.sms_token,
-//             "Content-Type": "application/json",
-//           },
-//         },
-//         function (error, response, body) {
-//           console.log(body);
-//         }
-//       );
-//       return res.json({
-//         otp_code: otp_code,
-//         otp_ref: otp_ref,
-//         total_request: total_request_set,
-//       });
-//     }
-//   );
-// });
 router.get("/otp/:user_id", middleware, (req, res, next) => {
   const { user_id } = req.params;
   const otp_code = Math.floor(100000 + Math.random() * 900000);
   const otp_ref = functions.randomCode();
-
-  const genNumber = Math.floor(100 + Math.random() * 100);
-  const date = new Date();
-  const dateText =
-    date.getFullYear() +
-    ("0" + (date.getMonth() + 1)).slice(-2) +
-    ("0" + date.getDate()).slice(-2) +
-    ("0" + date.getHours()).slice(-2) +
-    ("0" + date.getMinutes()).slice(-2) +
-    ("0" + date.getSeconds()).slice(-2);
 
   con.query(
     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
@@ -601,9 +516,8 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
       }
       // SMS API
       let data = {
-        transaction_id: "DTC" + dateText + genNumber.toString(),
-        header: "DOT",
-        phoneNumber: user_phone,
+        sender: "SMS PRO",
+        msisdn: [user_phone],
         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
       };
       request(
@@ -611,9 +525,9 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
           method: "POST",
           body: data,
           json: true,
-          url: "https://ltcapi-uat.laotel.com:9443/api/sms_center/submit_sms",
+          url: "https://thsms.com/api/send-sms",
           headers: {
-            Apikey: "1JMr6JLXfRonSIhmPLjYGHcTj0rAwPgK",
+            Authorization: common.sms_token,
             "Content-Type": "application/json",
           },
         },
@@ -629,6 +543,82 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
     }
   );
 });
+// router.get("/otp/:user_id", middleware, (req, res, next) => {
+//   const { user_id } = req.params;
+//   const otp_code = Math.floor(100000 + Math.random() * 900000);
+//   const otp_ref = functions.randomCode();
+
+//   const genNumber = Math.floor(100 + Math.random() * 100);
+//   const date = new Date();
+//   const dateText =
+//     date.getFullYear() +
+//     ("0" + (date.getMonth() + 1)).slice(-2) +
+//     ("0" + date.getDate()).slice(-2) +
+//     ("0" + date.getHours()).slice(-2) +
+//     ("0" + date.getMinutes()).slice(-2) +
+//     ("0" + date.getSeconds()).slice(-2);
+
+//   con.query(
+//     "SELECT app_user.user_name ,app_user.user_phone,app_user_otp.total_request FROM app_user LEFT JOIN app_user_otp ON app_user_otp.user_id  = app_user.user_id  WHERE app_user.user_id = ?",
+//     [user_id],
+
+//     (err, rows) => {
+//       let checkuser = rows.length;
+//       if (checkuser <= 0) {
+//         return res.status(204).json({
+//           status: 204,
+//           message: "Data is null", // error.sqlMessage
+//         });
+//       }
+
+//       let user_phone =
+//         rows[0]?.user_phone === undefined ? 0 : rows[0]?.user_phone;
+
+//       let total_request =
+//         rows[0]?.total_request === undefined ? 0 : rows[0]?.total_request;
+//       let total_request_set = total_request + 1;
+
+//       if (total_request <= 0) {
+//         con.query(
+//           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
+//           [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+//         );
+//       } else {
+//         con.query(
+//           "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
+//           [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+//         );
+//       }
+//       // SMS API
+//       let data = {
+//         transaction_id: "DTC" + dateText + genNumber.toString(),
+//         header: "DOT",
+//         phoneNumber: user_phone,
+//         message: "Your OTP is " + otp_code + " REF:" + otp_ref,
+//       };
+//       request(
+//         {
+//           method: "POST",
+//           body: data,
+//           json: true,
+//           url: "https://ltcapi-uat.laotel.com:9443/api/sms_center/submit_sms",
+//           headers: {
+//             Apikey: "1JMr6JLXfRonSIhmPLjYGHcTj0rAwPgK",
+//             "Content-Type": "application/json",
+//           },
+//         },
+//         function (error, response, body) {
+//           console.log(body);
+//         }
+//       );
+//       return res.json({
+//         otp_code: otp_code,
+//         otp_ref: otp_ref,
+//         total_request: total_request_set,
+//       });
+//     }
+//   );
+// });
 
 router.put("/verify_otp", middleware, (req, res, next) => {
   const data = req.body;
