@@ -167,4 +167,24 @@ router.get("/list?", middleware, (req, res, next) => {
   );
 });
 
+router.get("/check/expiry_date", middleware, (req, res, next) => {
+  const user_id = req.query.user_id;
+  Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  };
+  const date = new Date();
+  let start = date.toISOString().split("T")[0];
+  let end = date.addDays(30).toISOString().split("T")[0];
+
+  con.query(
+    " SELECT  *  FROM app_dlt_card WHERE user_id  = ? AND DATE(expiry_date) BETWEEN ? AND  ? ",
+    [user_id, start, end],
+    (err, rows) => {
+      return res.json(rows);
+    }
+  );
+});
+
 module.exports = router;
