@@ -153,7 +153,7 @@ router.post("/main/list", middleware, async (req, res, next) => {
     total_filter: total_filter, // จำนวนรายการทั้งหมด
     current_page: current_page, // หน้าที่กำลังแสดงอยู่
     limit_page: per_page, // limit data
-    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
     search: search, // คำค้นหา
     data: getContent, // รายการข้อมูล
   };
@@ -315,7 +315,7 @@ FROM
     total_filter: total_filter, // จำนวนรายการที่ค้นหา
     current_page: current_page, // หน้าที่กำลังแสดงอยู่
     limit_page: per_page, // limit data
-    total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
     search: search, // คำค้นหา
     data: obj, // รายการข้อมูล
   };
@@ -810,7 +810,7 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
       total_filter: total_filter, // จำนวนรายการทั้งหมด
       current_page: current_page, // หน้าที่กำลังแสดงอยู่
       limit_page: per_page, // limit data
-      total_page: Math.ceil(total / per_page), // จำนวนหน้าทั้งหมด
+      total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
       search: search, // คำค้นหา
       data: obj, // รายการข้อมูล
     };
