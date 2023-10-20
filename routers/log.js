@@ -104,6 +104,16 @@ router.get(
   middleware,
   async (req, res, next) => {
     const { dlt_code, year } = req.params;
+    const dltObj = common.drivinglicense_type;
+    const result_filter = dltObj.filter(function (e) {
+      return e.dlt_code === dlt_code;
+    });
+    if (result_filter.length <= 0) {
+      return res.status(404).json({
+        status: 404,
+        message: "Invalid 'dlt_code' ",
+      });
+    }
 
     let obj = [];
     for (let i = 1; i <= 12; i++) {
