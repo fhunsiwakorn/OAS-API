@@ -99,23 +99,27 @@ router.get("/course/:course_id/:year?", middleware, async (req, res, next) => {
   return res.json(obj);
 });
 
-router.get("/appointment/reserve/:year", middleware, async (req, res, next) => {
-  const { year } = req.params;
+router.get(
+  "/appointment/reserve/:dlt_code/:year",
+  middleware,
+  async (req, res, next) => {
+    const { dlt_code, year } = req.params;
 
-  let obj = [];
-  for (let i = 1; i <= 12; i++) {
-    let getLog = await runQuery(
-      "SELECT COUNT(ar_id) AS total FROM app_appointment_reserve WHERE  MONTH(udp_date) = ?  AND  YEAR(udp_date) = ? ",
-      [i, year]
-    );
-    let newObj = {
-      month: i,
-      total: getLog[0]?.total,
-    };
-    obj.push(newObj);
+    let obj = [];
+    for (let i = 1; i <= 12; i++) {
+      let getLog = await runQuery(
+        "SELECT COUNT(t1.ap_id) AS total FROM app_appointment_reserve t1  INNER JOIN  app_appointment t2 ON t2.ap_id = t1.ap_id    WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t2.dlt_code = ?",
+        [i, year, dlt_code]
+      );
+      let newObj = {
+        month: i,
+        total: getLog[0]?.total,
+      };
+      obj.push(newObj);
+    }
+    return res.json(obj);
   }
-  return res.json(obj);
-});
+);
 
 router.get("/exam/:dlt_code/:year", middleware, async (req, res, next) => {
   const { dlt_code, year } = req.params;
