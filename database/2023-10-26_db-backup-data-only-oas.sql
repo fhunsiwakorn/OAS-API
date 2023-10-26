@@ -259,13 +259,12 @@ INSERT INTO `app_course_log` VALUES('5','1','104','2023-10-19 09:13:37');
 
 -- Dumping data for table `app_dlt_card` 
 
-INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08','2023-11-25','2023-09-19 18:55:36','2023-09-19 18:55:36','1');
+INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08','2023-12-31','2023-09-19 18:55:36','2023-09-19 18:55:36','1');
 
 
 
 -- Dumping data for table `app_exam_cache` 
 
-INSERT INTO `app_exam_cache` VALUES('178','0','0','0','1','2','6','2023-10-17 15:07:26');
 
 
 

@@ -1,12 +1,12 @@
 -- Dumping data for table `app_appointment` 
 
-INSERT INTO `app_appointment` VALUES('1','1','3','2023-09-05 16:05:31','2023-09-05 17:05:31','Test','A','2023-08-28 21:44:31','2023-08-28 21:44:31','1','1','1');
+INSERT INTO `app_appointment` VALUES('1','1','3','2023-10-17 16:05:31','2023-09-05 17:05:31','Test','A','2023-08-28 21:44:31','2023-08-28 21:44:31','1','1','1');
 INSERT INTO `app_appointment` VALUES('2','1','120','2023-09-15 16:05:31','2023-09-15 19:05:31','สวย นะ','C1','2023-08-28 21:55:13','2023-08-28 21:59:25','1','1','1');
 INSERT INTO `app_appointment` VALUES('3','2','120','2023-10-17 16:05:31','2023-10-17 18:05:31','Test','A','2023-08-28 22:09:54','2023-08-28 22:09:54','1','1','1');
 INSERT INTO `app_appointment` VALUES('4','2','120','2023-10-02 16:05:31','2023-10-02 16:05:31','Test','A','2023-08-29 10:03:40','2023-08-29 10:03:40','1','1','1');
 INSERT INTO `app_appointment` VALUES('5','2','120','2023-09-05 19:15:31','2023-09-05 19:16:31','Test','A','2023-09-04 09:20:29','2023-09-04 09:20:29','1','1','1');
 INSERT INTO `app_appointment` VALUES('6','2','120','2023-09-10 19:15:31','2023-09-10 19:16:31','Test','A','2023-09-04 09:20:29','2023-09-04 09:20:29','1','1','1');
-INSERT INTO `app_appointment` VALUES('7','2','120','2023-09-10 19:15:31','2023-09-10 19:16:31','Test','B','2023-09-04 09:33:00','2023-09-04 09:33:00','1','1','1');
+INSERT INTO `app_appointment` VALUES('7','2','120','2023-10-17 19:15:31','2023-09-10 19:16:31','Test','B','2023-09-04 09:33:00','2023-09-04 09:33:00','1','1','1');
 INSERT INTO `app_appointment` VALUES('8','2','120','2023-09-05 19:05:31','2023-09-05 20:05:31','Test','A','2023-09-04 15:35:08','2023-09-04 15:35:08','1','1','1');
 INSERT INTO `app_appointment` VALUES('9','2','120','2023-09-05 19:05:31','2023-09-05 20:05:31','Test','A','2023-09-04 15:35:08','2023-09-04 15:35:08','1','1','1');
 INSERT INTO `app_appointment` VALUES('10','2','120','2023-09-05 19:05:31','2023-09-05 20:05:31','Test','A','2023-09-04 15:35:08','2023-09-04 15:35:08','1','1','1');
@@ -27,10 +27,9 @@ INSERT INTO `app_appointment` VALUES('20','2','120','2023-10-04 16:05:15','2023-
 
 INSERT INTO `app_appointment_reserve` VALUES('2','1','6','2023-08-28 21:44:31');
 INSERT INTO `app_appointment_reserve` VALUES('3','3','1','2023-09-06 16:41:16');
-INSERT INTO `app_appointment_reserve` VALUES('4','19','7','2023-09-29 20:06:53');
-INSERT INTO `app_appointment_reserve` VALUES('5','1','7','2023-10-03 13:33:29');
-INSERT INTO `app_appointment_reserve` VALUES('6','6','7','2023-10-03 13:33:29');
-INSERT INTO `app_appointment_reserve` VALUES('7','1','1','2023-10-03 13:33:29');
+INSERT INTO `app_appointment_reserve` VALUES('4','19','104','2023-09-29 20:06:53');
+INSERT INTO `app_appointment_reserve` VALUES('5','1','85','2023-10-03 13:33:29');
+INSERT INTO `app_appointment_reserve` VALUES('6','6','100','2023-10-03 13:33:29');
 
 
 
@@ -254,25 +253,19 @@ INSERT INTO `app_course_log` VALUES('1','1','7','2023-10-12 19:13:06');
 INSERT INTO `app_course_log` VALUES('2','1','7','2023-10-12 19:13:06');
 INSERT INTO `app_course_log` VALUES('3','1','7','2023-10-12 19:33:01');
 INSERT INTO `app_course_log` VALUES('4','2','7','2023-10-12 19:33:01');
+INSERT INTO `app_course_log` VALUES('5','1','104','2023-10-19 09:13:37');
 
 
 
 -- Dumping data for table `app_dlt_card` 
 
-INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08','2023-11-25','2023-09-19 18:55:36','2023-09-19 18:55:36','1');
+INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08','2023-12-31','2023-09-19 18:55:36','2023-09-19 18:55:36','1');
 
 
 
 -- Dumping data for table `app_exam_cache` 
 
-INSERT INTO `app_exam_cache` VALUES('144','1','1','1','1','2','1','2023-08-23 15:07:26');
-INSERT INTO `app_exam_cache` VALUES('145','0','1','0','2','2','1','2023-08-23 15:07:26');
-INSERT INTO `app_exam_cache` VALUES('149','0','0','0','1','2','7','2023-09-28 15:53:27');
-INSERT INTO `app_exam_cache` VALUES('150','0','0','0','2','2','7','2023-09-28 15:53:27');
-INSERT INTO `app_exam_cache` VALUES('173','0','1','2','1','2','2','2023-09-28 19:03:30');
-INSERT INTO `app_exam_cache` VALUES('174','0','1','3','2','2','2','2023-09-28 19:03:30');
-INSERT INTO `app_exam_cache` VALUES('176','0','0','0','2','2','6','2023-09-28 19:12:36');
-INSERT INTO `app_exam_cache` VALUES('177','0','0','0','1','2','6','2023-09-28 19:12:36');
+INSERT INTO `app_exam_cache` VALUES('178','0','0','0','1','2','6','2023-10-17 15:07:26');
 
 
 
@@ -303,16 +296,17 @@ INSERT INTO `app_exam_question` VALUES('1','ม้าอะไรบินได
 INSERT INTO `app_exam_question` VALUES('2','2 + 2 เท่ากับ','url/image','2','1','2');
 INSERT INTO `app_exam_question` VALUES('3','2 + 2 เท่ากับ','url/image','2','1','1');
 INSERT INTO `app_exam_question` VALUES('4','3 + 2 เท่ากับ','url/image','2','1','1');
+INSERT INTO `app_exam_question` VALUES('5','3 + 2 เท่ากับ','url/image','2','1','2');
 
 
 
 -- Dumping data for table `app_exam_result` 
 
-INSERT INTO `app_exam_result` VALUES('1','1','2','2023-08-23 12:55:26','2023-08-23 12:55:26','1','2');
-INSERT INTO `app_exam_result` VALUES('2','0','2','2023-08-23 14:39:01','2023-08-23 14:39:01','1','2');
-INSERT INTO `app_exam_result` VALUES('3','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','1','2');
-INSERT INTO `app_exam_result` VALUES('4','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','1','2');
-INSERT INTO `app_exam_result` VALUES('5','1','2','2023-09-28 19:27:26','2023-09-28 19:27:26','1','2');
+INSERT INTO `app_exam_result` VALUES('1','1','2','2023-08-23 12:55:26','2023-08-23 12:55:26','104','2');
+INSERT INTO `app_exam_result` VALUES('2','0','2','2023-08-23 14:39:01','2023-08-23 14:39:01','104','2');
+INSERT INTO `app_exam_result` VALUES('3','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','104','2');
+INSERT INTO `app_exam_result` VALUES('4','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','114','2');
+INSERT INTO `app_exam_result` VALUES('5','1','2','2023-09-28 19:27:26','2023-09-28 19:27:26','114','38');
 
 
 
@@ -324,7 +318,7 @@ INSERT INTO `app_exam_time` VALUES('2','00:25:00','2','1');
 
 -- Dumping data for table `app_main_result` 
 
-INSERT INTO `app_main_result` VALUES('2','49','2','pass','A1','2023-09-13 09:47:22','2023-09-13 09:47:22','1');
+INSERT INTO `app_main_result` VALUES('2','49','2','pass','A1','2023-09-13 09:47:22','2023-09-13 09:47:22','104');
 INSERT INTO `app_main_result` VALUES('3','49','2','fail','A2','2023-09-13 09:48:46','2023-09-13 09:48:46','1');
 INSERT INTO `app_main_result` VALUES('4','49','2','fail','A2','2023-09-13 10:18:13','2023-09-13 10:18:13','7');
 INSERT INTO `app_main_result` VALUES('8','49','2','fail','A2','2023-09-15 09:29:21','2023-09-15 09:29:21','7');
@@ -359,15 +353,84 @@ INSERT INTO `app_news_image` VALUES('13','path','test','1');
 
 -- Dumping data for table `app_user` 
 
-INSERT INTO `app_user` VALUES('1','faii','$2b$08$sQQBSFKRNyqFm5V1CIlfOOaNTDKaCKYPL6kweMIq9Qo15AYoeczke','เจน','เป็นมงคล','test@gmail.com','0943908077','3','1','2023-07-07 15:15:23','2023-07-07 15:15:23','1');
-INSERT INTO `app_user` VALUES('6','fhun','$2b$08$kgMXXclzI6S5u1.RS9M38OzejKCkhrKh9k0zu5RZdK0i1D7jXSH3O','ประยุทธิ์','จันทร์โอชา','siwakorn167@gmail.com','0987654321','3','1','2023-08-26 11:58:34','2023-10-10 11:22:51','1');
-INSERT INTO `app_user` VALUES('7','ppun','$2b$08$Oq0BE8l7m17j0jHqBOsGuuj0d1HHontaSCZrqRrtbkCKlnHGS..M6','ปั่น','ไอที','test2222@gmail.com','0833268813','3','1','2023-08-26 11:58:34','2023-08-28 10:22:21','1');
+INSERT INTO `app_user` VALUES('85','rkknoob1','$2b$08$6IYHq0d98hc.Y.iLQQsKB.wHDEuBmIkPQtVO1mYJiq.irSdiFePWm','ปั่น','ไอที','test2223@gmail.com','0833261122','1','1','2023-08-28 09:50:42','2023-10-11 09:30:00','1');
+INSERT INTO `app_user` VALUES('86','rkknoob2','$2b$08$iL7fZ9gayaUkJZIH28RsV.PNSGLLaQ/49Vpge9chc56Er706gRSJy','rkknoob','rkknoob','rkknoob2@gmail.com','0833268814','2','1','2023-08-28 09:50:42','2023-09-22 21:15:57','1');
+INSERT INTO `app_user` VALUES('87','rkknoob11','$2b$08$UOQkqD0NG8hbITSyWdhGlOqjhADajB.skdxhxsJzRxdNiYJUwTPQ2','rkknoob11','rkknoob11','rkknoob11@gmail.com','0833268810','2','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('88','rkknoob10','$2b$08$tsNbq6owx2/5oXL0TZ0CIOEdfmELDojORdiCHls8f6G0JzI7jRhsK','rkknoob10','rkknoob10','rkknoob10@gmail.com','0833268811','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('89','rkknoob9','$2b$08$rWp9DPUhPzqXd1B2qq1zU.KpBET1pUhCzm9IC9JLr15EuXk6y5WdG','rkknoob9','rkknoob9','rkknoob9@gmail.com','0833261100','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('90','rkknoob001','$2b$08$L4SoNTukW13euyBRD7vWruTmZtxy4iC1OFXcvcEKkbmykCnU3gM3C','rkknoob001','rkknoob001','rkknoob001@gmail.com','0833268801','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('91','rkknoob002','$2b$08$Q/pFhfAO.InbXEpSVjF8/.53STSQ8sxN7dFoRKWV6svXeAv5chVMO','rkknoob002','rkknoob002','rkknoob002@gmail.com','0833268802','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('92','rkknoob003','$2b$08$jYVx9pKTICTTK1dQeGmE0eau6bnn5k4xv2xInMkFdlFhQDEZscAMy','rkknoob003','rkknoob003','rkknoob003@gmail.com','0833268803','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('93','rkknoob13','$2b$08$aD2mgYqZTHwLGoHPqD9vwe7mIF3V2j/kOSQIaY9JPQoITe2RtAZ7S','rkknoob13','rkknoob13','rkknoob13@gmail.com','0833268805','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('94','rkknoob15','$2b$08$4cHVyMTKBXP95rmZllQrY.dnQxS8LzUpDL3fqqSo57hxKaHgLe9TW','rkknoob15','rkknoob15','rkknoob15@gmail.com','0833260001','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('95','rkknoob16','$2b$08$Mimg3I.10hRHm7qKtvjbb.xchyfHhNnjtdNihuRNeHEaW.msvg2KK','rkknoob16','rkknoob16','rkknoob16@gmail.com','08332680002','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('96','rkknoob17','$2b$08$tdXa1XC9r0ZXhVBrTbfgIe63AdzLLEwqHalBceEPBFYb8C.Co3JZy','rkknoob17','rkknoob17','rkknoob17@gmail.com','0833260003','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('97','rkknoob016','$2b$08$LXN4F9WxvAceMzNvOyV.8u6XNlz/X1aqakhp//hTaKfkBCMv2UOaS','rkknoob016','rkknoob016','rkknoob016@gmail.com','0833260004','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('98','rkknoob017','$2b$08$S.iuOoMe5MJQBykA98H7GO8eS3wvwg37L9r9D2/elHlmuwdDTB7dq','rkknoob017','rkknoob017','rkknoob017@gmail.com','0833260006','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('99','rkknoob018','$2b$08$kEvPca1X7qfLtZLjS7ct8eNV8X6i/AkYTJSfqYfItwng7em03Lxi.','rkknoob018','rkknoob018','rkknoob018@gmail.com','0833260008','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('100','1513135125','$2b$08$C9O/H0ZIeeCn2gI..XPsGe3RqRomk1YlXPcA40.OUzeGePPMFbpc2','51251251255','1241241244','rkknoob987@gmail.com','078456456235','3','1','2023-08-28 12:49:39','2023-08-28 12:49:39','1');
+INSERT INTO `app_user` VALUES('101','rkknoob1001','$2b$08$po0QtlM6a1AlWXkgQtQYveJrwzdW9OIRauOrbm9Fho/Pv1Id.ykA.','rkknoob1001','Test111','rkknoob1001@gmail.com','0847431881','3','1','2023-08-29 18:30:20','2023-08-31 17:41:47','1');
+INSERT INTO `app_user` VALUES('102','rkknoob1002','$2b$08$dxVwv3wyz8WRLzLYcVsE9eBegRCwySuar4taV2mUqgcPfRl.n02t6','rkknoob1002','rkknoob1002','rkknoob1002@gmail.com','0847431882','3','1','2023-08-29 18:30:20','2023-08-29 18:30:20','1');
+INSERT INTO `app_user` VALUES('103','rkknoob1003','$2b$08$lpvMtOKVRRWRVMfl1rOr9.pfwv15Ne41KZyvgoJbeLPBfuZfG3ngG','rkknoob1003','rkknoob1003','rkknoob1003@gmail.com','0847431884','3','1','2023-08-29 18:30:20','2023-08-29 18:30:20','1');
+INSERT INTO `app_user` VALUES('104','fhun','$2b$08$EbutNEHvgBFIlfCIovN86eGPEIw0Q542u41fTue.UNDKTts/rzB6u','ประยุทธิ์','จันทร์โอชา','siwakorn167@gmail.com','0987654321','3','1','2023-08-30 01:57:14','2023-10-18 19:30:52','1');
+INSERT INTO `app_user` VALUES('105','32525235','$2b$08$vx2qoFDMlwD2FblzaviB3.M2ROTesCiMUm.XiBC1ddLaWfjWi1Uwi','rrrrrrrrrrrrrrr','rrrrrrrrrr','fefdfsdfdfs@gmail.com','0833222211','3','1','2023-08-30 23:37:41','2023-08-30 23:37:41','1');
+INSERT INTO `app_user` VALUES('106','sssssssssss','$2b$08$30dcIfFuArZrGFRlNC0SpevJzP.sGoTLjNiZ3Szv0dYjdaOEc1ZOO','ssssssss','sssssss','31ry4634@gmail.com','0833264104','3','1','2023-08-30 23:37:41','2023-08-31 17:41:46','1');
+INSERT INTO `app_user` VALUES('107','Test0001','$2b$08$J6.PxK1kNUJPwtRZ.YmILOGkySIYMO0b4ByoGoVp/IibSyvaNT0te','Test0001','Test0001','','0992952666','3','1','2023-08-31 10:45:17','2023-10-16 09:35:25','1');
+INSERT INTO `app_user` VALUES('108','meanie','$2b$08$5jfdFRrtDoaTH3mDqcpO/eBjeMsnqVkJ7bOz9Kaa.i6nbxje9.Xim','Meanie','kurumi','adison.ben.2543@gmail.com','0986321173','3','1','2023-08-31 16:34:59','2023-08-31 16:34:59','1');
+INSERT INTO `app_user` VALUES('109','kurumi','$2b$08$ehRK37eq4f8A0JX2BLHsLuREdywSSuQTnRz0.A/y8LE8yRZeHE5ei','kurumi','อดิศร1','adison.wlakh@gmail.com','0927485332','3','1','2023-08-31 16:34:59','2023-10-05 11:28:32','1');
+INSERT INTO `app_user` VALUES('110','adad6521','$2b$08$k5iQDj8TLTXei9a6DogkZ.kdTGoFl7ougP4/LGYyG4Di1zvmOrxLG','adison','wonglak','adison.wlakhon@gmail.com','0986321','3','1','2023-08-31 16:34:59','2023-08-31 16:34:59','1');
+INSERT INTO `app_user` VALUES('111','dsfdsfdsf','$2b$08$u4PtGsu/Qe1brFCRARBwde5ylsVqIKL4HO5Hd4rmUxkIZKOJVKXeS','dfsdfdsf','fsdfdsfds','fdsfsdfsdf@dfdsf.com','dsfsdfsdfdsfsd','3','1','2023-09-05 17:16:26','2023-09-05 17:16:26','1');
+INSERT INTO `app_user` VALUES('112','xxxxxx','$2b$08$UjcVt4meLdl/G4cTokX02uszRszUxu4rJzUyNzWbJGsMKt6uO.GA2','ชลิตา','ยืนยัง','xxxxxx@gmail.com','0943908014','3','1','2023-09-13 13:40:11','2023-09-13 13:40:11','1');
+INSERT INTO `app_user` VALUES('113','boonkhet','$2b$08$HI0vgStwDdeDs0TuDBxhf.QlNjfeMrznhSe2OLP2mtDkJy2L51Cp2','บุญเขต','เรืองเจริญธรรม','boonkhet1@gmail.com','1234567811015','2','1','2023-09-27 10:23:18','2023-10-04 16:44:41','0');
+INSERT INTO `app_user` VALUES('114','apinut','$2b$08$GcM2jBS5AIO1WjMwqZEq0.otDBWR6RUritXsJsXB.p2jpoVvZJeG2','apinut','aunsoda','apinutaunsoda@gmail.com','0934569009','3','1','2023-10-04 09:19:43','2023-10-04 09:19:43','1');
+INSERT INTO `app_user` VALUES('115','gupune','$2b$08$RNeyjEYyk0X0ayCz9N1jveKzDI9B2CInnYEGnmMgOiM8qaNH9Th0C','15125125','4125412515','rkknoob99@gmail.com','5151512512515','3','1','2023-10-04 16:44:41','2023-10-04 16:44:41','1');
+INSERT INTO `app_user` VALUES('116','gupune11','$2b$08$6.uW79kIqWxVpdiAqq5OmeaG40Z1FC0DE6RCUGhubWideWPHxksbe','as125215125','fdwtgfwetwetwet','gupune11@gmail.com','0847431883','3','1','2023-10-04 16:44:41','2023-10-04 16:44:41','1');
+INSERT INTO `app_user` VALUES('117','test002','$2b$08$fiQrrvrCphjk.zjr4Nl/luaathnMcVSxfk/VtoEY2l9W2s4VdgOJm','test002','test002','rkknoob@gmail.com','0833268813','3','1','2023-10-04 16:44:41','2023-10-12 13:43:22','1');
+INSERT INTO `app_user` VALUES('118','fhun222','$2b$08$DadVn4.6i9GY4RLkCX/ucu95s.sgUYeq23kGZdyoJnspdzUfD0Ii6','ชลิตา','ยืนยัง','siwakorn169@gmail.com','0943908033','3','1','2023-10-10 09:21:27','2023-10-10 09:21:27','1');
+INSERT INTO `app_user` VALUES('122','irene','$2b$08$PZ4eGlqDmi0LBtRHjrpyguZWpZFr3n6ka9a2WMBdZ9CIIL6uJmidW','irene','redvelvet','tqwtwetwt@gmail.com','0987654328','3','1','2023-10-10 09:21:27','2023-10-10 21:03:11','1');
+INSERT INTO `app_user` VALUES('123','test0099','$2b$08$5NGjfbSN7gbIIEbMAZRhOuhH/tbbAxnKl.u2BUW.Sh.qTgZBxBzrO','test0099','test0099','test0099@gmail.com','0833268445','3','1','2023-10-10 11:33:51','2023-10-10 11:33:51','1');
+INSERT INTO `app_user` VALUES('124','test00100','$2b$08$um2c3ZIj8i0Tmh/tq.JaXe.bqOHOzKC0y.1mYD2ycJr.GjmtIU9yq','test00100','test00100','','0845458748','3','1','2023-10-10 11:33:51','2023-10-10 11:33:51','1');
+INSERT INTO `app_user` VALUES('125','test00101','$2b$08$bRo9EOmMI/j949320eppPui0FkSj58uIP9gVmVmWWuy2NswFcrcpy','test00101','test00101','-','08323268141','3','1','2023-10-10 11:33:51','2023-10-10 11:33:51','1');
+INSERT INTO `app_user` VALUES('126','test001032','$2b$08$4QtmIL9CFdR2ESrB9aRzEu6GaJKmHZSxq792o5tqBnnvASkoKomd.','test001032','test001032','','0823267142','3','1','2023-10-10 16:02:13','2023-10-10 16:02:13','1');
+INSERT INTO `app_user` VALUES('127','test001033','$2b$08$F.lwHQhH8qShH1HhJnCr3ep0ZZ8Kr3kme1sylNN1OCuiZXZc9.HMi','test001033','test001033','','0823267141','3','1','2023-10-10 16:02:13','2023-10-10 16:02:13','1');
+INSERT INTO `app_user` VALUES('128','test001034','$2b$08$BE10NNXJhBH9R9ZOBCjGzuzJ8ZDi3p3NOnv.XZUb5kpOr427zHc/y','test001034','test001034','','0847431235','3','1','2023-10-10 16:02:13','2023-10-10 16:02:13','1');
+INSERT INTO `app_user` VALUES('129','harry','$2b$08$Eqyy3IgHEXAlviH4eAFBPO9KwZ9PoURJTPEm9O7YvX2bbb04kSkmq','harry','potter','harry@outlook.com','0943908077','3','1','2023-10-10 21:03:11','2023-10-18 03:31:36','1');
+INSERT INTO `app_user` VALUES('130','kimyeri','$2b$08$AptbiNFG05A3x/abXNGBCuzsjGpLntjEqlO1blKpSJlPHDs5doJJa','kim','yeri','','0987656666','3','1','2023-10-11 09:30:00','2023-10-11 09:30:00','1');
+INSERT INTO `app_user` VALUES('131','nana','$2b$08$gnuVtV2tu2qIHxOvFhHM7ujus/0eeW9O2wHa5W3jP6GUN5EG/7vaS','nana','narak','','085623114','3','1','2023-10-11 09:30:00','2023-10-11 09:30:00','1');
+INSERT INTO `app_user` VALUES('132','jisoo','$2b$08$EQpxFyrBXZsSKNkDUO7kmuMgiaXPvKVkNrIF5q4Z9CwS.3Djkhy6y','jisoo','blakpink','','086652175','3','1','2023-10-11 09:30:00','2023-10-11 09:30:00','1');
+INSERT INTO `app_user` VALUES('133','test1001','$2b$08$AAOOugbTnbcP0dEN/s86ZuCX5aRB2g2JosYIZ43RjIP8fVJv.gMea','test1001','test1001','','0992952667','3','1','2023-10-16 09:35:25','2023-10-16 09:35:25','1');
+INSERT INTO `app_user` VALUES('134','prayuth','$2b$08$nki4WrsuGVLQ3wnLUtukvuNc9o4hj8TLpxSYAU2RPMq2Xj6CpnhiK','mana','jaidee','','0925252525','3','1','2023-10-17 10:18:28','2023-10-17 10:18:28','1');
+INSERT INTO `app_user` VALUES('135','fhun5','$2b$08$kHyqPaXN1Z0ABBuiUFXpuOxCS0i1E2/HV6ENA9IFeEED1wbVZMr1K','haha','mama','','0943908059','3','1','2023-10-18 03:31:36','2023-10-18 03:31:36','1');
+INSERT INTO `app_user` VALUES('136','Testdev001edit','$2b$08$4MCK3Ws74Vw/p0rgXTxlpeSglwJbI3YhC8219Xe7ZaP8UkidbdPom','Testdev001edit','Testdev001edit','','0849797979','2','1','2023-10-18 16:24:03','2023-10-18 16:24:03','0');
+INSERT INTO `app_user` VALUES('137','Testdev001','$2b$08$mgWsB2AjG0JEC.wcDM9zBO3b7IBfqBWD35/Wo4usTt9wSP./XPJLC','Testdev001','Testdev001','','08474646748','3','1','2023-10-18 16:24:04','2023-10-18 16:24:04','0');
+INSERT INTO `app_user` VALUES('138','Testdev002','$2b$08$7rvBV.5d2Kc91bYTFU1.SetLeqf1LrI5LHOsgxnETqoAkURJWHT3a','Testdev002','Testdev002','','0891234561','3','1','2023-10-18 16:24:03','2023-10-18 16:24:03','1');
 
 
 
 -- Dumping data for table `app_user_detail` 
 
-INSERT INTO `app_user_detail` VALUES('17','phone_active','1101800590277','url/image','1993-03-19','112','2','1','7');
+INSERT INTO `app_user_detail` VALUES('4','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','3','33','104');
+INSERT INTO `app_user_detail` VALUES('5','phone_active','2409900020066','static/upload/2023/9/files-i9H1WDJEQf.png','2023-09-12','4124124124','9','9','85');
+INSERT INTO `app_user_detail` VALUES('6','n','4444444444444','static/upload/2023/8/files-WRg9qCNuQr.png','2023-08-22','414412','18','18','106');
+INSERT INTO `app_user_detail` VALUES('7','system_active','2409901123131','static/upload/2023/10/files-N7BvRtgBkD.jpg','2023-10-04','4564654','14','1','107');
+INSERT INTO `app_user_detail` VALUES('8','y','1234567890','static/upload/2023/8/files-zZfiGEECZS.png','2000-11-12','111/123','1','14','108');
+INSERT INTO `app_user_detail` VALUES('9','system_active','11018005902277','url/image','1993-03-19','365','2','1','111');
+INSERT INTO `app_user_detail` VALUES('10','phone_active','1101800590227733','static/upload/2023/10/files-7ABuwOVwny.png','1993-03-19','365','2','1','110');
+INSERT INTO `app_user_detail` VALUES('11','unactive','2409900500412','static/upload/2023/9/files-E2vJaDzhBE.jpg','2023-09-20','4124124124','1','1','113');
+INSERT INTO `app_user_detail` VALUES('12','phone_active','1234567891234','static/upload/2023/10/files-Ji71tOmwfP.jpg','2020-12-31','123456','4','5','114');
+INSERT INTO `app_user_detail` VALUES('13','unactive','2409900020050','static/upload/2023/10/files-AutyfsWNLs.jpg','2023-10-01','4124124124','1','1','116');
+INSERT INTO `app_user_detail` VALUES('14','system_active','412415125125','static/upload/2023/10/files-j5wO5Kf721.jpg','2023-10-06','1t1t61523151255','18','16','117');
+INSERT INTO `app_user_detail` VALUES('15','phone_active','5125125112512','static/upload/2023/10/files-001lmBJBcZ.jpg','2023-10-13','255125','1','1','109');
+INSERT INTO `app_user_detail` VALUES('16','system_active','52523553555','static/upload/2023/10/files-59TZ7GuNIi.jpg','2023-10-19','1415152','1','1','123');
+INSERT INTO `app_user_detail` VALUES('30','system_active','1101800590288','static/upload/2023/10/files-5ZWbAciMro.jpg','2023-10-10','55/99-2','1','33','129');
+INSERT INTO `app_user_detail` VALUES('31','phone_active','25651454411','','2023-10-11','kk','5','33','130');
+INSERT INTO `app_user_detail` VALUES('32','phone_active','65145685412','static/upload/2023/10/files-xMxDizzIEa.jpg','1993-07-13','Test Address','165','33','131');
+INSERT INTO `app_user_detail` VALUES('33','phone_active','265211555','','1985-09-01','25/36','1','33','132');
+INSERT INTO `app_user_detail` VALUES('34','phone_active','26666','static/upload/2023/10/files-pQdhAG1YRP.jpg','2023-10-17','34777','1','33','134');
+INSERT INTO `app_user_detail` VALUES('35','phone_active','25651455','static/upload/2023/10/files-P0ZRSpX6Rs.jpg','2003-10-31','2566','5','33','135');
+INSERT INTO `app_user_detail` VALUES('36','phone_unactive','3011231231231','static/upload/2023/10/files-kI3cQG2oBW.png','2023-05-31','3011231231231','1','1','137');
+INSERT INTO `app_user_detail` VALUES('37','unactive','1241251251251','static/upload/2023/10/files-YeodRpkyLr.jpg','2023-09-26','125125125','1','1','138');
+INSERT INTO `app_user_detail` VALUES('38','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','3','33','7');
 
 
 
@@ -385,170 +448,156 @@ INSERT INTO `app_user_otp` VALUES('8','445755','B2V6YVuGVw','1','2023-08-30 15:3
 
 -- Dumping data for table `app_zipcode_lao` 
 
-INSERT INTO `app_zipcode_lao` VALUES('1','01000','ໄປສະນີກາງ','c345db74601792cbf388bfb943cec7af','ຈັນທະບູລີ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('2','01010','ສີໄຄ','ee884b2039581984dbd995e268ffcdfa','ສີໂຄດຕະບອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('3','01020','ວັດໄຕ','ee884b2039581984dbd995e268ffcdfa','ສີໂຄດຕະບອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('4','01030','ຈີ່ນາຍໂມ້','45ac47309ea3e56392e30ea545966a0c','ສີສັດຕະນາກ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('5','01070','ທ່າງ່ອນ','90c021683e774817ded1e6636830a4c6','ໄຊທານີ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('6','01080','ດົງໂດກ','90c021683e774817ded1e6636830a4c6','ໄຊທານີ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('7','01110','ທ່າເດື່ອ','ee382fd22a4f6f91d9c478e8d28f6da8','ຫາດຊາຍຟອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('8','01120','ບ້ານຫ້ອມ','ee382fd22a4f6f91d9c478e8d28f6da8','ຫາດຊາຍຟອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('9','01140','ນາຊາຍທອງ','204405ec75594c72ed5b5f1de82adea7','ນາຊາຍທອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('10','01160','ທາດຫຼວງ','50e9e73fe33cf75e1ce01810b8da0a9f','ໄຊເສດຖາ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('11','01170','ດອນໜູນ','90c021683e774817ded1e6636830a4c6','ໄຊທານີ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('12','01180','ທ່ານາແລ້ງ','ee382fd22a4f6f91d9c478e8d28f6da8','ຫາດຊາຍຟອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('13','01190','ສັງທອງ','11efee15ff277116c844a178a1dc6f6b','ສັງທອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('14','01200','ປາກງື່ມ','d2ae7aa3e01a2c4ba60d68f52ca93185','ປາກງື່ມ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('15','01210','ຊ້າງຄູ້','90c021683e774817ded1e6636830a4c6','ໄຊທານີ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('16','01220','ດົງຄຳຊ້າງ','ee382fd22a4f6f91d9c478e8d28f6da8','ຫາດຊາຍຟອງ','e3d3882b778463af79d910587471bc54','ນະຄອນຫຼວງ');
-INSERT INTO `app_zipcode_lao` VALUES('17','02000','ຜົ້ງສາລີ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('18','02010','ເມືອງຂວາ','8ac050e82d2f4164a00b3b2887d4f853','ຂວາ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('19','02030','ສຳພັນ','47c8ce687076b3746721c6f963273c53','ສຳພັນ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('20','02040','ເມືອງໃໝ່','0de22506456a41604240ce96de63256e','ໃໝ່','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('21','02050','ບຸນເໜືອ','b02fa3128741df4256978390895738a6','ບຸນເໜືອ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('22','02060','ບຸນໃຕ້','e1b909fcfac04975be1b04e8db80ce3f','ບຸນໃຕ້','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('23','02070','ຍອດອູ','c34d0b6eea8126012435022622689acb','ຍອດອູ','b6734805c6d50f688bdd2aa1e140aafc','ຜົ້ງສາລີ');
-INSERT INTO `app_zipcode_lao` VALUES('24','03000','ຫຼວງນ້ຳທາ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ');
-INSERT INTO `app_zipcode_lao` VALUES('25','03010','ເມືອງສິງ','2578898fdbd71377ddab511ee1fd054c','ສິງ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ');
-INSERT INTO `app_zipcode_lao` VALUES('26','03020','ນາແລ','c1f1ac0264c726d8678fd49365dfd43b','ນາແລ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ');
-INSERT INTO `app_zipcode_lao` VALUES('27','03030','ວຽງພູຄາ','e8b7601b756a9ccfd82e6572a7ed1f49','ວຽງພູຄາ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ');
-INSERT INTO `app_zipcode_lao` VALUES('28','3040','ເມືອງລອງ','a2dd864ce653205f7babaa7878de26ba','ລອງ','1b3aa3c4c06eb2b5564a33df20ce5640','ຫຼວງນ້ຳທາ');
-INSERT INTO `app_zipcode_lao` VALUES('29','04000','ອຸດົມໄຊ','030e542cf9b293a3fe5bf37cef15853a','ໄຊ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('30','04010','ເມືອງຫຼາ','1bf4881fce68c426d7926abd9faeed42','ຫຼາ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('31','04020','ນາໝໍ້','e5a59eac17361c994193880a94dca6eb','ນາໝໍ້','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('32','04030','ເມືອງງາ','1e341f889badec3a72852c00718c61c0','ງາ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('33','04040','ເມືອງແບ່ງ','69e617793ed65b35173237b2a9a4bac6','ແບ່ງ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('34','04050','ເມືອງຮຸນ','11c48c2229dcd1a804ef550f7184adf8','ຮຸນ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('35','04053','ຍາຊຽງດີ','11c48c2229dcd1a804ef550f7184adf8','ຮຸນ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('36','04060','ປາກແບ່ງ','51d970351dfa2ce9b08a88c73a1a3c40','ປາກແບ່ງ','2982159c3df2f6a87f5cdaf6f83d1b1b','ອຸດົມໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('37','05000','ຫ້ວຍຊາຍ','fec574653d9e1df2f75fb851d744a771','ຫ້ວຍຊາຍ','c1ae7c1b7b1f88c97075dc6cdb4233f6','ບໍ່ແກ້ວ');
-INSERT INTO `app_zipcode_lao` VALUES('38','05010','ຕົ້ນເຜິ້ງ','703c0ba928230455c513ab1b61433349','ຕົ້ນເຜິ້ງ','c1ae7c1b7b1f88c97075dc6cdb4233f6','ບໍ່ແກ້ວ');
-INSERT INTO `app_zipcode_lao` VALUES('39','05020','ເມືອງເມິງ','025cb070ee4b683a1deecba4b646aeec','ເມິງ','c1ae7c1b7b1f88c97075dc6cdb4233f6','ບໍ່ແກ້ວ');
-INSERT INTO `app_zipcode_lao` VALUES('40','05030','ປາກທາ','8f77d5e38ebda5e3605511f06d33befa','ປາກທາ','c1ae7c1b7b1f88c97075dc6cdb4233f6','ບໍ່ແກ້ວ');
-INSERT INTO `app_zipcode_lao` VALUES('41','05040','ຜາອຸດົມ','bbcc76b86e2489b217aad4e93052955d','ຜາອຸດົມ','c1ae7c1b7b1f88c97075dc6cdb4233f6','ບໍ່ແກ້ວ');
-INSERT INTO `app_zipcode_lao` VALUES('42','06000','ຫຼວງພະບາງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('43','06010','ຊຽງເງິນ','0639cee842c407fde858908ab73fe7d0','ຊຽງເງິນ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('44','06020','ເມືອງນານ','2174af4f4ebec63083e3cbc647acd941','ນານ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('45','06030','ປາກອູ','5b9be9a585c54336c2d62ebddce2674f','ປາກອູ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('46','06040','ນ້ຳບາກ','a29d2b70e315bfef8159f248fdeb3d83','ນ້ຳບາກ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('47','06050','ເມືອງງອຍ','787c48344cff553f0b9c5f0308059455','ງອຍ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('48','06060','ປາກແຊງ','9542f7f9737eddaf1a5ab169b398287b','ປາກແຊງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('49','06070','ໂພນໄຊ','758dd625ec83e26024abb53f54d5ddbb','ໂພນໄຊ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('50','06080','ເມືອງຂາຍ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('51','06090','ວຽງຄຳ','30dea0f91873c4de0ce64dedb82f5e66','ວຽງຄຳ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('52','06100','ພູຄູນ','527759d2463cb25f8e93081525fa3095','ພູຄູນ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('53','06110','ຈອມເພັດ','e0165b14c9ad24204ea63d802f6448d0','ຈອມເພັດ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('54','06130','ກິ່ວກະຈາ','4c09e6191c12c5f87ac91fce29feab01','ຊຽງເງິຮ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('55','06140','ນ້ຳຖ້ວມ','a29d2b70e315bfef8159f248fdeb3d83','ນ້ຳບາກ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('56','06160','ມະຫາວິທະຍາໄລ ສຸພານຸວົງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ','a35e3e6e78f721e43d9f436427619c01','ຫຼວງພະບາງ');
-INSERT INTO `app_zipcode_lao` VALUES('57','07000','ຊຳເໜືອ','908578a284ff7536543fdd72c31d448a','ຊຳເໜືອ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('58','07010','ຊຽງຄໍ້','8f45a0c06f46645c91c8be9e41bde3cd','ຊຽງຄໍ້','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('59','07020','ວຽງທອງ','9bcc8d5b8dcef863b63494cdafdacc48','ວຽງທອງ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('60','07030','ວຽງໄຊ','38599476e43e2d7067c5f05d1a8ce3fa','ວຽງໄຊ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('61','07040','ຫົວເມືອງ','1a5ad80a3602494931a8fc8b49ff9615','ຫົວເມືອງ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('62','07050','ຊຳໃຕ້','25899599fdb09f734e6bb034c60f6708','ຊຳໃຕ້','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('63','07060','ເມືອງແອດ','837bf0d8c857aa33e2e0059d95536684','ແອດ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('64','07070','ສົບເບົາ','7cc90df36c0072c447f543f185690757','ສົບເບົາ','5ded2fd54a24fa19351f508cfa8e865d','ຫົວພັນ');
-INSERT INTO `app_zipcode_lao` VALUES('65','08000','ໄຊຍະບູລີ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('66','08010','ເມືອງພຽງ','631977b3951c10af693a64905cf6bc83','ພຽງ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('67','08020','ປາກລາຍ','5b5d3ccb19521029466d7135cd001320','ປາກລາຍ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('68','08030','ແກ່ນທ້າວ','d3e421ad75c975c3316d20490bef9133','ແກ່ນທ້າວ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('69','08040','ຫົງສ','5df1a1cbe3d76ed81b0640f06ade3e80','ຫົງສ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('70','08050','ຊຽງຮ່ອນ','ad3fb3e79f744d2a7406fd891e4d36bf','ຊຽງຮ່ອນ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('71','08060','ເມືອງເງິນ','4c6b477668dcb96f004e49ecb41a7129','ເມືອງເງິນ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('72','08070','ເມືອງຄອບ','f7c6500eaae4f9b244f4d5a670fd7833','ຄອບ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('73','08090','ທົ່ງມີໄຊ','ac53b6c525ce574d86b7da0c1fe978bb','ທົ່ງມີໄຊ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('74','08100','ນ້ຳປຸຍ','631977b3951c10af693a64905cf6bc83','ພຽງ','2e16d9b84b20671bb6e93715f1eb9c73','ໄຊຍະບູລີ');
-INSERT INTO `app_zipcode_lao` VALUES('75','09000','ໂພນສະຫວັນ','b32b54f1e3138b477d707c3997792aa4','ແປກ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('76','09010','ເມືອງຄຳ','f1861f555a0f8d728883e26868053b92','ຄຳ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('77','09030','ເມືອງຄູນ','b1608ebb6ba3a9c2914ccca52e96fa13','ຄູນ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('78','09040','ໜອງແຮດ','ea50daabaa0535600782e08672e5141d','ໜອງແຮດ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('79','09050','ຜາໄຊ','a1a3a99b4f8e248d73c3f1bbbfd4d9a2','ຜາໄຊ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('80','09060','ນ້ຳຫງຳ','b32b54f1e3138b477d707c3997792aa4','ແປກ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('81','09070','ໜອງເປັດ','b32b54f1e3138b477d707c3997792aa4','ແປກ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('82','09080','ເມືອງໝອກ','a08c8f627e80573015d199383ea0ec0b','ໝອກ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('83','09090','ພູກູດ','fd2d943151ca87e0675aec70bbd611bc','ພູກູດ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('84','09100','ທ່າວຽງໄຊ','59061ceac4c25d156ebe7ad6c948e991','ທ່າໂທມ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('85','09110','ລ້ອງມັດໃຕ້','f1861f555a0f8d728883e26868053b92','ຄຳ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('86','09130','ບ້ານສຸຍ','fd2d943151ca87e0675aec70bbd611bc','ພູກູດ','9c6201b031799ba3ea02214d115e3b21','ຊຽງຂວາງ');
-INSERT INTO `app_zipcode_lao` VALUES('87','10000','ໂພນໂຮງ','2235090b793065d208b7a7235e2f5fb9','ໂພນໂຮງ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('88','10010','ບ້ານເກິນ','66dcface3b50e87a9ed31b650348664a','ທຸລະຄົມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('89','10020','ທ່າລາດ','b4404484192719872f73a8c3c77069c7','ແກ້ວອຸດົມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('90','10030','ວັງວຽງ','819fa8aa09ea27c1e11e78a402d490d8','ວັງວຽງ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('91','10040','ໄຊສົມບູນ','24ea2b0ae414af94c3cbfb42b570ddad','ໄຊສົມບູນ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('92','10050','ເມືອງເຟືອງ','3e077a7cb467e6f4cb2acf625576e83c','ເຟືອງ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('93','10060','ຊະນະຄາມ','150ce882d8508cfc277ddea930ca6fdd','ຊະນະຄາມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('94','10070','ກາສີ','4dae2ce3b27719e2d109f2d6e124cd26','ກາສີ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('95','10080','ຜາລະແວກ','f39f572829d39ec2533b4a9bc0dd3072','ຮົ່ມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('96','10100','ຫຼັກ52','2235090b793065d208b7a7235e2f5fb9','ໂພນໂຮງ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('97','10110','ໂຮງຮຽນເຕັກນິກ','30dea0f91873c4de0ce64dedb82f5e66','ວຽງຄຳ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('98','10120','ໂນນໄຮ','30dea0f91873c4de0ce64dedb82f5e66','ວຽງຄຳ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('99','10130','ລ້ອງຊານ','f39f572829d39ec2533b4a9bc0dd3072','ຮົ່ມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('100','10140','516','f39f572829d39ec2533b4a9bc0dd3072','ຮົ່ມ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('101','10150','ເມືອງແມດ','d492b92af53b4d9b0d4da1c3558a9491','ແມດ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('102','10160','ຫີນຫົວເສືອ','24ea2b0ae414af94c3cbfb42b570ddad','ໄຊສົມບູນ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('103','10170','ນ້ຳຍອນ','24ea2b0ae414af94c3cbfb42b570ddad','ໄຊສົມບູນ','9fd4a5106385b2bf9a16e01e56b4651c','ວຽງຈັນ');
-INSERT INTO `app_zipcode_lao` VALUES('104','11000','ປາກຊັນ','47657a989ee173118155b328b8b30de7','ປາກຊັນ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('105','11010','ບໍລິຄັນ','60c5da675e3aec35efcb595296798582','ບໍລິຄັນ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('106','11020','ປາກກະດິງ','b9ebe9306214715857013edceea41145','ປາກກະດິງ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('107','11030','ທ່າບົກ','8f0e6b14e98e63ebea0711e8a9d95179','ທ່າພະບາດ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('108','11040','ຫຼັກ20','644fa54b428c4b7d39a9f6c923a4a65f','ຄຳເກີດ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('109','11050','ວຽງທອງ','9bcc8d5b8dcef863b63494cdafdacc48','ວຽງທອງ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('110','11060','ທົ່ງນາມີ','b9ebe9306214715857013edceea41145','ປາກກະດິງ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('111','11070','ຜາເມືອງ','60c5da675e3aec35efcb595296798582','ບໍລິຄັນ','dbca658d5da6f4251234dcc24382016b','ບໍລິຄຳໄຊ');
-INSERT INTO `app_zipcode_lao` VALUES('112','12000','ຄຳມ່ວນ','2a55aa4464cd5dfcdfc5b3394b863bfb','ທ່າແຂກ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('113','12010','ມະຫາໄຊ','51ffa27ce838e021048cddd6e75c2619','ມະຫາໄຊ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('114','12020','ໜອງບົກ','a5e153f0297fd444f28eb737da2b96ef','ໜອງບົກ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('115','12030','ຫີນບູນ','4937c451335ab66845c0c21ff159d1c2','ຫີນບູນ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('116','12050','ຍົມມະລາດ','be8be7748b6fc6493a8ffa8c78165faa','ຍົມມະລາດ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('117','12060','ບົວລະພາ','03fcc14f2c6dc1e7ae0b84d9c6364dee','ບົວລະພາ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('118','12070','ເຊບັ້ງໄຟ','b87e9e65370d7cd00470707f30a52f62','ເຊບັ້ງໄຟ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('119','12080','ນາກາຍ','992fc97c608b4e04349fa569c24b2528','ນາກາຍ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('120','12090','ໄຊບົວທອງ','ad07b0f3a144c652e525cfcb5aba9bc2','ໄຊບົວທອງ','0d0f6d7af210ce5ef0e4e8e8b8fab2dc','ຄຳມ່ວນ');
-INSERT INTO `app_zipcode_lao` VALUES('121','13000','ສະຫວັນນະເຂດ','858e669a05ff25ea6b0e3013bc341ce1','ໄກສອນ ພົມວິຫານ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('122','13020','ອຸທຸມພອນ','82ea3f0006bc0af31c3358d9524b0226','ອຸທຸມພອນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('123','13030','ອາດສະພັງທອງ','58f1e137b4da97dc597b38374c48c7c2','ອດາສະພັງທອງ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('124','13040','ເມືອງພີນ','2e93eddc2858002c16e2c3d8758cfa68','ພີນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('125','13050','ເຊໂປນ','cd36403954b2730e9c3b19b4e94de084','ເຊໂປນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('126','13060','ຈຳພອນ','5d7cc595ec7d7c03fb72b1536215715f','ຈຳພອນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('127','13070','ສອງຄອນ','b7cc87cf7120ee760af54b9c0c18b4fb','ສອງຄອນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('128','13080','ອຸດົມວິໄລ','858e669a05ff25ea6b0e3013bc341ce1','ໄກສອນ ພົມວິຫານ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('129','13090','ວິລະບູລີ','413d6ea4fe10930eba31e002d46611ec','ວິລະບູລີ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('130','13100','ທ່າປາງທອງ','ad99d5e7bfd436ec8efb86b154eb174e','ທ່າປາງທອງ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('131','13110','ຊົນນະບູລີ','70275001dc66336fb95ce2b96f934abf','ຊົນນະບູລີ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('132','13120','ໄຊບູລີ','1cad6a7b3649133254fe05adedce1f2c','ໄຊບູລີ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('133','13140','ເມືອງນອງ','693a5dc48bb91cf1357a24d6b2b63653','ນອງ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('134','13150','ອາດສະພອນ','5cb5c553ff6068705eff3fba8c174117','ອາດສະພອນ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('135','13160','ໄຊພູທອງ','93c4a3c557a996f2afd068c41af3c72b','ໄຊພູທອງ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('136','13170','ພະລານໄຊ','794c9f12de0531aa71d27e6b2cc12cde','ພະລານໄຊ','2815ef4253638f997030af6fecfd7340','ສະຫວັນນະເຂດ');
-INSERT INTO `app_zipcode_lao` VALUES('137','14000','ສາລະວັນ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('138','14010','ຕະໂອ້ຍ','d5fbb69c3ba7f041a45725e216e6febc','ຕະໂອ້ຍ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('139','14020','ຕຸມລານ','e104cdac85169feb40793faf5e5c0a3f','ຕຸມລານ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('140','14040','ວາປີ','692455047f0852c4a540b5843923adec','ວາປີ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('141','14050','ຄົງເຊໂດນ','4be50520f1f75f702b69380cb9341274','ຄົງເຊໂດນ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('142','14060','ເລົ່າງາມ','f8a65ce75d4be4acad621732ecdd872a','ເລົ່າງາມ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('143','14070','ລະຄອນເພັງ','942786d15ed9786de501605d00e2ea85','ລະຄອນເພັງ','752fc5b4faf2e7fc7b14fe5cbd1fbd57','ສາລະວັນ');
-INSERT INTO `app_zipcode_lao` VALUES('144','15000','ເຊກອງ','cbfc9c7e8ab4884e319582d365520391','ລະມາມ','e75d699b6a31b07e4baec5bc856344ee','ເຊກອງ');
-INSERT INTO `app_zipcode_lao` VALUES('145','15010','ທ່າແຕ໋ງ','5f4660e636a53fb3aa59ad886ebe3bdd','ທ່າແຕ໋ງ','e75d699b6a31b07e4baec5bc856344ee','ເຊກອງ');
-INSERT INTO `app_zipcode_lao` VALUES('146','15020','ກະລຶມ','309d39b7c73f7ae92e418572c2d62abf','ກະລຶມ','e75d699b6a31b07e4baec5bc856344ee','ເຊກອງ');
-INSERT INTO `app_zipcode_lao` VALUES('147','15030','ດັກຈຶງ','35cc625e0c9f042d24580fab79e0b2bb','ດັກຈຶງ','e75d699b6a31b07e4baec5bc856344ee','ເຊກອງ');
-INSERT INTO `app_zipcode_lao` VALUES('148','16000','ປາກເຊ','7ba903840c45b96d4af60eb0ee349a64','ປາກເຊ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('149','16010','ຈຳປາສັກ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('150','16020','ເມືອງໂຂງ','3b02da4ec732335a6367ba4aad977856','ໂຂງ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('151','16030','ມູນລະປະໂມກ','98629f72ea3c7670a54dd2387b3c6744','ມູນລະປະໂມກ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('152','16040','ສຸຂຸມາ','5c3ed821fa4a4b560e103663ad232f69','ສຸຂຸມາ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('153','16050','ປະທຸມພອນ','52eb6c23044d7822db679bc7ecdcb36b','ປະທຸມພອນ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('154','16060','ໂພນທອງ','fdbb1a64acbbe174f1e084ecb8ba6e18','ໂພນທອງ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('155','16070','ຊະນະສົມບູນ','0f50b401cb6cc17f06ec079530137e5f','ຊະນະສົມບູນ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('156','16080','ປາກຊ່ອງ','acb4baa3252f10bebf2db86cb3483dc8','ປາກຊ່ອງ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('157','16090','ບາຈຽງຈະເລີນສຸກ','1f99ab064f8fc53a538056bd01101f94','ບາຈຽງຈະເລີນສຸກ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('158','16100','ຂີ້ນາກ','3b02da4ec732335a6367ba4aad977856','ໂຂງ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('159','16120','ເດີ່ນບິນ','7ba903840c45b96d4af60eb0ee349a64','ປາກເຊ','a4d2dc30331186d36b1f34c02cb193fe','ຈຳປາສັກ');
-INSERT INTO `app_zipcode_lao` VALUES('160','17000','ອັດຕະປື','ec923062d97dc0a255b87d8f18d606d0','ສາມັກຄີໄຊ','398eb34a68ead658454c8b11d6b4e154','ອັດຕະປື');
-INSERT INTO `app_zipcode_lao` VALUES('161','17010','ໄຊເສດຖາ','50e9e73fe33cf75e1ce01810b8da0a9f','ໄຊເສດຖາ','398eb34a68ead658454c8b11d6b4e154','ອັດຕະປື');
-INSERT INTO `app_zipcode_lao` VALUES('162','17020','ສະໜາມໄຊ','117628a3743d052a69454c157fff479e','ສະໜາມໄຊ','398eb34a68ead658454c8b11d6b4e154','ອັດຕະປື');
-INSERT INTO `app_zipcode_lao` VALUES('163','17030','ພູວົງ','2deecf66d6550da32213051bb9e07a57','ພູວົງ','398eb34a68ead658454c8b11d6b4e154','ອັດຕະປື');
-INSERT INTO `app_zipcode_lao` VALUES('164','17040','ສານໄຊ','66deb82ae6daec2d513a2af77a270338','ສານໄຊ','398eb34a68ead658454c8b11d6b4e154','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('1','1','ຈັນທະບູລີ','1','ຈັນທະບູລີ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('2','2','ສີໂຄດຕະບອງ','2','ສີໂຄດຕະບອງ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('3','3','ໄຊເສດຖາ','3','ໄຊເສດຖາ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('4','4','ສີສັດຕະນາກ','4','ສີສັດຕະນາກ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('5','5','ນາຊາຍທອງ','5','ນາຊາຍທອງ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('6','6','ໄຊທານີ','6','ໄຊທານີ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('7','7','ຫາດຊາຍຟອງ','7','ຫາດຊາຍຟອງ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('8','8','ສັງທອງ','8','ສັງທອງ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('9','9','ປາກງື່ມ','9','ປາກງື່ມ','1','ນະຄອນຫລວງວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('10','10','ຜົ້ງສາລີ','10','ຜົ້ງສາລີ','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('11','11','ໃໝ່','11','ໃໝ່','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('12','12','ຂວາ','12','ຂວາ','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('13','13','ສຳພັນ','13','ສຳພັນ','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('14','14','ບຸນເຫນືອ','14','ບຸນເຫນືອ','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('15','15','ຍອດອູ','15','ຍອດອູ','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('16','16','ບຸນໃຕ້','16','ບຸນໃຕ້','2','ຜົ້ງສາລີ');
+INSERT INTO `app_zipcode_lao` VALUES('17','17','ນ້ຳທາ','17','ນ້ຳທາ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('18','18','ສິງ','18','ສິງ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('19','19','ລອງ','19','ລອງ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('20','20','ວຽງພູຄາ','20','ວຽງພູຄາ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('21','21','ນາແລ','21','ນາແລ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('22','22','ນາເຕີຍ','22','ນາເຕີຍ','3','ຫລວງນໍ້າທາ');
+INSERT INTO `app_zipcode_lao` VALUES('23','23','ໄຊ','23','ໄຊ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('24','24','ຫລາ','24','ຫລາ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('25','25','ນາຫມໍ້','25','ນາຫມໍ້','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('26','26','ງາ','26','ງາ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('27','27','ແບງ','27','ແບງ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('28','28','ຮຸນ','28','ຮຸນ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('29','29','ປາກແບ່ງ','29','ປາກແບ່ງ','4','ອຸດົມໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('30','30','ຫ້ວຍຊາຍ','30','ຫ້ວຍຊາຍ','5','ບໍ່ແກ້ວ');
+INSERT INTO `app_zipcode_lao` VALUES('31','31','ຕົ້ນເຜິ້ງ','31','ຕົ້ນເຜິ້ງ','5','ບໍ່ແກ້ວ');
+INSERT INTO `app_zipcode_lao` VALUES('32','32','ເມິງ','32','ເມິງ','5','ບໍ່ແກ້ວ');
+INSERT INTO `app_zipcode_lao` VALUES('33','33','ຜາອຸດົມ','33','ຜາອຸດົມ','5','ບໍ່ແກ້ວ');
+INSERT INTO `app_zipcode_lao` VALUES('34','34','ປາກທາ','34','ປາກທາ','5','ບໍ່ແກ້ວ');
+INSERT INTO `app_zipcode_lao` VALUES('35','35','ຫລວງພະບາງ','35','ຫລວງພະບາງ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('36','36','ຊຽງເງິນ','36','ຊຽງເງິນ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('37','37','ນານ','37','ນານ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('38','38','ປາກອູ','38','ປາກອູ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('39','39','ນ້ຳບາກ','39','ນ້ຳບາກ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('40','40','ງອຍ','40','ງອຍ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('41','41','ປາກແຊງ','41','ປາກແຊງ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('42','42','ໂພນໄຊ','42','ໂພນໄຊ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('43','43','ຈອມເພັດ','43','ຈອມເພັດ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('44','44','ວຽງຄຳ','44','ວຽງຄຳ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('45','45','ພູຄູນ','45','ພູຄູນ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('46','46','ໂພນທອງ','46','ໂພນທອງ','6','ຫລວງພະບາງ');
+INSERT INTO `app_zipcode_lao` VALUES('47','47','ຊຳເໜືອ','47','ຊຳເໜືອ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('48','48','ຊຽງຄໍ້','48','ຊຽງຄໍ້','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('49','49','ວຽງທອງ','49','ວຽງທອງ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('50','50','ວຽງໄຊ','50','ວຽງໄຊ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('51','51','ຫົວເມືອງ','51','ຫົວເມືອງ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('52','52','ຊຳໃຕ້','52','ຊຳໃຕ້','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('53','53','ສົບເບົາ','53','ສົບເບົາ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('54','54','ແອດ','54','ແອດ','7','ຫົວພັນ');
+INSERT INTO `app_zipcode_lao` VALUES('55','55','ໄຊຍະບູລີ','55','ໄຊຍະບູລີ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('56','56','ພຽງ','56','ພຽງ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('57','57','ປາກລາຍ','57','ປາກລາຍ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('58','58','ແກ່ນທ້າວ','58','ແກ່ນທ້າວ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('59','59','ບໍ່ແຕນ','59','ບໍ່ແຕນ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('60','60','ຫົງສາ','60','ຫົງສາ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('61','61','ຊຽງຮ່ອນ','61','ຊຽງຮ່ອນ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('62','62','ຄອບ','62','ຄອບ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('63','63','ເງິນ','63','ເງິນ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('64','64','ທົ່ງມີໄຊ','64','ທົ່ງມີໄຊ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('65','65','ໄຊຊະຖານ','65','ໄຊຊະຖານ','8','ໄຊຍະບູລີ');
+INSERT INTO `app_zipcode_lao` VALUES('66','66','ແປກ','66','ແປກ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('67','67','ຄຳ','67','ຄຳ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('68','68','ໜອງແຮດ','68','ໜອງແຮດ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('69','69','ຄູນ','69','ຄູນ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('70','70','ໝອກໃໝ່','70','ໝອກໃໝ່','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('71','71','ພູກູດ','71','ພູກູດ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('72','72','ຜາໄຊ','72','ຜາໄຊ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('73','73','ທ່າໂທມ','73','ທ່າໂທມ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('74','74','ພູນ','74','ພູນ','9','ຊຽງຂວາງ');
+INSERT INTO `app_zipcode_lao` VALUES('75','75','ໂພນໂຮງ','75','ໂພນໂຮງ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('76','76','ທຸລະຄົມ','76','ທຸລະຄົມ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('77','77','ແກ້ວອຸດົມ','77','ແກ້ວອຸດົມ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('78','78','ກາສີ','78','ກາສີ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('79','79','ວັງວຽງ','79','ວັງວຽງ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('80','80','ເຟືອງ','80','ເຟືອງ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('81','81','ຊະນະຄາມ','81','ຊະນະຄາມ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('82','82','ແມດ','82','ແມດ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('83','83','ວຽງຄຳ','83','ວຽງຄຳ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('84','84','ຫີນເຫີບ','84','ຫີນເຫີບ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('85','85','ລ່ອງຊານ','85','ລ່ອງຊານ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('86','86','ຮົ່ມ','86','ຮົ່ມ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('87','87','ໄຊສົມບູນ','87','ໄຊສົມບູນ','10','ວຽງຈັນ');
+INSERT INTO `app_zipcode_lao` VALUES('88','88','ປາກຊັນ','88','ປາກຊັນ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('89','89','ທ່າພະບາດ','89','ທ່າພະບາດ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('90','90','ປາກກະດິງ','90','ປາກກະດິງ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('91','91','ບໍລິຄັນ','91','ບໍລິຄັນ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('92','92','ຄຳເກີດ','92','ຄຳເກີດ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('93','93','ວຽງທອງ','93','ວຽງທອງ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('94','94','ໄຊຈຳພອນ','94','ໄຊຈຳພອນ','11','ບໍລິຄຳໄຊ');
+INSERT INTO `app_zipcode_lao` VALUES('95','95','ທ່າແຂກ','95','ທ່າແຂກ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('96','96','ມະຫາໄຊ','96','ມະຫາໄຊ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('97','97','ໜອງບົກ','97','ໜອງບົກ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('98','98','ຫີນບູນ','98','ຫີນບູນ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('99','99','ຍົມມະລາດ','99','ຍົມມະລາດ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('100','100','ບົວລະພາ','100','ບົວລະພາ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('101','101','ເຊບັ້ງໄຟ','101','ເຊບັ້ງໄຟ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('102','102','ນາກາຍ','102','ນາກາຍ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('103','103','ໄຊບົວທອງ','103','ໄຊບົວທອງ','12','ຄຳມ່ວນ');
+INSERT INTO `app_zipcode_lao` VALUES('104','104','ໄກສອນ','104','ໄກສອນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('105','105','ອຸດທຸມພອນ','105','ອຸດທຸມພອນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('106','106','ອາດສະພັງທອງ','106','ອາດສະພັງທອງ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('107','107','ພີນ','107','ພີນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('108','108','ເຊໂປນ','108','ເຊໂປນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('109','109','ນອງ','109','ນອງ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('110','110','ທ່າປາງທອງ','110','ທ່າປາງທອງ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('111','111','ສອງຄອນ','111','ສອງຄອນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('112','112','ຈຳພອນ','112','ຈຳພອນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('113','113','ຊົນບູລີ','113','ຊົນບູລີ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('114','114','ໄຊບູລີ','114','ໄຊບູລີ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('115','115','ວີລະບູລີ','115','ວີລະບູລີ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('116','116','ອາດສະພອນ','116','ອາດສະພອນ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('117','117','ໄຊພູທອງ','117','ໄຊພູທອງ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('118','118','ທ່າພະລານໄຊ','118','ທ່າພະລານໄຊ','13','ສະຫວັນນະເຂດ');
+INSERT INTO `app_zipcode_lao` VALUES('119','119','ສາລະວັນ','119','ສາລະວັນ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('120','120','ຕະໂອຍ','120','ຕະໂອຍ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('121','121','ຕຸ້ມລານ','121','ຕຸ້ມລານ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('122','122','ລະຄອນເພັງ','122','ລະຄອນເພັງ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('123','123','ວາປີ','123','ວາປີ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('124','124','ຄົງເຊໂດນ','124','ຄົງເຊໂດນ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('125','125','ເລົ່າງາມ','125','ເລົ່າງາມ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('126','126','ສະໝ້ວຍ','126','ສະໝ້ວຍ','14','ສາລະວັນ');
+INSERT INTO `app_zipcode_lao` VALUES('127','127','ລະມາມ','127','ລະມາມ','15','ເຊກອງ');
+INSERT INTO `app_zipcode_lao` VALUES('128','128','ກະລຶມ','128','ກະລຶມ','15','ເຊກອງ');
+INSERT INTO `app_zipcode_lao` VALUES('129','129','ດັກຈຶງ','129','ດັກຈຶງ','15','ເຊກອງ');
+INSERT INTO `app_zipcode_lao` VALUES('130','130','ທ່າແຕງ','130','ທ່າແຕງ','15','ເຊກອງ');
+INSERT INTO `app_zipcode_lao` VALUES('131','131','ປາກເຊ','131','ປາກເຊ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('132','132','ຊະນະສົມບູນ','132','ຊະນະສົມບູນ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('133','133','ບາຈຽງຈະເລີນສຸກ','133','ບາຈຽງຈະເລີນສຸກ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('134','134','ປາກຊ່ອງ','134','ປາກຊ່ອງ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('135','135','ປະທຸມພອນ','135','ປະທຸມພອນ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('136','136','ໂພນທອງ','136','ໂພນທອງ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('137','137','ຈຳປາສັກ','137','ຈຳປາສັກ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('138','138','ສຸຂຸມມາ','138','ສຸຂຸມມາ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('139','139','ມູນລະປະໂມກ','139','ມູນລະປະໂມກ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('140','140','ໂຂງ','140','ໂຂງ','16','ຈຳປາສັກ');
+INSERT INTO `app_zipcode_lao` VALUES('141','141','ໄຊເຊດຖາ','141','ໄຊເຊດຖາ','17','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('142','142','ສາມັກຄີໄຊ','142','ສາມັກຄີໄຊ','17','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('143','143','ສະຫນາມໄຊ','143','ສະຫນາມໄຊ','17','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('144','144','ສານໄຊ','144','ສານໄຊ','17','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('145','145','ພູວົງ','145','ພູວົງ','17','ອັດຕະປື');
+INSERT INTO `app_zipcode_lao` VALUES('146','146','ອະນຸວົງ','146','ອະນຸວົງ','18','ໄຊສົມບູນ');
+INSERT INTO `app_zipcode_lao` VALUES('147','147','ລ້ອງແຈ້ງ','147','ລ້ອງແຈ້ງ','18','ໄຊສົມບູນ');
+INSERT INTO `app_zipcode_lao` VALUES('148','148','ລ້ອງຊານ','148','ລ້ອງຊານ','18','ໄຊສົມບູນ');
+INSERT INTO `app_zipcode_lao` VALUES('149','149','ຮົ່ມ','149','ຮົ່ມ','18','ໄຊສົມບູນ');
+INSERT INTO `app_zipcode_lao` VALUES('150','150','ທ່າໂທມ','150','ທ່າໂທມ','18','ໄຊສົມບູນ');
 
 
 

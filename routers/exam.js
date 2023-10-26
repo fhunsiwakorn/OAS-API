@@ -556,7 +556,14 @@ FROM
   // console.log(total_cache);
   if (total_cache < 1) {
     await runQuery(
-      `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id) SELECT IF(em_id >=1,'0','0') AS c1 ,eq_id,em_id ,IF(em_id >=1,${user_id},'0') AS c2 FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
+      `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id,udp_date) 
+      SELECT 
+      IF(em_id >=1,'0','0') AS c1 ,
+      eq_id,
+      em_id,
+      IF(em_id >=1,'${user_id}','0'), 
+      IF(em_id >=1,'${localISOTime}','${localISOTime}')
+      FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
       [em_id, em_random_amount]
     );
   }
