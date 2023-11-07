@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get("/", function (req, res, next) {
   return res.json({
-    project_name: "Online Application System : OAS (สปป. ลาว)",
+    project_name: "DoT Smart App",
     deverlopment: "Siwakorn Banluesapy",
   });
 });
