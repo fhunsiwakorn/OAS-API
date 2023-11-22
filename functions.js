@@ -20,4 +20,12 @@ f.urlFriendly = (value) => {
         .replace(/^-|-$/g, "")
         .toLowerCase();
 };
+f.datetimeNow = () => {
+  const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+  const localISOTime = new Date(Date.now() - tzoffset)
+    .toISOString()
+    .slice(0, -1);
+  return localISOTime;
+};
+
 module.exports = f;

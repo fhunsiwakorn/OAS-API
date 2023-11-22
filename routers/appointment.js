@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
-const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
+const functions = require("../functions");
+const localISOTime = functions.datetimeNow();
 const common = require("../common");
 
 async function runQuery(sql, param) {

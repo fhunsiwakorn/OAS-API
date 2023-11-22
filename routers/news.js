@@ -3,8 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-const localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
+const localISOTime = functions.datetimeNow();
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
