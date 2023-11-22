@@ -422,7 +422,7 @@ router.post("/reserve/get/:ap_id", middleware, (req, res, next) => {
   let search_param = [];
   let sql = `
   SELECT t1.*,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t3.user_id,'user_firstname', t3.user_firstname,'user_lastname', t3.user_lastname , 'user_email', t3.user_email,'user_phone', t3.user_phone,'identification_number', t7.identification_number)))  FROM app_user t3   INNER JOIN app_user_detail t7 ON t7.user_id = t3.user_id WHERE t3.user_id =  t1.user_id) AS user_reserve,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t3.user_id,'user_prefrix', t3.user_prefrix,'user_firstname', t3.user_firstname,'user_lastname', t3.user_lastname , 'user_email', t3.user_email,'user_phone', t3.user_phone,'identification_number', t7.identification_number)))  FROM app_user t3   INNER JOIN app_user_detail t7 ON t7.user_id = t3.user_id WHERE t3.user_id =  t1.user_id) AS user_reserve,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('ap_id', t5.ap_id,'ap_learn_type', t5.ap_learn_type,'ap_quota', t5.ap_quota , 'ap_date_start', t5.ap_date_start,'ap_date_end', t5.ap_date_end,'ap_remark', t5.ap_remark,'dlt_code', t5.dlt_code)))  FROM app_appointment t5  WHERE t5.ap_id =  t1.ap_id ) AS appointment_detail
   FROM app_appointment_reserve t1  
   INNER JOIN app_appointment t2 ON t2.ap_id = t1.ap_id AND t2.cancelled=1 
@@ -484,7 +484,7 @@ router.get("/reserve/list?", middleware, (req, res, next) => {
   const present_day = new Date(req.query.present_day);
   let sql = `
   SELECT t1.*, 
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t3.user_id,'user_firstname', t3.user_firstname,'user_lastname', t3.user_lastname , 'user_email', t3.user_email,
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t3.user_id,'user_prefrix', t3.user_prefrix,'user_firstname', t3.user_firstname,'user_lastname', t3.user_lastname , 'user_email', t3.user_email,
   'user_phone', t3.user_phone,'identification_number', t7.identification_number,'user_img', t7.user_img,'user_birthday', t7.user_birthday,'user_address', t7.user_address,
   'user_location',(SELECT   GROUP_CONCAT( (JSON_OBJECT('zipcode', t4.zipcode,'zipcode_name', t4.zipcode_name,'amphur_name', t4.amphur_name,'province_name', t4.province_name   ) ))   FROM app_zipcode_lao t4 WHERE t4.id = t7.location_id )
   ))) 
@@ -508,6 +508,7 @@ router.get("/reserve/list?", middleware, (req, res, next) => {
           udp_date: el?.udp_date,
           user_reserve: {
             user_id: user_reserve?.user_id,
+            user_prefrix: user_reserve?.user_prefrix,
             user_firstname: user_reserve?.user_firstname,
             user_lastname: user_reserve?.user_lastname,
             user_email: user_reserve?.user_id,

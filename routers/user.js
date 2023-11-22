@@ -153,10 +153,11 @@ router.post("/create", middleware, async (req, res, next) => {
       let userHash = hash;
       // console.log("Hash ", hash);
       con.query(
-        "INSERT INTO app_user (user_name, user_password,user_firstname,user_lastname,user_email,user_phone,user_type,active,crt_date,udp_date) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_user (user_name, user_password,user_prefrix,user_firstname,user_lastname,user_email,user_phone,user_type,active,crt_date,udp_date) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
           user_name,
           userHash,
+          data.user_prefrix,
           data.user_firstname,
           data.user_lastname,
           user_email,
@@ -227,10 +228,11 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
       .then((hash) => {
         let passHash = hash;
         con.query(
-          "UPDATE  app_user SET user_name=? , user_password=? ,user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
+          "UPDATE  app_user SET user_name=? , user_password=? ,user_prefrix=?, user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
           [
             user_name,
             passHash,
+            data.user_prefrix,
             data.user_firstname,
             data.user_lastname,
             user_email,
@@ -252,6 +254,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
       "UPDATE  app_user SET user_name=? , user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
       [
         user_name,
+        data.user_prefrix,
         data.user_firstname,
         data.user_lastname,
         user_email,
@@ -313,6 +316,7 @@ router.get("/get/:user_id", middleware, async (req, res, next) => {
   const response = {
     user_id: data?.user_id,
     user_name: data?.user_name,
+    user_prefrix: data?.user_prefrix,
     user_firstname: data?.user_firstname,
     user_lastname: data?.user_lastname,
     user_email: data?.user_email,
