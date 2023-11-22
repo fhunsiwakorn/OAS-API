@@ -250,7 +250,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
       .catch((err) => console.error(err.message));
   } else {
     con.query(
-      "UPDATE  app_user SET user_name=? , user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
+      "UPDATE  app_user SET user_name=? ,user_prefrix=?, user_firstname=? ,user_lastname=? ,user_email=? ,user_phone=? ,user_type=?,active=?, udp_date=? WHERE user_id=? ",
       [
         user_name,
         data.user_prefrix,
