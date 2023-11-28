@@ -37,9 +37,9 @@ router.post("/sms/laotel/send", middleware, (req, res, next) => {
       method: "POST",
       body: post,
       json: true,
-      url: "https://ltcapi-uat.laotel.com:9443/api/sms_center/submit_sms",
+      url: "https://apicenter.laotel.com:9443/api/sms_center/submit_sms",
       headers: {
-        Apikey: "1JMr6JLXfRonSIhmPLjYGHcTj0rAwPgK",
+        Apikey: "ufCeK941cimODrm6iCtisQg1JFAdGu62",
         "Content-Type": "application/json",
       },
     },

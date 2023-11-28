@@ -260,6 +260,7 @@ CREATE TABLE `app_user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(64) NOT NULL,
   `user_password` varchar(128) NOT NULL,
+  `user_prefrix` varchar(24) NOT NULL,
   `user_firstname` varchar(64) NOT NULL,
   `user_lastname` varchar(64) NOT NULL,
   `user_email` varchar(64) NOT NULL,
@@ -270,7 +271,7 @@ CREATE TABLE `app_user` (
   `udp_date` datetime NOT NULL,
   `cancelled` int(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=139 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='ตาราง User';
+) ENGINE=InnoDB AUTO_INCREMENT=141 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='ตาราง User';
 
 -- Table structure for table `app_user_detail`; 
 
