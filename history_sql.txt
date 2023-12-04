@@ -1,1 +1,4 @@
 ALTER TABLE `app_user` ADD `user_prefrix` VARCHAR(24) NOT NULL AFTER `user_password`;
+
+4/12/2023
+ALTER TABLE `app_user_detail` ADD `user_village` VARCHAR(128) NOT NULL AFTER `user_address`;

@@ -306,6 +306,7 @@ router.get("/get/:user_id", middleware, async (req, res, next) => {
       user_img: detail?.user_img,
       user_birthday: detail?.user_birthday,
       user_address: detail?.user_address,
+      user_village: detail?.user_village,
       location_id: detail?.location_id,
       country_id: detail?.country_id,
       location: location,
@@ -465,13 +466,14 @@ router.post("/detail/create", middleware, async (req, res, next) => {
 
   if (id_detail <= 0) {
     let result = await runQuery(
-      "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?)",
+      "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,user_village,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?,?)",
       [
         verify_account,
         identification_number,
         data.user_img,
         data.user_birthday,
         data.user_address,
+        data.user_village,
         location_id,
         country_id,
         data.user_id,
@@ -480,13 +482,14 @@ router.post("/detail/create", middleware, async (req, res, next) => {
     return res.json(result);
   } else {
     let result = await runQuery(
-      "UPDATE  app_user_detail SET verify_account=?,identification_number=?, user_img=? , user_birthday=? ,user_address=? ,location_id=? ,country_id=?  WHERE user_id=? ",
+      "UPDATE  app_user_detail SET verify_account=?,identification_number=?, user_img=? , user_birthday=? ,user_address=? ,user_village=?, location_id=? ,country_id=?  WHERE user_id=? ",
       [
         verify_account,
         identification_number,
         data.user_img,
         data.user_birthday,
         data.user_address,
+        data.user_village,
         location_id,
         country_id,
         data.user_id,
