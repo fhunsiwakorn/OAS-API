@@ -275,7 +275,7 @@ router.get("/get/:user_id", middleware, async (req, res, next) => {
   const { user_id } = req.params;
   let sql = `SELECT 
   t1.* ,
-  (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'identification_number', t2.identification_number,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'location_id', t2.location_id,'country_id',t2.country_id,
+  (SELECT  GROUP_CONCAT((JSON_OBJECT('verify_account', t2.verify_account,'identification_number', t2.identification_number,'user_img', t2.user_img,'user_birthday', t2.user_birthday,'user_address', t2.user_address,'user_village', t2.user_village,'location_id', t2.location_id,'country_id',t2.country_id,
   'location', (SELECT   GROUP_CONCAT((JSON_OBJECT('zipcode', t3.zipcode,'zipcode_name', t3.zipcode_name ,'amphur_code', t3.amphur_code,'amphur_name', t3.amphur_name, 'province_code', t3.province_code,'province_name', t3.province_name)))  FROM app_zipcode_lao t3  WHERE t3.id =  t2.location_id),
   'country', (SELECT   GROUP_CONCAT((JSON_OBJECT('country_name_eng', t4.country_name_eng,'country_official_name_eng', t4.country_official_name_eng , 'capital_name_eng', t4.capital_name_eng,'zone', t4.zone)))  FROM app_country t4  WHERE t4.country_id =  t2.country_id)
   )))  FROM app_user_detail t2  WHERE t2.user_id =  t1.user_id ) AS detail,
