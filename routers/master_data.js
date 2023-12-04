@@ -28,7 +28,7 @@ router.post("/zipcode", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `ORDER BY zipcode_name ASC LIMIT ${offset},${per_page} `;
+  sql += ` ORDER BY zipcode_name ASC LIMIT ${offset},${per_page} `;
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
     if (err) {
@@ -76,7 +76,7 @@ router.post("/contry", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += `ORDER BY country_name_eng ASC LIMIT ${offset},${per_page} `;
+  sql += ` ORDER BY country_name_eng ASC LIMIT ${offset},${per_page} `;
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
     if (err) {
