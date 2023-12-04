@@ -341,6 +341,65 @@ router.delete("/delete/:user_id", middleware, (req, res, next) => {
   );
 });
 
+router.put("/change_password/:user_id", middleware, async (req, res, next) => {
+  const { user_id } = req.params;
+  const data = req.body;
+  let curent_password = data.curent_password;
+  let new_password = data.new_password;
+  let confirm_new_password = data.confirm_new_password;
+
+  if (new_password !== confirm_new_password) {
+    return res.status(404).json({
+      status: 404,
+      message: "Passwords do NOT match!",
+    });
+  }
+  let _content_users = await runQuery(
+    "SELECT * FROM app_user WHERE user_id = ?",
+    [user_id]
+  );
+  if (_content_users.length <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Data is null",
+    });
+  }
+  password_verify = _content_users[0]?.user_password;
+
+  bcrypt
+    .compare(curent_password, password_verify)
+    .then((result) => {
+      if (result === true) {
+        bcrypt
+          .hash(new_password, numSaltRounds)
+          .then((hash) => {
+            let passHash = hash;
+            con.query(
+              "UPDATE  app_user SET  user_password=? , udp_date=? WHERE user_id=? ",
+              [passHash, localISOTime, user_id],
+              function (err, result) {
+                if (err) throw err;
+                return res.json(result);
+              }
+            );
+          })
+          .catch((err) => console.error(err.message));
+      } else {
+        return res.status(400).json({
+          status: 400,
+          message: "Invalid Credentials Error With Correct Password", // error.sqlMessage
+        });
+      }
+    })
+    .catch((err) => {
+      //   console.log(err);
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid Credentials Error With Correct Password", // error.sqlMessage
+      });
+    });
+});
+
 router.post("/detail/create", middleware, async (req, res, next) => {
   const data = req.body;
   let user_id = data.user_id;
