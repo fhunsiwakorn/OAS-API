@@ -6,7 +6,6 @@ const middleware = require("../middleware");
 const functions = require("../functions");
 const common = require("../common");
 const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-const functions.dateAsiaThai() = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
 
 router.post("/sms/laotel/send", middleware, (req, res, next) => {
   const data = req.body;
