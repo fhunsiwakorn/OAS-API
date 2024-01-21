@@ -284,6 +284,7 @@ CREATE TABLE `app_user_detail` (
   `user_img` varchar(128) NOT NULL,
   `user_birthday` date NOT NULL,
   `user_address` varchar(128) NOT NULL,
+  `user_village` varchar(128) NOT NULL,
   `location_id` int(11) NOT NULL COMMENT 'app_zipcode_lao.id',
   `country_id` int(11) NOT NULL COMMENT 'app_country.country_id',
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',

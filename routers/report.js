@@ -14,7 +14,7 @@ router.post("/register", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
 
   const start_date = data.start_date;
   const end_date = data.end_date;
@@ -80,7 +80,7 @@ router.post("/appointment/reserve", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
 
   const start_date = data.start_date;
   const end_date = data.end_date;
@@ -167,7 +167,7 @@ router.post("/exam", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
 
   const start_date = data.start_date;
   const end_date = data.end_date;
@@ -253,7 +253,7 @@ router.post("/main_result", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
 
   const start_date = data.start_date;
   const end_date = data.end_date;

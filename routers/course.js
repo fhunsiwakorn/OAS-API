@@ -118,7 +118,7 @@ router.post("/list", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
   let total_filter = 0;
   let search_param = [];
@@ -311,7 +311,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
   let total_filter = 0;
   let search_param = [];

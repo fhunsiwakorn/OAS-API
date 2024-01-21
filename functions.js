@@ -27,5 +27,12 @@ f.datetimeNow = () => {
     .slice(0, -1);
   return localISOTime;
 };
+f.setZero = (val) => {
+  let z = val;
+  if (val <= 0) {
+    z = 0;
+  }
+  return z;
+};
 
 module.exports = f;

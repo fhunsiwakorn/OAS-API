@@ -377,7 +377,7 @@ INSERT INTO `app_user` VALUES('100','1513135125','$2b$08$C9O/H0ZIeeCn2gI..XPsGe3
 INSERT INTO `app_user` VALUES('101','rkknoob1001','$2b$08$po0QtlM6a1AlWXkgQtQYveJrwzdW9OIRauOrbm9Fho/Pv1Id.ykA.','','rkknoob1001','Test111','rkknoob1001@gmail.com','0847431881','3','1','2023-08-29 18:30:20','2023-08-31 17:41:47','1');
 INSERT INTO `app_user` VALUES('102','rkknoob1002','$2b$08$dxVwv3wyz8WRLzLYcVsE9eBegRCwySuar4taV2mUqgcPfRl.n02t6','','rkknoob1002','rkknoob1002','rkknoob1002@gmail.com','0847431882','3','1','2023-08-29 18:30:20','2023-08-29 18:30:20','1');
 INSERT INTO `app_user` VALUES('103','rkknoob1003','$2b$08$lpvMtOKVRRWRVMfl1rOr9.pfwv15Ne41KZyvgoJbeLPBfuZfG3ngG','','rkknoob1003','rkknoob1003','rkknoob1003@gmail.com','0847431884','3','1','2023-08-29 18:30:20','2023-08-29 18:30:20','1');
-INSERT INTO `app_user` VALUES('104','fhun','$2b$08$EbutNEHvgBFIlfCIovN86eGPEIw0Q542u41fTue.UNDKTts/rzB6u','','ประยุทธิ์','จันทร์โอชา','siwakorn167@gmail.com','0987654321','3','1','2023-08-30 01:57:14','2023-10-18 19:30:52','1');
+INSERT INTO `app_user` VALUES('104','fhun','$2b$08$8hZS3OivYe08S93Nt5Nf4ua.13ixJFn.II5NOLer5mDIp5XfW4Nuq','','ประยุทธิ์','จันทร์โอชา','siwakorn167@gmail.com','0987654321','3','1','2023-08-30 01:57:14','2023-12-04 10:35:33','1');
 INSERT INTO `app_user` VALUES('105','32525235','$2b$08$vx2qoFDMlwD2FblzaviB3.M2ROTesCiMUm.XiBC1ddLaWfjWi1Uwi','','rrrrrrrrrrrrrrr','rrrrrrrrrr','fefdfsdfdfs@gmail.com','0833222211','3','1','2023-08-30 23:37:41','2023-08-30 23:37:41','1');
 INSERT INTO `app_user` VALUES('106','sssssssssss','$2b$08$30dcIfFuArZrGFRlNC0SpevJzP.sGoTLjNiZ3Szv0dYjdaOEc1ZOO','','ssssssss','sssssss','31ry4634@gmail.com','0833264104','3','1','2023-08-30 23:37:41','2023-08-31 17:41:46','1');
 INSERT INTO `app_user` VALUES('107','Test0001','$2b$08$J6.PxK1kNUJPwtRZ.YmILOGkySIYMO0b4ByoGoVp/IibSyvaNT0te','','Test0001','Test0001','','0992952666','3','1','2023-08-31 10:45:17','2023-10-16 09:35:25','1');
@@ -416,28 +416,28 @@ INSERT INTO `app_user` VALUES('140','superadmin2','$2b$08$2DWP29fPAR.UzYXCIXCacO
 
 -- Dumping data for table `app_user_detail` 
 
-INSERT INTO `app_user_detail` VALUES('4','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','3','33','104');
-INSERT INTO `app_user_detail` VALUES('5','phone_active','2409900020066','static/upload/2023/9/files-i9H1WDJEQf.png','2023-09-12','4124124124','9','9','85');
-INSERT INTO `app_user_detail` VALUES('6','n','4444444444444','static/upload/2023/8/files-WRg9qCNuQr.png','2023-08-22','414412','18','18','106');
-INSERT INTO `app_user_detail` VALUES('7','system_active','2409901123131','static/upload/2023/10/files-N7BvRtgBkD.jpg','2023-10-04','4564654','14','1','107');
-INSERT INTO `app_user_detail` VALUES('8','y','1234567890','static/upload/2023/8/files-zZfiGEECZS.png','2000-11-12','111/123','1','14','108');
-INSERT INTO `app_user_detail` VALUES('9','system_active','11018005902277','url/image','1993-03-19','365','2','1','111');
-INSERT INTO `app_user_detail` VALUES('10','phone_active','1101800590227733','static/upload/2023/10/files-7ABuwOVwny.png','1993-03-19','365','2','1','110');
-INSERT INTO `app_user_detail` VALUES('11','unactive','2409900500412','static/upload/2023/9/files-E2vJaDzhBE.jpg','2023-09-20','4124124124','1','1','113');
-INSERT INTO `app_user_detail` VALUES('12','phone_active','1234567891234','static/upload/2023/10/files-Ji71tOmwfP.jpg','2020-12-31','123456','4','5','114');
-INSERT INTO `app_user_detail` VALUES('13','unactive','2409900020050','static/upload/2023/10/files-AutyfsWNLs.jpg','2023-10-01','4124124124','1','1','116');
-INSERT INTO `app_user_detail` VALUES('14','system_active','412415125125','static/upload/2023/10/files-j5wO5Kf721.jpg','2023-10-06','1t1t61523151255','18','16','117');
-INSERT INTO `app_user_detail` VALUES('15','phone_active','5125125112512','static/upload/2023/10/files-001lmBJBcZ.jpg','2023-10-13','255125','1','1','109');
-INSERT INTO `app_user_detail` VALUES('16','system_active','52523553555','static/upload/2023/10/files-59TZ7GuNIi.jpg','2023-10-19','1415152','1','1','123');
-INSERT INTO `app_user_detail` VALUES('30','system_active','1101800590288','static/upload/2023/10/files-5ZWbAciMro.jpg','2023-10-10','55/99-2','1','33','129');
-INSERT INTO `app_user_detail` VALUES('31','phone_active','25651454411','','2023-10-11','kk','5','33','130');
-INSERT INTO `app_user_detail` VALUES('32','phone_active','65145685412','static/upload/2023/10/files-xMxDizzIEa.jpg','1993-07-13','Test Address','165','33','131');
-INSERT INTO `app_user_detail` VALUES('33','phone_active','265211555','','1985-09-01','25/36','1','33','132');
-INSERT INTO `app_user_detail` VALUES('34','phone_active','26666','static/upload/2023/10/files-pQdhAG1YRP.jpg','2023-10-17','34777','1','33','134');
-INSERT INTO `app_user_detail` VALUES('35','phone_active','25651455','static/upload/2023/10/files-P0ZRSpX6Rs.jpg','2003-10-31','2566','5','33','135');
-INSERT INTO `app_user_detail` VALUES('36','phone_unactive','3011231231231','static/upload/2023/10/files-kI3cQG2oBW.png','2023-05-31','3011231231231','1','1','137');
-INSERT INTO `app_user_detail` VALUES('37','unactive','1241251251251','static/upload/2023/10/files-YeodRpkyLr.jpg','2023-09-26','125125125','1','1','138');
-INSERT INTO `app_user_detail` VALUES('38','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','3','33','7');
+INSERT INTO `app_user_detail` VALUES('4','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','','3','33','104');
+INSERT INTO `app_user_detail` VALUES('5','phone_active','2409900020066','static/upload/2023/9/files-i9H1WDJEQf.png','2023-09-12','4124124124','','9','9','85');
+INSERT INTO `app_user_detail` VALUES('6','n','4444444444444','static/upload/2023/8/files-WRg9qCNuQr.png','2023-08-22','414412','','18','18','106');
+INSERT INTO `app_user_detail` VALUES('7','system_active','2409901123131','static/upload/2023/10/files-N7BvRtgBkD.jpg','2023-10-04','4564654','','14','1','107');
+INSERT INTO `app_user_detail` VALUES('8','y','1234567890','static/upload/2023/8/files-zZfiGEECZS.png','2000-11-12','111/123','','1','14','108');
+INSERT INTO `app_user_detail` VALUES('9','system_active','11018005902277','url/image','1993-03-19','365','','2','1','111');
+INSERT INTO `app_user_detail` VALUES('10','phone_active','1101800590227733','static/upload/2023/10/files-7ABuwOVwny.png','1993-03-19','365','','2','1','110');
+INSERT INTO `app_user_detail` VALUES('11','unactive','2409900500412','static/upload/2023/9/files-E2vJaDzhBE.jpg','2023-09-20','4124124124','','1','1','113');
+INSERT INTO `app_user_detail` VALUES('12','phone_active','1234567891234','static/upload/2023/10/files-Ji71tOmwfP.jpg','2020-12-31','123456','','4','5','114');
+INSERT INTO `app_user_detail` VALUES('13','unactive','2409900020050','static/upload/2023/10/files-AutyfsWNLs.jpg','2023-10-01','4124124124','','1','1','116');
+INSERT INTO `app_user_detail` VALUES('14','system_active','412415125125','static/upload/2023/10/files-j5wO5Kf721.jpg','2023-10-06','1t1t61523151255','','18','16','117');
+INSERT INTO `app_user_detail` VALUES('15','phone_active','5125125112512','static/upload/2023/10/files-001lmBJBcZ.jpg','2023-10-13','255125','','1','1','109');
+INSERT INTO `app_user_detail` VALUES('16','system_active','52523553555','static/upload/2023/10/files-59TZ7GuNIi.jpg','2023-10-19','1415152','','1','1','123');
+INSERT INTO `app_user_detail` VALUES('30','system_active','1101800590288','static/upload/2023/10/files-5ZWbAciMro.jpg','2023-10-10','55/99-2','','1','33','129');
+INSERT INTO `app_user_detail` VALUES('31','phone_active','25651454411','','2023-10-11','kk','','5','33','130');
+INSERT INTO `app_user_detail` VALUES('32','phone_active','65145685412','static/upload/2023/10/files-xMxDizzIEa.jpg','1993-07-13','Test Address','','165','33','131');
+INSERT INTO `app_user_detail` VALUES('33','phone_active','265211555','','1985-09-01','25/36','','1','33','132');
+INSERT INTO `app_user_detail` VALUES('34','phone_active','26666','static/upload/2023/10/files-pQdhAG1YRP.jpg','2023-10-17','34777','','1','33','134');
+INSERT INTO `app_user_detail` VALUES('35','phone_active','25651455','static/upload/2023/10/files-P0ZRSpX6Rs.jpg','2003-10-31','2566','','5','33','135');
+INSERT INTO `app_user_detail` VALUES('36','phone_unactive','3011231231231','static/upload/2023/10/files-kI3cQG2oBW.png','2023-05-31','3011231231231','','1','1','137');
+INSERT INTO `app_user_detail` VALUES('37','unactive','1241251251251','static/upload/2023/10/files-YeodRpkyLr.jpg','2023-09-26','125125125','','1','1','138');
+INSERT INTO `app_user_detail` VALUES('38','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','','3','33','7');
 
 
 

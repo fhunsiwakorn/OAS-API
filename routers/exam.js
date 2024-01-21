@@ -116,7 +116,7 @@ router.post("/main/list", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
   let total_filter = 0;
   let search_param = [];
@@ -249,7 +249,7 @@ router.post("/question/:em_id/list", middleware, async (req, res, next) => {
   const { em_id } = req.params;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
   let total_filter = 0;
   let search_param = [];
@@ -476,7 +476,7 @@ router.post("/start/render", middleware, async (req, res, next) => {
   const clear_cach = data.clear_cach; // 0 = ไม่เคลียร์ , 1 = เคลียร์
   const em_id = data.em_id;
   const user_id = data.user_id;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total_cache = 0;
   let total_cache_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
   let exam_complete = 0;
@@ -550,7 +550,11 @@ FROM
   }
 
   // ตรวจสอบว่าทำข้อสอบเสร้จหมดทุกข้อยัง
-  if (total_cache_complete >= total_cache && clear_cach !== 1) {
+  if (
+    total_cache_complete >= total_cache &&
+    clear_cach !== 1 &&
+    total_cache !== 0
+  ) {
     exam_complete = 1;
   }
   // console.log(total_cache);
@@ -563,7 +567,7 @@ FROM
       em_id,
       IF(em_id >=1,'${user_id}','0'), 
       IF(em_id >=1,'${localISOTime}','${localISOTime}')
-      FROM app_exam_question WHERE em_id = ?  ORDER BY RAND() LIMIT ?`,
+      FROM app_exam_question WHERE cancelled = 1 AND em_id = ?  ORDER BY RAND() LIMIT ?`,
       [em_id, em_random_amount]
     );
   }
@@ -593,11 +597,17 @@ FROM
     };
     obj.push(newObj);
   }
+  // จำนวน Cache
+  const count_cache_repeat = await runQuery(
+    "SELECT COUNT(*) AS total_cache FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
+    [em_id, user_id]
+  );
+  let repeat = count_cache_repeat[0]?.total_cache;
   const response = {
-    total: total_cache, // จำนวนรายการทั้งหมด
+    total: repeat, // จำนวนรายการทั้งหมด
     current_page: current_page, // หน้าที่กำลังแสดงอยู่
     limit_page: per_page, // limit data
-    total_page: Math.ceil(total_cache / per_page), // จำนวนหน้าทั้งหมด
+    total_page: Math.ceil(repeat / per_page), // จำนวนหน้าทั้งหมด
     exam_complete: exam_complete, ///สถานะการทำข้อสอบเสร็จต่อรอบ
     data: obj, // รายการข้อมูล
   };
@@ -759,7 +769,7 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  const offset = (current_page - 1) * per_page;
+  const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
   let total_filter = 0;
   let search_param = [];
