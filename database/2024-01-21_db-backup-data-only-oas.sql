@@ -265,12 +265,6 @@ INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08',
 
 -- Dumping data for table `app_exam_cache` 
 
-INSERT INTO `app_exam_cache` VALUES('188','0','0','0','2','2','7','2023-10-26 15:04:25');
-INSERT INTO `app_exam_cache` VALUES('189','0','0','0','5','2','7','2023-10-26 15:04:25');
-INSERT INTO `app_exam_cache` VALUES('190','0','0','0','1','2','7','2023-10-26 15:04:25');
-INSERT INTO `app_exam_cache` VALUES('191','0','0','0','5','2','85','2023-10-26 15:04:25');
-INSERT INTO `app_exam_cache` VALUES('192','0','0','0','1','2','85','2023-10-26 15:04:25');
-INSERT INTO `app_exam_cache` VALUES('193','0','0','0','2','2','85','2023-10-26 15:04:25');
 
 
 

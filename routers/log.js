@@ -4,7 +4,7 @@ const con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
 const functions = require("../functions");
-const localISOTime = functions.datetimeNow();
+const localISOTime = functions.dateAsiaThai();
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));

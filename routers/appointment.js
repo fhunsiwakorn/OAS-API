@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.datetimeNow();
+const localISOTime = functions.dateAsiaThai();
 const common = require("../common");
 
 async function runQuery(sql, param) {

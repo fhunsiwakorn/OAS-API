@@ -126,7 +126,7 @@ CREATE TABLE `app_exam_cache` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_choice`; 
 
