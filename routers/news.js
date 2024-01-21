@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
@@ -33,8 +33,8 @@ router.post("/create", middleware, (req, res, next) => {
           data.news_description,
           data.news_type,
           news_friendly,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
           user_id,
           user_id,
         ],
@@ -72,7 +72,7 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
           data.news_description,
           data.news_type,
           news_friendly,
-          localISOTime,
+          functions.dateAsiaThai(),
           user_id,
           news_id,
         ],

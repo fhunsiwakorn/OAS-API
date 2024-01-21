@@ -6,7 +6,7 @@ const con = require("../database");
 const common = require("../common");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+
 const numSaltRounds = 8;
 
 async function runQuery(sql, param) {
@@ -163,8 +163,8 @@ router.post("/create", middleware, async (req, res, next) => {
           user_phone,
           data.user_type,
           data.active,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
         ],
         function (err, result) {
           if (err) throw err;
@@ -238,7 +238,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
             user_phone,
             data.user_type,
             data.active,
-            localISOTime,
+            functions.dateAsiaThai(),
             user_id,
           ],
           function (err, result) {
@@ -260,7 +260,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
         user_phone,
         data.user_type,
         data.active,
-        localISOTime,
+        functions.dateAsiaThai(),
         user_id,
       ],
       function (err, result) {
@@ -377,7 +377,7 @@ router.put("/change_password/:user_id", middleware, async (req, res, next) => {
             let passHash = hash;
             con.query(
               "UPDATE  app_user SET  user_password=? , udp_date=? WHERE user_id=? ",
-              [passHash, localISOTime, user_id],
+              [passHash, functions.dateAsiaThai(), user_id],
               function (err, result) {
                 if (err) throw err;
                 return res.json(result);
@@ -571,12 +571,12 @@ router.get("/only/detail/:user_param", middleware, (req, res, next) => {
 //       if (total_request <= 0) {
 //         con.query(
 //           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
-//           [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+//           [otp_code, otp_ref, 1, functions.dateAsiaThai(), functions.dateAsiaThai(), user_id]
 //         );
 //       } else {
 //         con.query(
 //           "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
-//           [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+//           [otp_code, otp_ref, total_request_set, functions.dateAsiaThai(), user_id]
 //         );
 //       }
 //       // SMS API
@@ -646,12 +646,25 @@ router.get("/otp/:user_id", middleware, (req, res, next) => {
       if (total_request <= 0) {
         con.query(
           "INSERT INTO app_user_otp (otp_code,otp_ref,total_request, crt_date,udp_date,user_id) VALUES (?,?,?,?,?,?)",
-          [otp_code, otp_ref, 1, localISOTime, localISOTime, user_id]
+          [
+            otp_code,
+            otp_ref,
+            1,
+            functions.dateAsiaThai(),
+            functions.dateAsiaThai(),
+            user_id,
+          ]
         );
       } else {
         con.query(
           "UPDATE  app_user_otp SET otp_code=?,otp_ref=?, total_request=? , udp_date=?  WHERE user_id=? ",
-          [otp_code, otp_ref, total_request_set, localISOTime, user_id]
+          [
+            otp_code,
+            otp_ref,
+            total_request_set,
+            functions.dateAsiaThai(),
+            user_id,
+          ]
         );
       }
       // SMS API

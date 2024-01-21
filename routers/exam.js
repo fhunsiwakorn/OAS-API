@@ -4,7 +4,7 @@ let con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+// const localISOTime = functions.dateAsiaThai();
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     // setTimeout(() => {
@@ -48,8 +48,8 @@ router.post("/main/create", middleware, (req, res, next) => {
           data.em_random_amount,
           data.em_time,
           data.dlt_code,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
           user_id,
           user_id,
         ],
@@ -97,7 +97,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
           data.em_random_amount,
           data.em_time,
           data.dlt_code,
-          localISOTime,
+          functions.dateAsiaThai(),
           user_id,
           em_id,
         ],
@@ -566,7 +566,7 @@ FROM
       eq_id,
       em_id,
       IF(em_id >=1,'${user_id}','0'), 
-      IF(em_id >=1,'${localISOTime}','${localISOTime}')
+      IF(em_id >=1,'${functions.dateAsiaThai()}','${functions.dateAsiaThai()}')
       FROM app_exam_question WHERE cancelled = 1 AND em_id = ?  ORDER BY RAND() LIMIT ?`,
       [em_id, em_random_amount]
     );
@@ -670,7 +670,14 @@ router.post("/result/render", middleware, (req, res, next) => {
       // นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
       con.query(
         "INSERT INTO app_exam_result (er_score_total,er_question_total,crt_date,udp_date,user_id,em_id) VALUES (?,?,?,?,?,?)",
-        [sum_score, total_question, localISOTime, localISOTime, user_id, em_id],
+        [
+          sum_score,
+          total_question,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
+          user_id,
+          em_id,
+        ],
         (err, rs_end) => {
           // Update ข้อสอบที่กำลังทำทั้งหมดเป็น ทำครบแล้ว
           con.query(

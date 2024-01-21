@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
@@ -33,8 +33,8 @@ router.post("/create", middleware, (req, res, next) => {
           data.course_code,
           data.course_name,
           data.course_description,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
           user_id,
           user_id,
         ],
@@ -71,7 +71,7 @@ router.put("/update/:course_id", middleware, (req, res, next) => {
           data.course_code,
           data.course_name,
           data.course_description,
-          localISOTime,
+          functions.dateAsiaThai(),
           user_id,
           course_id,
         ],
@@ -221,8 +221,8 @@ router.post("/lesson/create", middleware, (req, res, next) => {
               data.cs_name,
               data.cs_video,
               data.cs_description,
-              localISOTime,
-              localISOTime,
+              functions.dateAsiaThai(),
+              functions.dateAsiaThai(),
               course_id,
               user_id,
               user_id,
@@ -262,7 +262,7 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
           data.cs_name,
           data.cs_video,
           data.cs_description,
-          localISOTime,
+          functions.dateAsiaThai(),
           course_id,
           user_id,
           cs_id,

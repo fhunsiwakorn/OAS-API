@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+
 const common = require("../common");
 
 router.post("/create", middleware, (req, res, next) => {
@@ -46,8 +46,8 @@ router.post("/create", middleware, (req, res, next) => {
           data.mr_learn_type,
           mr_status,
           dlt_code,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
           user_id,
         ],
         function (err, result) {
@@ -101,7 +101,7 @@ router.put("/update/:mr_id", middleware, (req, res, next) => {
           data.mr_learn_type,
           mr_status,
           dlt_code,
-          localISOTime,
+          functions.dateAsiaThai(),
           user_id,
           mr_id,
         ],

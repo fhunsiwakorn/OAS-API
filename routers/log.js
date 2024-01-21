@@ -4,7 +4,7 @@ const con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
+
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
@@ -27,7 +27,7 @@ router.post("/lesson/create", middleware, (req, res, next) => {
       }
       con.query(
         "INSERT INTO app_course_log (cs_id,user_id,udp_date) VALUES (?,?,?)",
-        [cs_id, user_id, localISOTime],
+        [cs_id, user_id, functions.dateAsiaThai()],
         function (err, result) {
           if (err) throw err;
           return res.json(result);

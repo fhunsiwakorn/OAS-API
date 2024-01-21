@@ -35,7 +35,7 @@ f.setZero = (val) => {
   return z;
 };
 f.dateAsiaThai = () => {
-  const date = new Date() + "+00";
+  const date = new Date() + "-04";
   return new Date(
     (typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {
       timeZone: "Asia/Bangkok",

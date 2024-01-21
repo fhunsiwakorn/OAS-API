@@ -3,7 +3,6 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const functions = require("../functions");
-const localISOTime = functions.dateAsiaThai();
 const common = require("../common");
 
 async function runQuery(sql, param) {
@@ -63,8 +62,8 @@ router.post("/create", middleware, (req, res, next) => {
           data.ap_date_end,
           data.ap_remark,
           data.dlt_code,
-          localISOTime,
-          localISOTime,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
           user_id,
           user_id,
         ],
@@ -144,7 +143,7 @@ router.put("/update/:ap_id", middleware, (req, res, next) => {
           data.ap_date_end,
           data.ap_remark,
           data.dlt_code,
-          localISOTime,
+          functions.dateAsiaThai(),
           user_id,
           ap_id,
         ],
@@ -355,7 +354,7 @@ router.post("/reserve/create", middleware, async (req, res, next) => {
   // บันทึกการนัดหมาย
   let _content = await runQuery(
     "INSERT INTO app_appointment_reserve (ap_id,user_id,udp_date) VALUES (?,?,?)",
-    [ap_id, user_id, localISOTime]
+    [ap_id, user_id, functions.dateAsiaThai()]
   );
   return res.json(_content);
 });
