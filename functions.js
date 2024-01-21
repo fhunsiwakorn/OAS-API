@@ -28,7 +28,7 @@ f.datetimeNow = () => {
   return localISOTime;
 };
 f.setZero = (val) => {
-  let z = val;
+  let z = parseInt(val);
   if (val <= 0) {
     z = 0;
   }
