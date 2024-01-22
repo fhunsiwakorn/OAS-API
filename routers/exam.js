@@ -557,7 +557,7 @@ FROM
   ) {
     exam_complete = 1;
   }
-  // console.log(total_cache);
+  // console.log(functions.dateAsiaThai());
   if (total_cache < 1) {
     await runQuery(
       `INSERT INTO app_exam_cache (ec_id,eq_id,em_id,user_id,udp_date) 

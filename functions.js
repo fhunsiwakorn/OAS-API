@@ -36,11 +36,14 @@ f.setZero = (val) => {
 };
 f.dateAsiaThai = () => {
   const date = new Date();
-  return new Date(
+  const r = new Date(
     (typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {
       timeZone: "Asia/Jakarta",
     })
   );
+  const tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+  const localISOTime = new Date(r - tzoffset).toISOString().slice(0, -1);
+  return localISOTime;
 };
 
 module.exports = f;
