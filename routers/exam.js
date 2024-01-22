@@ -503,8 +503,9 @@ FROM
   `;
 
   // ลบแคชของวันที่ผ่านมาออก
-  await runQuery("DELETE FROM app_exam_cache WHERE MONTH(udp_date) < ? ", [
-    new Date().getMonth() + 1,
+  // console.log(new Date().getDate());
+  await runQuery("DELETE FROM app_exam_cache WHERE DAY(udp_date) < ? ", [
+    new Date().getDate(),
   ]);
 
   if (clear_cach === 1) {
