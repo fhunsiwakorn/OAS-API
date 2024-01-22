@@ -602,7 +602,10 @@ FROM
     "SELECT COUNT(*) AS total_cache FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
     [em_id, user_id]
   );
-  let repeat = count_cache_repeat[0]?.total_cache;
+  let repeat =
+    count_cache_repeat[0]?.total_cache !== undefined
+      ? count_cache_repeat[0]?.total_cache
+      : 0;
   const response = {
     total: repeat, // จำนวนรายการทั้งหมด
     current_page: current_page, // หน้าที่กำลังแสดงอยู่
