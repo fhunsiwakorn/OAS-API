@@ -469,7 +469,7 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
 });
 
 router.post("/start/render", middleware, async (req, res, next) => {
-  const present_day = new Date().getDate();
+  // const present_day = new Date().getDate();
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -503,8 +503,8 @@ FROM
   `;
 
   // ลบแคชของวันที่ผ่านมาออก
-  await runQuery("DELETE FROM app_exam_cache WHERE DAY(udp_date) < ? ", [
-    present_day,
+  await runQuery("DELETE FROM app_exam_cache WHERE MONTH(udp_date) < ? ", [
+    new Date().getMonth() + 1,
   ]);
 
   if (clear_cach === 1) {
