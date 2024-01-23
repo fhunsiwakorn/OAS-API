@@ -315,7 +315,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description,app_course_lesson.crt_date,app_course_lesson.udp_date ,
+  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description,app_course_lesson.course_id,app_course_lesson.crt_date,app_course_lesson.udp_date ,
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
      FROM app_course_lesson LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp WHERE app_course_lesson.cancelled=1 AND app_course_lesson.course_id=?`;
   let p = [course_id];
