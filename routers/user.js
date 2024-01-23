@@ -85,6 +85,7 @@ router.post("/login", middleware, (req, res, next) => {
             const r = response[0];
             const js = {
               user_id: r?.user_id,
+              user_prefrix: r?.user_prefrix,
               user_name: r?.user_name,
               user_firstname: r?.user_firstname,
               user_lastname: r?.user_lastname,
