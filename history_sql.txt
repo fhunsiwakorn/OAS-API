@@ -2,6 +2,6 @@ ALTER TABLE `app_user` ADD `user_prefrix` VARCHAR(24) NOT NULL AFTER `user_passw
 
 4/12/2023
 ALTER TABLE `app_user_detail` ADD `user_village` VARCHAR(128) NOT NULL AFTER `user_address`;
-1/12/2024
+27/12/2024
 ALTER TABLE `app_exam_main` ADD `em_measure` INT(0) NOT NULL AFTER `em_time`;
 ALTER TABLE `app_exam_time` ADD `udp_date` DATETIME NOT NULL AFTER `user_id`;
