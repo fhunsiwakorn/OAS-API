@@ -831,8 +831,14 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
   con.query(sql, param.concat(search_param), (err, rs) => {
     let obj = [];
     rs.forEach((el) => {
-      let out_user = JSON.parse(el?.out_user);
-      let out_em = JSON.parse(el?.out_em);
+      const out_user = JSON.parse(el?.out_user);
+      const out_em = JSON.parse(el?.out_em);
+      let em_measure = out_em?.em_measure;
+      let result = "fail";
+      // เปรียบเทียบว่าคะแนนที่ได้ผ่านเกณฑ์หรือไม่
+      if (parseInt(el?.er_score_total) >= parseInt(em_measure)) {
+        result = "pass";
+      }
       let newObj = {
         er_id: el?.er_id,
         er_score_total: el?.er_score_total,
@@ -841,6 +847,7 @@ router.post("/history/:em_id", middleware, (req, res, next) => {
         udp_date: el?.udp_date,
         user_id: el?.user_id,
         em_id: el?.em_id,
+        status: result,
         out_user: out_user,
         out_em: out_em,
       };
