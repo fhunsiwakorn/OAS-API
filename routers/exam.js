@@ -39,7 +39,7 @@ router.post("/main/create", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "INSERT INTO app_exam_main (em_code,em_name,em_cover,em_description,em_random_amount,em_time,dlt_code,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_exam_main (em_code,em_name,em_cover,em_description,em_random_amount,em_time,em_measure,dlt_code,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           data.em_code,
           data.em_name,
@@ -47,6 +47,7 @@ router.post("/main/create", middleware, (req, res, next) => {
           data.em_description,
           data.em_random_amount,
           data.em_time,
+          data.em_measure,
           data.dlt_code,
           functions.dateAsiaThai(),
           functions.dateAsiaThai(),
@@ -88,7 +89,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "UPDATE  app_exam_main SET em_code=? , em_name=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,dlt_code=?,udp_date=?,user_udp=? WHERE em_id=? ",
+        "UPDATE  app_exam_main SET em_code=? , em_name=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,em_measure=?,dlt_code=?,udp_date=?,user_udp=? WHERE em_id=? ",
         [
           data.em_code,
           data.em_name,
@@ -96,6 +97,7 @@ router.put("/main/update/:em_id", middleware, (req, res, next) => {
           data.em_description,
           data.em_random_amount,
           data.em_time,
+          data.em_measure,
           data.dlt_code,
           functions.dateAsiaThai(),
           user_id,
@@ -120,7 +122,7 @@ router.post("/main/list", middleware, async (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.dlt_code,app_exam_main.crt_date,app_exam_main.udp_date ,
+  let sql = `SELECT app_exam_main.em_id,app_exam_main.em_code,app_exam_main.em_name,app_exam_main.em_cover,app_exam_main.em_description,app_exam_main.em_random_amount,app_exam_main.em_time,app_exam_main.em_measure,app_exam_main.dlt_code,app_exam_main.crt_date,app_exam_main.udp_date ,
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, COUNT(q.eq_id) AS total_question
      FROM app_exam_main 
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
@@ -507,6 +509,9 @@ FROM
   await runQuery("DELETE FROM app_exam_cache WHERE DAY(udp_date) < ? ", [
     new Date().getDate(),
   ]);
+  await runQuery("DELETE FROM app_exam_time WHERE DAY(udp_date) < ? ", [
+    new Date().getDate(),
+  ]);
 
   if (clear_cach === 1) {
     await runQuery(
@@ -711,16 +716,16 @@ router.post("/time/render", middleware, (req, res, next) => {
       let _check_data = rs_time.length;
       if (_check_data <= 0) {
         con.query(
-          "INSERT INTO app_exam_time (et_time,em_id,user_id) VALUES (?,?,?)",
-          [et_time, em_id, user_id],
+          "INSERT INTO app_exam_time (et_time,em_id,user_id,udp_date) VALUES (?,?,?,?)",
+          [et_time, em_id, user_id, functions.dateAsiaThai()],
           (err, rs) => {
             return res.json(rs);
           }
         );
       } else {
         con.query(
-          "UPDATE  app_exam_time SET et_time=? WHERE em_id=?  AND user_id=?",
-          [et_time, em_id, user_id],
+          "UPDATE  app_exam_time SET et_time=? ,  udp_date=? WHERE em_id=?  AND user_id=? ",
+          [et_time, functions.dateAsiaThai(), em_id, user_id],
           (err, rs) => {
             return res.json(rs);
           }
@@ -748,15 +753,22 @@ router.get("/history?", middleware, (req, res, next) => {
   SELECT
   t1.*,
   (SELECT   GROUP_CONCAT((JSON_OBJECT('user_id', t2.user_id,'user_firstname', t2.user_firstname,'user_lastname', t2.user_lastname , 'user_email', t2.user_email,'user_phone', t2.user_phone)))  FROM app_user t2 WHERE t2.user_id =  t1.user_id) AS out_user,
-  (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time , 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
+  (SELECT   GROUP_CONCAT((JSON_OBJECT('em_code', t3.em_code,'em_name', t3.em_name , 'em_cover', t3.em_cover, 'em_description', t3.em_description, 'em_random_amount', t3.em_random_amount , 'em_time', t3.em_time ,'em_measure',t3.em_measure, 'dlt_code', t3.dlt_code)))  FROM app_exam_main t3 WHERE t3.em_id =  t1.em_id) AS out_em
   FROM app_exam_result t1 WHERE t1.em_id = ? AND t1.user_id = ? ORDER BY t1.er_id DESC 
   `;
   con.query(sql, [em_id, user_id], (err, rs) => {
     let obj = [];
     rs.forEach((el) => {
       // console.log(JSON.parse(el?.choices));
-      let out_user = JSON.parse(el?.out_user);
-      let out_em = JSON.parse(el?.out_em);
+      const out_user = JSON.parse(el?.out_user);
+      const out_em = JSON.parse(el?.out_em);
+      let em_measure = out_em?.em_measure;
+      let result = "fail";
+      // เปรียบเทียบว่าคะแนนที่ได้ผ่านเกณฑ์หรือไม่
+      if (parseInt(el?.er_score_total) >= parseInt(em_measure)) {
+        result = "pass";
+      }
+      // console.log(em_measure);
       let newObj = {
         er_id: el?.er_id,
         er_score_total: el?.er_score_total,
@@ -765,6 +777,7 @@ router.get("/history?", middleware, (req, res, next) => {
         udp_date: el?.udp_date,
         user_id: el?.user_id,
         em_id: el?.em_id,
+        status: result,
         out_user: out_user,
         out_em: out_em,
       };

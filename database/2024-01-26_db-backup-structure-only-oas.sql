@@ -81,7 +81,7 @@ CREATE TABLE `app_course_lesson` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`cs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=407 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_course_log`; 
 
@@ -126,7 +126,7 @@ CREATE TABLE `app_exam_cache` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_choice`; 
 
@@ -232,6 +232,7 @@ CREATE TABLE `app_news` (
   `news_description` text NOT NULL,
   `news_type` int(1) NOT NULL,
   `news_friendly` varchar(128) NOT NULL,
+  `news_view` int(11) NOT NULL DEFAULT 0,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `cancelled` int(1) NOT NULL DEFAULT 1,
