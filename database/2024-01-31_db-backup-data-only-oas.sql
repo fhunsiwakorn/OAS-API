@@ -657,7 +657,7 @@ INSERT INTO `app_course_log` VALUES('1','1','7','2023-10-12 19:13:06');
 INSERT INTO `app_course_log` VALUES('2','1','7','2023-10-12 19:13:06');
 INSERT INTO `app_course_log` VALUES('3','1','7','2023-10-12 19:33:01');
 INSERT INTO `app_course_log` VALUES('4','2','7','2023-10-12 19:33:01');
-INSERT INTO `app_course_log` VALUES('5','1','104','2023-10-19 09:13:37');
+INSERT INTO `app_course_log` VALUES('5','1','99','2023-10-19 09:13:37');
 
 
 
@@ -669,9 +669,9 @@ INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08',
 
 -- Dumping data for table `app_exam_cache` 
 
-INSERT INTO `app_exam_cache` VALUES('13','0','0','0','2','2','85','2024-01-22 10:11:03');
-INSERT INTO `app_exam_cache` VALUES('14','0','0','0','1','2','85','2024-01-22 10:11:03');
-INSERT INTO `app_exam_cache` VALUES('15','0','0','0','5','2','85','2024-01-22 10:11:03');
+INSERT INTO `app_exam_cache` VALUES('16','0','0','0','2','2','99','2024-01-27 08:09:58');
+INSERT INTO `app_exam_cache` VALUES('17','0','0','0','5','2','99','2024-01-27 08:09:58');
+INSERT INTO `app_exam_cache` VALUES('18','0','0','0','1','2','99','2024-01-27 08:09:58');
 
 
 
@@ -687,12 +687,13 @@ INSERT INTO `app_exam_choice` VALUES('5','3','เมืองพลอยู่ 
 
 -- Dumping data for table `app_exam_main` 
 
-INSERT INTO `app_exam_main` VALUES('2','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','B','2023-08-05 16:05:31','2023-08-30 15:10:55','1','1','1');
-INSERT INTO `app_exam_main` VALUES('4','013','New Jean','url/image','ไม่มีอะไรเลย','50','00:59:00','A','2023-08-26 10:52:48','2023-08-26 10:52:48','1','1','1');
-INSERT INTO `app_exam_main` VALUES('5','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:56:52','2023-08-28 15:56:52','1','1','1');
-INSERT INTO `app_exam_main` VALUES('6','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
-INSERT INTO `app_exam_main` VALUES('7','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
-INSERT INTO `app_exam_main` VALUES('8','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','B','2023-08-28 15:57:50','2023-08-28 15:57:50','1','1','1');
+INSERT INTO `app_exam_main` VALUES('2','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','10','B','2023-08-05 16:05:31','2023-08-30 15:10:55','1','1','1');
+INSERT INTO `app_exam_main` VALUES('4','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','45','B','2023-08-26 10:52:48','2024-01-27 08:40:28','1','1','99');
+INSERT INTO `app_exam_main` VALUES('5','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:56:52','2023-08-28 15:56:52','1','1','1');
+INSERT INTO `app_exam_main` VALUES('6','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
+INSERT INTO `app_exam_main` VALUES('7','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
+INSERT INTO `app_exam_main` VALUES('8','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','0','B','2023-08-28 15:57:50','2023-08-28 15:57:50','1','1','1');
+INSERT INTO `app_exam_main` VALUES('9','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','45','B','2024-01-27 08:39:59','2024-01-27 08:39:59','1','99','99');
 
 
 
@@ -718,7 +719,6 @@ INSERT INTO `app_exam_result` VALUES('5','1','2','2023-09-28 19:27:26','2023-09-
 
 -- Dumping data for table `app_exam_time` 
 
-INSERT INTO `app_exam_time` VALUES('2','00:25:00','2','1');
 
 
 
