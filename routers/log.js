@@ -13,6 +13,7 @@ async function runQuery(sql, param) {
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const cs_id = data.cs_id;
+  const course_id = data.course_id;
   const user_id = data.user_id;
   con.query(
     "SELECT * FROM app_course_lesson WHERE cs_id = ?",
@@ -26,8 +27,8 @@ router.post("/lesson/create", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "INSERT INTO app_course_log (cs_id,user_id,udp_date) VALUES (?,?,?)",
-        [cs_id, user_id, functions.dateAsiaThai()],
+        "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+        [cs_id, course_id, user_id, functions.dateAsiaThai()],
         function (err, result) {
           if (err) throw err;
           return res.json(result);
@@ -63,9 +64,7 @@ router.get("/course/:course_id/:year", middleware, async (req, res, next) => {
     let getLog = await runQuery(
       `SELECT COUNT(t1.cs_id) AS total 
           FROM app_course_log t1  
-          INNER JOIN  app_course_lesson t2 ON t2.cs_id = t1.cs_id   
-          INNER JOIN  app_course t3 ON t3.course_id = t2.course_id AND  t3.course_id = ?
-          WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? `,
+          WHERE   t1.course_id=? AND MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? `,
       [course_id, i, year]
     );
     let newObj = {
@@ -77,27 +76,29 @@ router.get("/course/:course_id/:year", middleware, async (req, res, next) => {
   return res.json(obj);
 });
 
-router.get("/course/:course_id/:year?", middleware, async (req, res, next) => {
-  const { course_id, year } = req.params;
-  const user_id = req.query.user_id;
-  let obj = [];
-  for (let i = 1; i <= 12; i++) {
-    let getLog = await runQuery(
-      `SELECT COUNT(t1.cs_id) AS total 
+router.get(
+  "/course/:course_id/:year/f?",
+  middleware,
+  async (req, res, next) => {
+    const { course_id, year } = req.params;
+    const user_id = req.query.user_id;
+    let obj = [];
+    for (let i = 1; i <= 12; i++) {
+      let getLog = await runQuery(
+        `SELECT COUNT(t1.cs_id) AS total 
           FROM app_course_log t1  
-          INNER JOIN  app_course_lesson t2 ON t2.cs_id = t1.cs_id   
-          INNER JOIN  app_course t3 ON t3.course_id = t2.course_id AND  t3.course_id = ?
-          WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t1.user_id = ?`,
-      [course_id, i, year, user_id]
-    );
-    let newObj = {
-      month: i,
-      total: getLog[0]?.total,
-    };
-    obj.push(newObj);
+          WHERE t1.course_id=? AND MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t1.user_id = ?`,
+        [course_id, i, year, user_id]
+      );
+      let newObj = {
+        month: i,
+        total: getLog[0]?.total,
+      };
+      obj.push(newObj);
+    }
+    return res.json(obj);
   }
-  return res.json(obj);
-});
+);
 
 router.get(
   "/appointment/reserve/:dlt_code/:year",

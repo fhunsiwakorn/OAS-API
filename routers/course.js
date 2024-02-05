@@ -215,7 +215,7 @@ router.post("/lesson/create", middleware, (req, res, next) => {
             });
           }
           con.query(
-            "INSERT INTO app_course_lesson (cs_cover,cs_name,cs_video,cs_description,crt_date,udp_date,course_id,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO app_course_lesson (cs_cover,cs_name,cs_video,cs_description,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?)",
             [
               data.cs_cover,
               data.cs_name,
@@ -223,7 +223,6 @@ router.post("/lesson/create", middleware, (req, res, next) => {
               data.cs_description,
               functions.dateAsiaThai(),
               functions.dateAsiaThai(),
-              course_id,
               user_id,
               user_id,
             ],
@@ -242,7 +241,6 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   const data = req.body;
   const user_id = data.user_id;
-  const course_id = data.course_id;
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
@@ -256,14 +254,13 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
       }
 
       con.query(
-        "UPDATE  app_course_lesson SET cs_cover=? , cs_name=? ,cs_video=? ,cs_description=?,udp_date=? ,course_id=?, user_udp=? WHERE cs_id=? ",
+        "UPDATE  app_course_lesson SET cs_cover=? , cs_name=? ,cs_video=? ,cs_description=?,udp_date=? , user_udp=? WHERE cs_id=? ",
         [
           data.cs_cover,
           data.cs_name,
           data.cs_video,
           data.cs_description,
           functions.dateAsiaThai(),
-          course_id,
           user_id,
           cs_id,
         ],
@@ -305,6 +302,53 @@ router.delete("/lesson/delete/:cs_id", middleware, (req, res, next) => {
   );
 });
 
+router.post(
+  "/cluster/create/:course_id",
+  middleware,
+  async (req, res, next) => {
+    const data = req.body;
+    const { course_id } = req.params;
+    const total = data.length;
+    if (total <= 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Error Transaction",
+      });
+    }
+    // Clear Last Data
+    await runQuery("DELETE FROM app_course_cluster WHERE course_id = ? ", [
+      course_id,
+    ]);
+    let sql =
+      " INSERT INTO app_course_cluster (cct_id,cs_id,course_id) VALUES ? ";
+    let obj = [];
+    data.forEach((el) => {
+      let newObj = [
+        `${functions.randomCode()}`,
+        `${el?.cs_id}`,
+        `${course_id}`,
+      ];
+      obj.push(newObj);
+    });
+
+    const r = await runQuery(sql, [obj]);
+    return res.json(r);
+  }
+);
+
+router.delete(
+  "/cluster/empty/:course_id",
+  middleware,
+  async (req, res, next) => {
+    const { course_id } = req.params;
+    const r = // Clear Last Data
+      await runQuery("DELETE FROM app_course_cluster WHERE course_id = ? ", [
+        course_id,
+      ]);
+    return res.json(r);
+  }
+);
+
 router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
   const data = req.body;
@@ -312,19 +356,23 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description,app_course_lesson.course_id,app_course_lesson.crt_date,app_course_lesson.udp_date ,
+  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description ,app_course_lesson.crt_date,app_course_lesson.udp_date ,
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM app_course_lesson LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp WHERE app_course_lesson.cancelled=1 AND app_course_lesson.course_id=?`;
+     FROM  app_course_cluster INNER JOIN  app_course_lesson  ON app_course_lesson.cs_id = app_course_cluster.cs_id  LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp WHERE app_course_lesson.cancelled=1 AND app_course_cluster.course_id=?`;
   let p = [course_id];
 
   let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.course_id =? ";
+    " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  app_course_cluster.course_id =? ";
 
   let getCountAll = await runQuery(sql_count, p);
-  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  if (total <= 0) {
+    return res.status(400).json({
+      status: 400,
+      message: "Error Transaction",
+    });
+  }
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
@@ -334,11 +382,11 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   }
 
   let getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  total_filter =
+  const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
-  sql += `  ORDER BY app_course_lesson.cs_id DESC LIMIT ${offset},${per_page} `;
-  let getContent = await runQuery(sql, p.concat(search_param));
+  sql += ` GROUP BY app_course_lesson.cs_id ORDER BY app_course_lesson.cs_name DESC LIMIT ${offset},${per_page} `;
+  const getContent = await runQuery(sql, p.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -375,7 +423,6 @@ router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
         cs_description: reslut?.cs_description,
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
-        course_id: reslut?.course_id,
       };
       return res.json(response);
     }

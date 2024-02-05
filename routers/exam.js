@@ -479,8 +479,6 @@ router.post("/start/render", middleware, async (req, res, next) => {
   const em_id = data.em_id;
   const user_id = data.user_id;
   const offset = functions.setZero((current_page - 1) * per_page);
-  let total_cache = 0;
-  let total_cache_complete = 0; //จำนวนข้อสอบที่ทำแล้วทั้งหมด
   let exam_complete = 0;
   // --IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
   let sql_question = `
@@ -506,12 +504,18 @@ FROM
 
   // ลบแคชของวันที่ผ่านมาออก
   // console.log(new Date().getDate());
-  await runQuery("DELETE FROM app_exam_cache WHERE DAY(udp_date) < ? ", [
-    new Date().getDate(),
-  ]);
-  await runQuery("DELETE FROM app_exam_time WHERE DAY(udp_date) < ? ", [
-    new Date().getDate(),
-  ]);
+  const count_cache_yesterday = await runQuery(
+    "SELECT COUNT(*) AS total_cache   FROM app_exam_cache WHERE DAY(udp_date) < ? ",
+    [new Date().getDate()]
+  );
+  const total_cache_yesterday =
+    count_cache_yesterday[0]?.total_cache !== undefined
+      ? count_cache_yesterday[0]?.total_cache
+      : 0;
+  if (total_cache_yesterday > 0) {
+    await runQuery("TRUNCATE TABLE app_exam_cache", []);
+    await runQuery("TRUNCATE TABLE app_exam_time", []);
+  }
 
   if (clear_cach === 1) {
     await runQuery(
@@ -520,29 +524,30 @@ FROM
     );
   }
   // จำนวน Cache
-  let count_cache = await runQuery(
+  const count_cache = await runQuery(
     "SELECT COUNT(*) AS total_cache FROM app_exam_cache WHERE em_id = ? AND user_id =? ",
     [em_id, user_id]
   );
-  total_cache =
+  const total_cache =
     count_cache[0]?.total_cache !== undefined ? count_cache[0]?.total_cache : 0;
 
   // จำนวน Cache ข้อสอบที่ทำเสร็จ
-  let count_cache_complete = await runQuery(
+  const count_cache_complete = await runQuery(
     "SELECT COUNT(*) AS total_cache_complete FROM app_exam_cache WHERE em_id = ? AND user_id =? AND is_complete=1",
     [em_id, user_id]
   );
-  total_cache_complete =
+  //จำนวนข้อสอบที่ทำแล้วทั้งหมด
+  const total_cache_complete =
     count_cache_complete[0]?.total_cache_complete !== undefined
       ? count_cache_complete[0]?.total_cache_complete
       : 0;
 
   // ดึงข้อมูลจำนวนการ Random จากฐานข้อมูลหลักสูตร
-  let random_amount = await runQuery(
+  const random_amount = await runQuery(
     "SELECT em_random_amount FROM app_exam_main WHERE em_id = ?",
     [em_id]
   );
-  let em_random_amount =
+  const em_random_amount =
     random_amount[0]?.em_random_amount !== undefined
       ? random_amount[0]?.em_random_amount
       : 0;
@@ -578,7 +583,7 @@ FROM
     );
   }
 
-  let getQuestion = await runQuery(sql_question, [em_id, user_id]);
+  const getQuestion = await runQuery(sql_question, [em_id, user_id]);
   let obj = [];
   // console.log(getQuestion);
   for (let i = 0; i < getQuestion.length; i++) {

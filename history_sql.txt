@@ -5,3 +5,8 @@ ALTER TABLE `app_user_detail` ADD `user_village` VARCHAR(128) NOT NULL AFTER `us
 27/12/2024
 ALTER TABLE `app_exam_main` ADD `em_measure` INT(0) NOT NULL AFTER `em_time`;
 ALTER TABLE `app_exam_time` ADD `udp_date` DATETIME NOT NULL AFTER `user_id`;
+
+5/2/2021
+ALTER TABLE `app_course_lesson` DROP `course_id`;
+CREATE TABLE `oas`.`app_course_cluster` (`cct_id` VARCHAR(48) NOT NULL , `cs_id` INT NOT NULL COMMENT 'app_course_lesson.cs_id' , `course_id` INT NOT NULL COMMENT 'app_course.course_id' , PRIMARY KEY (`cct_id`)) ENGINE = InnoDB;
+ALTER TABLE `app_course_log` ADD `course_id` INT NOT NULL COMMENT 'app_course.course_id' AFTER `cs_id`;
