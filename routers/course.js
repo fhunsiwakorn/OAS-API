@@ -431,9 +431,10 @@ router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
 router.get("/learn/status?", middleware, (req, res, next) => {
   const cs_id = req.query.cs_id;
   const user_id = req.query.user_id;
+  const course_id = req.query.course_id;
   con.query(
-    " SELECT COUNT(cs_id) AS total_learing FROM app_course_log WHERE cs_id = ? AND user_id = ?",
-    [cs_id, user_id],
+    " SELECT COUNT(cs_id) AS total_learing FROM app_course_log WHERE cs_id = ? AND user_id = ? AND course_id = ?",
+    [cs_id, user_id, course_id],
     (err, rs) => {
       const total = rs[0]?.total_learing;
       if (total >= 1) {
