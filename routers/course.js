@@ -259,6 +259,51 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
   );
 });
 
+router.post("/lesson/all", middleware, async (req, res, next) => {
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const search = data.search;
+  const offset = (current_page - 1) * per_page;
+  let total = 0;
+  let total_filter = 0;
+  let search_param = [];
+  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description,app_course_lesson.crt_date,app_course_lesson.udp_date ,
+     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
+     FROM app_course_lesson LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp WHERE app_course_lesson.cancelled=1`;
+  let p = [];
+
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 ";
+
+  let getCountAll = await runQuery(sql_count, p);
+  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
+  if (search !== "" || search.length > 0) {
+    let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
+    search_param = [`%${search}%`, `%${search}%`];
+  }
+
+  let getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+
+  sql += `  ORDER BY app_course_lesson.cs_id DESC LIMIT ${offset},${per_page} `;
+  let getContent = await runQuery(sql, p.concat(search_param));
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
+});
+
 router.delete("/lesson/delete/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   con.query(
