@@ -346,6 +346,11 @@ router.delete(
   middleware,
   async (req, res, next) => {
     const { course_id } = req.params;
+    // Update Course
+    await runQuery(
+      "UPDATE  app_course SET is_complete=0 WHERE course_id = ? ",
+      [course_id]
+    );
     const r = // Clear Last Data
       await runQuery("DELETE FROM app_course_cluster WHERE course_id = ? ", [
         course_id,
