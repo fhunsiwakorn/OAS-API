@@ -122,7 +122,7 @@ router.post("/list", middleware, async (req, res, next) => {
   let total = 0;
   let total_filter = 0;
   let search_param = [];
-  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.crt_date,app_course.udp_date ,
+  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.is_complete,app_course.crt_date,app_course.udp_date ,
    CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
    FROM app_course LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course.user_udp WHERE app_course.cancelled=1`;
 
@@ -319,6 +319,11 @@ router.post(
     await runQuery("DELETE FROM app_course_cluster WHERE course_id = ? ", [
       course_id,
     ]);
+    // Update Course
+    await runQuery(
+      "UPDATE  app_course SET is_complete=1 WHERE course_id = ? ",
+      [course_id]
+    );
     let sql =
       " INSERT INTO app_course_cluster (cct_id,cs_id,course_id) VALUES ? ";
     let obj = [];
