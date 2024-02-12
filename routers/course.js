@@ -321,7 +321,7 @@ router.post(
     ]);
     // Update Course
     await runQuery(
-      "UPDATE  app_course SET is_complete=1 ,user_udp=?  WHERE course_id = ? ",
+      "UPDATE  app_course SET is_complete=1 ,udp_date=?  WHERE course_id = ? ",
       [functions.dateAsiaThai(), course_id]
     );
     let sql =
@@ -348,7 +348,7 @@ router.delete(
     const { course_id } = req.params;
     // Update Course
     await runQuery(
-      "UPDATE  app_course SET is_complete=0 ,user_udp=?  WHERE course_id = ? ",
+      "UPDATE  app_course SET is_complete=0 ,udp_date=?  WHERE course_id = ? ",
       [functions.dateAsiaThai(), course_id]
     );
     const r = // Clear Last Data
