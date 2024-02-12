@@ -190,7 +190,6 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
-  const course_id = data.course_id;
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
@@ -202,35 +201,21 @@ router.post("/lesson/create", middleware, (req, res, next) => {
           message: "Username Error", // error.sqlMessage
         });
       }
-
       con.query(
-        "SELECT course_id FROM app_course WHERE course_id = ?",
-        [course_id],
-        (err, rows) => {
-          let check_course = rows.length;
-          if (check_course <= 0) {
-            return res.status(204).json({
-              status: 204,
-              message: "Data is null", // error.sqlMessage
-            });
-          }
-          con.query(
-            "INSERT INTO app_course_lesson (cs_cover,cs_name,cs_video,cs_description,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?)",
-            [
-              data.cs_cover,
-              data.cs_name,
-              data.cs_video,
-              data.cs_description,
-              functions.dateAsiaThai(),
-              functions.dateAsiaThai(),
-              user_id,
-              user_id,
-            ],
-            function (err, result) {
-              if (err) throw err;
-              return res.json(result);
-            }
-          );
+        "INSERT INTO app_course_lesson (cs_cover,cs_name,cs_video,cs_description,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?)",
+        [
+          data.cs_cover,
+          data.cs_name,
+          data.cs_video,
+          data.cs_description,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
+          user_id,
+          user_id,
+        ],
+        function (err, result) {
+          if (err) throw err;
+          return res.json(result);
         }
       );
     }
