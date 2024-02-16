@@ -306,7 +306,7 @@ router.post("/lesson/all", middleware, async (req, res, next) => {
 router.delete("/lesson/delete/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   con.query(
-    "SELECT course_id FROM app_course_lesson WHERE cs_id = ?",
+    "SELECT * FROM app_course_lesson WHERE cs_id = ?",
     [cs_id],
     (err, rows) => {
       let _content = rows.length;
