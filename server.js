@@ -14,7 +14,7 @@ const media_file = require("./routers/media_file");
 const report = require("./routers/report");
 const log = require("./routers/log");
 const general = require("./routers/general");
-
+const vrdls = require("./routers/vrdls");
 // const http = require("http");
 const os = require("os");
 const cluster = require("cluster");
@@ -37,6 +37,7 @@ app.use("/media_file", media_file);
 app.use("/report", report);
 app.use("/log", log);
 app.use("/general", general);
+app.use("/vrdls", vrdls);
 // ทำงานทุก request ที่เข้ามา
 app.use(function (req, res, next) {
   var err = createError(404);

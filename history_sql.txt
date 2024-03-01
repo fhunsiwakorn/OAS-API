@@ -2,14 +2,17 @@ ALTER TABLE `app_user` ADD `user_prefrix` VARCHAR(24) NOT NULL AFTER `user_passw
 
 4/12/2023
 ALTER TABLE `app_user_detail` ADD `user_village` VARCHAR(128) NOT NULL AFTER `user_address`;
-27/12/2024
+27/12/2023
 ALTER TABLE `app_exam_main` ADD `em_measure` INT(0) NOT NULL AFTER `em_time`;
 ALTER TABLE `app_exam_time` ADD `udp_date` DATETIME NOT NULL AFTER `user_id`;
 
-5/2/2021
+5/2/2024
 ALTER TABLE `app_course_lesson` DROP `course_id`;
 CREATE TABLE `oas`.`app_course_cluster` (`cct_id` VARCHAR(48) NOT NULL , `cs_id` INT NOT NULL COMMENT 'app_course_lesson.cs_id' , `course_id` INT NOT NULL COMMENT 'app_course.course_id' , PRIMARY KEY (`cct_id`)) ENGINE = InnoDB;
 ALTER TABLE `app_course_log` ADD `course_id` INT NOT NULL COMMENT 'app_course.course_id' AFTER `cs_id`;
 
-12/2/2021
+12/2/2024
 ALTER TABLE `app_course` ADD `is_complete` INT(1) NOT NULL DEFAULT '0' AFTER `course_description`;
+
+1/3/2024
+CREATE TABLE `oas`.`app_user_vrdls` (`id` INT NOT NULL AUTO_INCREMENT , `student_id` VARCHAR(64) NOT NULL , `user_id` INT NOT NULL COMMENT 'app_user.user_id ' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
