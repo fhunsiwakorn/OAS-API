@@ -22,7 +22,6 @@ router.post("/verify/student", middleware, async (req, res, next) => {
     "SELECT * FROM app_user_vrdls WHERE user_id=? AND student_id=?",
     [user_id, student_id]
   );
-  const vrdls = getUserVrdls[0]?.["student_id"];
 
   //   console.log(getUser[0]?.["user_firstname"]);
   if (getUser[0]?.["user_firstname"] === undefined) {
@@ -33,7 +32,7 @@ router.post("/verify/student", middleware, async (req, res, next) => {
   const user_firstname = getUser[0]?.["user_firstname"];
   const user_lastname = getUser[0]?.["user_lastname"];
   const user_phone = getUser[0]?.["user_phone"];
-
+  const vrdls = getUserVrdls[0]?.["student_id"];
   request(
     {
       method: "GET",

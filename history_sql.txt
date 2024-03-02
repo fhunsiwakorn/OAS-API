@@ -16,3 +16,8 @@ ALTER TABLE `app_course` ADD `is_complete` INT(1) NOT NULL DEFAULT '0' AFTER `co
 
 1/3/2024
 CREATE TABLE `oas`.`app_user_vrdls` (`id` INT NOT NULL AUTO_INCREMENT , `student_id` VARCHAR(64) NOT NULL , `user_id` INT NOT NULL COMMENT 'app_user.user_id ' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+2/3/2024
+CREATE TABLE `oas`.`app_course_group` (`cg_id` INT NOT NULL , `cg_name` VARCHAR(256) NOT NULL , `crt_date` DATETIME NOT NULL , `udp_date` DATETIME NOT NULL , `user_crt` INT NOT NULL COMMENT 'app_user.user_id ' , `user_udp` INT NOT NULL COMMENT 'app_user.user_id ' ) ENGINE = InnoDB;
+ALTER TABLE `app_course_group` CHANGE `cg_id` `cg_id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`cg_id`);
+ALTER TABLE `app_course_group` ADD `cancelled` INT(1) NOT NULL DEFAULT '1' AFTER `udp_date`;
+ALTER TABLE `app_course_lesson` ADD `cg_id` INT NOT NULL COMMENT 'app_course_group.cg_id' AFTER `user_udp`;
