@@ -301,7 +301,7 @@ app_course_lesson.cs_id NOT IN ${ex}
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
-  sql += `  ORDER BY app_course_lesson.cs_name ASC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY app_course_lesson.cs_id ASC LIMIT ${offset},${per_page} `;
   const getContent = await runQuery(sql, p.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
