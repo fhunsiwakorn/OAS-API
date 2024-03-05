@@ -43,6 +43,12 @@ router.post("/verify/student", middleware, async (req, res, next) => {
     },
     async function (error, response, body) {
       const arr = body.split("\r\n");
+
+      if (arr[0] === "" || arr[0] === null || arr[0] === undefined) {
+        return res.status(400).json({
+          verify: false,
+        });
+      }
       const name = arr[0];
       const phone = arr[14];
       //   const nameText = name.split(":")[1];
