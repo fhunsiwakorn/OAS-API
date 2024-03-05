@@ -118,12 +118,12 @@ router.post("/login", middleware, (req, res, next) => {
 
 router.post("/create", middleware, async (req, res, next) => {
   const data = req.body;
-  let user_name = data.user_name;
-  let user_phone = data.user_phone;
-  let user_email = data.user_email;
-
+  const user_name = data.user_name;
+  const user_phone = data.user_phone;
+  const user_email = data.user_email;
+  const user_type = data.user_type;
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
-  if (user_email !== "") {
+  if (user_email !== "" && user_type === 3) {
     let _check_users = await runQuery(
       "SELECT user_name FROM app_user WHERE user_name = ? OR user_email=? OR user_phone=? ",
       [user_name, user_email, user_phone]
@@ -134,10 +134,21 @@ router.post("/create", middleware, async (req, res, next) => {
         message: "Username Error", // error.sqlMessage
       });
     }
+  } else if (user_email === "" && user_type === 3) {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE user_name = ?  OR user_phone=? ",
+      [user_name, user_phone]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
   } else {
     let _check_users = await runQuery(
-      "SELECT user_name FROM app_user WHERE user_name = ?  OR user_phone=?",
-      [user_name, user_phone]
+      "SELECT user_name FROM app_user WHERE user_name = ?",
+      [user_name]
     );
     if (_check_users.length >= 1) {
       return res.status(404).json({
@@ -167,9 +178,23 @@ router.post("/create", middleware, async (req, res, next) => {
           functions.dateAsiaThai(),
           functions.dateAsiaThai(),
         ],
-        function (err, result) {
+        async function (err, result) {
           if (err) throw err;
           // console.log("1 record inserted");
+          await runQuery(
+            "INSERT INTO app_user_detail (verify_account,identification_number,user_img, user_birthday,user_address,user_village,location_id,country_id,user_id) VALUES (?,?,?,?,?,?,?,?,?)",
+            [
+              "unactive",
+              "",
+              "",
+              `${functions.datetimeNow()}`,
+              "",
+              "",
+              1,
+              33,
+              result?.insertId,
+            ]
+          );
           return res.json(result);
         }
       );
@@ -179,11 +204,11 @@ router.post("/create", middleware, async (req, res, next) => {
 router.put("/update/:user_id", middleware, async (req, res, next) => {
   const { user_id } = req.params;
   const data = req.body;
-  let user_name = data.user_name;
-  let user_password = data.user_password;
-  let user_phone = data.user_phone;
-  let user_email = data.user_email;
-
+  const user_name = data.user_name;
+  const user_password = data.user_password;
+  const user_phone = data.user_phone;
+  const user_email = data.user_email;
+  const user_type = data.user_type;
   // ตรวจสอบว่ามี  user_id อยู่นี้หรือไม่
   let _check_user = await runQuery(
     "SELECT user_id FROM app_user WHERE user_id = ?",
@@ -198,7 +223,7 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
   }
 
   // ตรวจสอบว่ามี user_name ,email และเบอร์โทรนี้หรือไม่
-  if (user_email !== "") {
+  if (user_email !== "" && user_type === 3) {
     let _check_users = await runQuery(
       "SELECT user_name FROM app_user WHERE (user_name = ? OR user_email=? OR user_phone=?) AND user_id != ?  ",
       [user_name, user_email, user_phone, user_id]
@@ -209,10 +234,21 @@ router.put("/update/:user_id", middleware, async (req, res, next) => {
         message: "Username Error", // error.sqlMessage
       });
     }
+  } else if (user_email === "" && user_type === 3) {
+    let _check_users = await runQuery(
+      "SELECT user_name FROM app_user WHERE (user_name = ?  OR user_phone=?) AND user_id != ?  ",
+      [user_name, user_phone, user_id]
+    );
+    if (_check_users.length >= 1) {
+      return res.status(404).json({
+        status: 404,
+        message: "Username Error", // error.sqlMessage
+      });
+    }
   } else {
     let _check_users = await runQuery(
-      "SELECT user_name FROM app_user WHERE (user_name = ?  OR user_phone=?) AND user_id != ?",
-      [user_name, user_phone, user_id]
+      "SELECT user_name FROM app_user WHERE user_name = ? AND user_id != ?",
+      [user_name, user_id]
     );
     if (_check_users.length >= 1) {
       return res.status(404).json({

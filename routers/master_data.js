@@ -7,7 +7,7 @@ const functions = require("../functions");
 router.post("/zipcode", middleware, (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const per_page = data.per_page <= 250 ? data.per_page : 250;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
@@ -28,7 +28,7 @@ router.post("/zipcode", middleware, (req, res, next) => {
     total_filter = rows.length;
   });
 
-  sql += ` ORDER BY zipcode_name ASC LIMIT ${offset},${per_page} `;
+  sql += ` ORDER BY province_name ASC LIMIT ${offset},${per_page} `;
   // query ข้อมูล
   con.query(sql, search_param, (err, results) => {
     if (err) {
@@ -54,7 +54,7 @@ router.post("/zipcode", middleware, (req, res, next) => {
 router.post("/contry", middleware, (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const per_page = data.per_page <= 250 ? data.per_page : 250;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let total = 0;
