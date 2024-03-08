@@ -475,7 +475,7 @@ router.post("/detail/create", middleware, async (req, res, next) => {
     "SELECT identification_number FROM app_user_detail WHERE identification_number = ? AND user_id !=?",
     [identification_number, user_id]
   );
-  if (checkUser.length >= 1) {
+  if (checkUser.length >= 1 && identification_number !=="" ) {
     return res.status(404).json({
       status: 404,
       message: "Invalid 'identification_number'", // error.sqlMessage
