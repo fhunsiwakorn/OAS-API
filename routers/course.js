@@ -190,7 +190,6 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
-
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
@@ -287,6 +286,15 @@ app_course_lesson.cs_id NOT IN ${ex}
   let p = [];
 
   let sql_count = ` SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.cs_id NOT IN ${ex}`;
+  if (cg_id !== "" || cg_id !== 0 || cg_id !== undefined) {
+    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
+    sql += x;
+    sql_count += x;
+  } else {
+    let x = ` AND app_course_lesson.cg_id > 0`; //
+    sql += x;
+    sql_count += x;
+  }
 
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
@@ -296,15 +304,6 @@ app_course_lesson.cs_id NOT IN ${ex}
     sql += q;
     sql_count += q;
     search_param = [`%${search}%`, `%${search}%`];
-  }
-  if (cg_id !== "" || cg_id !== 0 || cg_id !== undefined) {
-    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
-    sql += x;
-    sql_count += x;
-  } else {
-    let x = ` AND app_course_lesson.cg_id > 0`; //
-    sql += x;
-    sql_count += x;
   }
 
   const getCountFilter = await runQuery(sql_count, p.concat(search_param));
