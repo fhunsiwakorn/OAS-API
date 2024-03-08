@@ -825,6 +825,9 @@ INSERT INTO `app_user` VALUES('137','Testdev001','$2b$08$mgWsB2AjG0JEC.wcDM9zBO3
 INSERT INTO `app_user` VALUES('138','Testdev002','$2b$08$7rvBV.5d2Kc91bYTFU1.SetLeqf1LrI5LHOsgxnETqoAkURJWHT3a','','Testdev002','Testdev002','','0891234561','3','1','2023-10-18 16:24:03','2023-10-18 16:24:03','1');
 INSERT INTO `app_user` VALUES('139','superadmin','$2b$08$suxma4tAQTCb1jUyTIddX.uVO1uM.fu7YOLQmAQBVRhGHxH2CJ4Km','นาย','super','administrator','','8562076540099','1','1','2023-11-22 08:59:07','2023-11-22 08:59:07','1');
 INSERT INTO `app_user` VALUES('140','superadmin2','$2b$08$2DWP29fPAR.UzYXCIXCacOGsFayf3MnRS3d2186vcKI2T3FYwdKjG','นาย','super','administrator','','','1','1','2023-11-22 10:17:53','2023-11-22 10:17:53','1');
+INSERT INTO `app_user` VALUES('141','admin2','$2b$08$Ui8PYwBuDyEWNfXcIFCvbOM52pNqwBye891CKtFsZT/tMJVfa127W','','super','administrator','','0544','1','1','2024-03-05 16:32:21','2024-03-05 16:32:21','1');
+INSERT INTO `app_user` VALUES('142','admin12','$2b$08$JKg4/4axHzvWYKlgWDtEHOMAlzmO/S8OqwZgWGnQ/imjo3bJVBrOK','','super','administrator','','0544','1','1','2024-03-05 16:37:11','2024-03-05 16:37:11','1');
+INSERT INTO `app_user` VALUES('143','admin122','$2b$08$fNlknftFLvrxyqsM032eXut/EjqLHsifMfctDeFBq6U6B/1hvkJUm','','super','administrator','','','1','1','2024-03-05 16:37:54','2024-03-05 16:37:54','1');
 
 
 
@@ -852,6 +855,8 @@ INSERT INTO `app_user_detail` VALUES('35','phone_active','25651455','static/uplo
 INSERT INTO `app_user_detail` VALUES('36','phone_unactive','3011231231231','static/upload/2023/10/files-kI3cQG2oBW.png','2023-05-31','3011231231231','','1','1','137');
 INSERT INTO `app_user_detail` VALUES('37','unactive','1241251251251','static/upload/2023/10/files-YeodRpkyLr.jpg','2023-09-26','125125125','','1','1','138');
 INSERT INTO `app_user_detail` VALUES('38','system_active','1101800590277','static/upload/2023/10/files-Iqhu0oDfAN.jpg','2023-10-31','112 / 22','','3','33','7');
+INSERT INTO `app_user_detail` VALUES('39','unactive','','','2024-03-05','','','1','1','142');
+INSERT INTO `app_user_detail` VALUES('40','unactive','','','2024-03-05','','','1','1','143');
 
 
 

@@ -269,6 +269,7 @@ router.post("/lesson/all", middleware, async (req, res, next) => {
   const search = data.search;
   const exclude = data.exclude;
   const offset = functions.setZero((current_page - 1) * per_page);
+  const cg_id = req.query.cg_id;
   let ex = '("0")';
   if (exclude.length > 0) {
     const toArr = exclude.toString();
@@ -295,6 +296,15 @@ app_course_lesson.cs_id NOT IN ${ex}
     sql += q;
     sql_count += q;
     search_param = [`%${search}%`, `%${search}%`];
+  }
+  if (cg_id !== "" || cg_id !== 0 || cg_id !== undefined) {
+    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
+    sql += x;
+    sql_count += x;
+  } else {
+    let x = ` AND app_course_lesson.cg_id > 0`; //
+    sql += x;
+    sql_count += x;
   }
 
   const getCountFilter = await runQuery(sql_count, p.concat(search_param));
@@ -432,7 +442,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  app_course_cluster.course_id =? ";
 
-  let getCountAll = await runQuery(sql_count, p);
+  const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
   if (total <= 0) {
     return res.status(400).json({
@@ -448,7 +458,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`];
   }
 
-  let getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
@@ -461,6 +471,93 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
     limit_page: per_page, // limit data
     total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
     search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
+});
+
+router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
+  const course_id = req.query.course_id;
+  const cg_id = req.query.cg_id;
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const search = data.search;
+  const offset = functions.setZero((current_page - 1) * per_page);
+  let search_param = [];
+  let sql = `
+  SELECT 
+  app_course_lesson.cs_id,
+  app_course_lesson.cs_cover,
+  app_course_lesson.cs_name,
+  app_course_lesson.cs_video,
+  app_course_lesson.cs_description,
+  app_course_lesson.crt_date,
+  app_course_lesson.udp_date,
+  app_course_cluster.course_id,
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM app_course_cluster 
+  INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  WHERE
+  app_course_group.cg_id = ? AND 
+  app_course_cluster.course_id = ?
+   `;
+  let sql_count = ` SELECT  COUNT(*) as numRows 
+   FROM  
+   app_course_cluster 
+   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+   WHERE  
+   app_course_group.cg_id = ? AND 
+   app_course_cluster.course_id = ?`;
+
+  let sql_next = ` SELECT  
+   app_course_lesson.cg_id
+   FROM  
+   app_course_cluster 
+   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+   WHERE  
+   app_course_group.cg_id > ? AND 
+   app_course_cluster.course_id = ?`;
+  let sql_previous = ` SELECT  
+   app_course_lesson.cg_id
+   FROM  
+   app_course_cluster 
+   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+   WHERE  
+   app_course_group.cg_id < ? AND 
+   app_course_cluster.course_id = ?`;
+  let p = [cg_id, course_id];
+  const getNext = await runQuery(sql_next, p);
+  const getPrevious = await runQuery(sql_previous, p);
+
+  const getCountAll = await runQuery(sql_count, p);
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
+  if (search !== "" || search.length > 0) {
+    let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
+    search_param = [`%${search}%`, `%${search}%`];
+  }
+  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  const total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+  sql += `  ORDER BY app_course_lesson.cs_name DESC LIMIT ${offset},${per_page} `;
+  const getContent = await runQuery(sql, p.concat(search_param));
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    next_cg_id: getNext[0] !== undefined ? getNext[0]?.cg_id : {},
+    previous_cg_id: getPrevious[0] !== undefined ? getPrevious[0]?.cg_id : {},
     data: getContent, // รายการข้อมูล
   };
   return res.json(response);
