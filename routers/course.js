@@ -286,7 +286,7 @@ app_course_lesson.cs_id NOT IN ${ex}
   let p = [];
 
   let sql_count = ` SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.cs_id NOT IN ${ex}`;
-  if (cg_id !== "" || cg_id !== 0 || cg_id !== undefined) {
+  if (cg_id !== "" && cg_id !== 0 && cg_id !== undefined) {
     let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
     sql += x;
     sql_count += x;
@@ -727,6 +727,62 @@ router.post("/group/all", middleware, async (req, res, next) => {
     data: getContent, // รายการข้อมูล
   };
   return res.json(response);
+});
+
+router.post("/document/create", middleware, (req, res, next) => {
+  const data = req.body;
+  const course_id = data.course_id;
+
+  con.query(
+    "SELECT * FROM app_course WHERE course_id = ?",
+    [course_id],
+    (err, rows) => {
+      let checkuser = rows.length;
+      if (checkuser <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Course Error",
+        });
+      }
+
+      con.query(
+        "INSERT INTO app_course_document (cd_path,cd_name,course_id) VALUES (?,?,?)",
+        [data.cd_path, data.cd_name, course_id],
+        function (err, result) {
+          if (err) throw err;
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+
+router.post("/document/delete/:id", middleware, (req, res, next) => {
+  const data = req.body;
+  const { id } = req.params;
+
+  con.query(
+    "SELECT user_id FROM app_course WHERE course_id = ?",
+    [course_id],
+    (err, rows) => {
+      let checkuser = rows.length;
+      if (checkuser <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Course Error",
+        });
+      }
+
+      con.query(
+        "INSERT INTO app_course_document (cd_path,cd_name,course_id) VALUES (?,?,?)",
+        [data.cd_path, data.cd_name, course_id],
+        function (err, result) {
+          if (err) throw err;
+          return res.json(result);
+        }
+      );
+    }
+  );
 });
 
 module.exports = router;
