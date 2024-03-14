@@ -424,6 +424,7 @@ router.delete("/cluster/delete", middleware, (req, res, next) => {
 
 router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
+  const cg_id = req.query.cg_id;
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -433,7 +434,9 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description ,app_course_lesson.crt_date,app_course_lesson.udp_date ,
   cg.cg_name,     
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM  app_course_cluster INNER JOIN  app_course_lesson  ON app_course_lesson.cs_id = app_course_cluster.cs_id  LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp 
+     FROM  app_course_cluster 
+     INNER JOIN  app_course_lesson  ON app_course_lesson.cs_id = app_course_cluster.cs_id  
+     LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp 
      LEFT JOIN  app_course_group cg ON cg.cg_id  = app_course_lesson.cg_id 
      WHERE app_course_lesson.cancelled=1 AND app_course_cluster.course_id=?`;
   let p = [course_id];
@@ -448,6 +451,15 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
       status: 400,
       message: "Error Transaction",
     });
+  }
+  if (cg_id !== "" && cg_id !== 0 && cg_id !== undefined) {
+    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
+    sql += x;
+    sql_count += x;
+  } else {
+    let x = ` AND app_course_lesson.cg_id > 0`; //
+    sql += x;
+    sql_count += x;
   }
 
   if (search !== "" || search.length > 0) {
