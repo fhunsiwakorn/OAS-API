@@ -424,7 +424,7 @@ router.delete("/cluster/delete", middleware, (req, res, next) => {
 
 router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
-  const cg_id = req.query.cg_id;
+
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -449,17 +449,8 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   if (total <= 0) {
     return res.status(400).json({
       status: 400,
-      message: "Error Transaction",
+      message: "Error Transactions",
     });
-  }
-  if (cg_id !== "" && cg_id !== 0 && cg_id !== undefined) {
-    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
-    sql += x;
-    sql_count += x;
-  } else {
-    let x = ` AND app_course_lesson.cg_id > 0`; //
-    sql += x;
-    sql_count += x;
   }
 
   if (search !== "" || search.length > 0) {
