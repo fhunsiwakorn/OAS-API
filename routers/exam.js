@@ -252,8 +252,6 @@ router.post("/question/:em_id/list", middleware, async (req, res, next) => {
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
   let sql = `SELECT
 	t1.eq_id, 
@@ -271,11 +269,9 @@ FROM
 
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_exam_question t1 WHERE t1.em_id=? AND t1.cancelled=1 ";
-  con.query(sql_count, param1, (err, results) => {
-    // console.log(results);
-    let res = results[0];
-    total = res !== undefined ? res?.numRows : 0;
-  });
+
+  const getCountAll = await runQuery(sql_count, param1);
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (t1.eq_name  LIKE ?)`; //
@@ -284,9 +280,9 @@ FROM
     search_param = [`%${search}%`];
   }
 
-  con.query(sql_count, param1.concat(search_param), (err, rows) => {
-    total_filter = rows.length;
-  });
+  const getCountFilter = await runQuery(sql_count, param1.concat(search_param));
+  const total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
   sql += `  ORDER BY t1.eq_id DESC LIMIT ${offset},${per_page} `;
 

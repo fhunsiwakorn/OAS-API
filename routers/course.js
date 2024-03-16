@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const con = require("../database");
+const fs = require("fs");
 const middleware = require("../middleware");
 const functions = require("../functions");
 
@@ -8,6 +9,11 @@ async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
   });
+}
+async function delFile(path) {
+  var filePath = path;
+  fs.unlinkSync(filePath);
+  res.end();
 }
 
 router.post("/create", middleware, (req, res, next) => {
@@ -744,7 +750,7 @@ router.post("/document/create", middleware, (req, res, next) => {
       if (checkuser <= 0) {
         return res.status(204).json({
           status: 204,
-          message: "Course Error",
+          message: "Document Error",
         });
       }
 
@@ -760,30 +766,46 @@ router.post("/document/create", middleware, (req, res, next) => {
   );
 });
 
-router.post("/document/delete/:id", middleware, (req, res, next) => {
-  const data = req.body;
+router.delete("/document/delete/:id", middleware, (req, res, next) => {
   const { id } = req.params;
 
   con.query(
-    "SELECT user_id FROM app_course WHERE course_id = ?",
-    [course_id],
+    "SELECT * FROM app_course_document WHERE id = ?",
+    [id],
     (err, rows) => {
-      let checkuser = rows.length;
+      const checkuser = rows.length;
+      const path = rows[0]?.cd_path;
       if (checkuser <= 0) {
         return res.status(204).json({
           status: 204,
-          message: "Course Error",
+          message: "Document Error",
         });
       }
 
       con.query(
-        "INSERT INTO app_course_document (cd_path,cd_name,course_id) VALUES (?,?,?)",
-        [data.cd_path, data.cd_name, course_id],
+        "DELETE FROM app_course_document WHERE id = ? ",
+        [id],
         function (err, result) {
           if (err) throw err;
+          if (path !== undefined && path !== "") {
+            delFile(path);
+          }
+
           return res.json(result);
         }
       );
+    }
+  );
+});
+
+router.get("/document/get/:course_id", middleware, (req, res, next) => {
+  const { course_id } = req.params;
+
+  con.query(
+    "SELECT * FROM app_course_document WHERE course_id = ?",
+    [course_id],
+    (err, result) => {
+      return res.json(result);
     }
   );
 });
