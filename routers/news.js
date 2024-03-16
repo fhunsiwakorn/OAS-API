@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
+const fs = require("fs");
 const functions = require("../functions");
 
 async function runQuery(sql, param) {
@@ -9,6 +10,12 @@ async function runQuery(sql, param) {
     resolve(con.query(sql, param));
   });
 }
+async function delFile(path) {
+  var filePath = path;
+  fs.unlinkSync(filePath);
+  res.end();
+}
+
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
@@ -240,12 +247,31 @@ router.post("/image/create", middleware, (req, res, next) => {
 
 router.delete("/image/delete/:ni_id", middleware, (req, res, next) => {
   const { ni_id } = req.params;
+
   con.query(
-    " DELETE FROM  app_news_image WHERE ni_id=? ",
+    "SELECT * FROM app_news_image WHERE ni_id = ?",
     [ni_id],
-    function (err, result) {
-      if (err) throw err;
-      return res.json(result);
+    (err, rows) => {
+      let _content = rows.length;
+      const path = rows[0]?.ni_path_file;
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+
+      con.query(
+        " DELETE FROM  app_news_image WHERE ni_id=? ",
+        [ni_id],
+        function (err, result) {
+          if (err) throw err;
+          if (path !== undefined && path !== "") {
+            delFile(path);
+          }
+          return res.json(result);
+        }
+      );
     }
   );
 });
