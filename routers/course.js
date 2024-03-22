@@ -487,10 +487,17 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
 router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
   const cg_id = req.query.cg_id;
+  const user_id = req.query.user_id;
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
+  if (course_id === undefined || cg_id !== undefined || user_id !== undefined) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid  Data ",
+    });
+  }
   const offset = functions.setZero((current_page - 1) * per_page);
   let search_param = [];
   let sql = `
@@ -557,6 +564,22 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY app_course_lesson.cs_name DESC LIMIT ${offset},${per_page} `;
   const getContent = await runQuery(sql, p.concat(search_param));
+
+  // บทเรียนที่แสดงข้อมูลอันดับแรก นำมาเก็บ log เพื่อเป็นประวัติเรียนล่าสุด
+  const first_cs_id = getContent[0] !== undefined ? getContent[0].cs_id : 0;
+  if (first_cs_id !== undefined && first_cs_id !== "" && first_cs_id !== 0) {
+    await runQuery(
+      "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+      [first_cs_id, course_id, user_id, functions.dateAsiaThai()]
+    );
+  }
+  // บทเรียนล่าสุด
+  const getLastLesson = await runQuery(
+    "SELECT * FROM app_course_log WHERE  course_id=? AND cs_id=? AND user_id=? ORDER BY cl_id DESC LIMIT 0,1",
+    [course_id, cg_id, user_id]
+  );
+  const last_lesson = getLastLesson[0] !== undefined ? getLastLesson[0] : {};
+
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -566,6 +589,7 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
     search: search, // คำค้นหา
     next_cg_id: getNext[0] !== undefined ? getNext[0]?.cg_id : {},
     previous_cg_id: getPrevious[0] !== undefined ? getPrevious[0]?.cg_id : {},
+    last_lesson: last_lesson,
     data: getContent, // รายการข้อมูล
   };
   return res.json(response);

@@ -86,7 +86,7 @@ CREATE TABLE `app_course_document` (
   `cd_name` varchar(128) NOT NULL,
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_course_group`; 
 
@@ -110,7 +110,7 @@ DROP TABLE IF EXISTS `app_course_lesson`;
 CREATE TABLE `app_course_lesson` (
   `cs_id` int(11) NOT NULL AUTO_INCREMENT,
   `cs_cover` varchar(128) NOT NULL,
-  `cs_name` varchar(128) NOT NULL,
+  `cs_name` varchar(512) NOT NULL,
   `cs_video` varchar(128) NOT NULL,
   `cs_description` text NOT NULL,
   `crt_date` datetime NOT NULL,
