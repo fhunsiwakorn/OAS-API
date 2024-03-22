@@ -495,7 +495,7 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
   if (course_id === undefined || cg_id === undefined || user_id === undefined) {
     return res.status(404).json({
       status: 404,
-      message: "Invalid  Data ",
+      message: "Invalid  Data",
     });
   }
   const offset = functions.setZero((current_page - 1) * per_page);
