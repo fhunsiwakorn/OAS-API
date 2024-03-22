@@ -492,7 +492,7 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
-  if (course_id === undefined || cg_id !== undefined || user_id !== undefined) {
+  if (course_id === undefined || cg_id === undefined || user_id === undefined) {
     return res.status(404).json({
       status: 404,
       message: "Invalid  Data ",
