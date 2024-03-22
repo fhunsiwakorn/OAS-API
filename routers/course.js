@@ -567,6 +567,7 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
 
   // บทเรียนที่แสดงข้อมูลอันดับแรก นำมาเก็บ log เพื่อเป็นประวัติเรียนล่าสุด
   const first_cs_id = getContent[0] !== undefined ? getContent[0].cs_id : 0;
+
   if (first_cs_id !== undefined && first_cs_id !== "" && first_cs_id !== 0) {
     await runQuery(
       "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
@@ -575,11 +576,12 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
   }
   // บทเรียนล่าสุด
   const getLastLesson = await runQuery(
-    "SELECT * FROM app_course_log WHERE  course_id=? AND cs_id=? AND user_id=? ORDER BY cl_id DESC LIMIT 0,1",
-    [course_id, cg_id, user_id]
+    "SELECT app_course_lesson.* FROM app_course_log INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_log.cs_id WHERE  app_course_log.course_id=? AND app_course_log.cs_id=? AND app_course_log.user_id=? ORDER BY cl_id DESC LIMIT 0,1",
+    [course_id, first_cs_id, user_id]
   );
-  const last_lesson = getLastLesson[0] !== undefined ? getLastLesson[0] : {};
 
+  const last_lesson = getLastLesson[0] !== undefined ? getLastLesson[0] : {};
+  // console.log(getLastLesson);
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
