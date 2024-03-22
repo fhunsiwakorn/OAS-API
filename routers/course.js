@@ -738,11 +738,23 @@ router.get("/lesson/list/options/q", middleware, async (req, res, next) => {
     LIMIT 0 ,1`,
     [cg_id, course_id, last_cl_id === 0 ? last_cl_id : new_last_cs_id]
   );
-
+  const check_learning = await runQuery(
+    "SELECT COUNT(cs_id) AS total_learing FROM app_course_log WHERE cs_id = ? AND user_id = ? AND course_id = ?",
+    [new_last_cs_id, user_id, course_id]
+  );
+  let learning_status = false;
+  const total_learing =
+    check_learning[0]?.total_learing !== undefined
+      ? check_learning[0]?.total_learing
+      : 0;
+  // console.log(new_last_cs_id);
+  if (total_learing > 0) {
+    learning_status = true;
+  }
   // console.log(getLastLesson);
   const response = {
     total: total, // จำนวนรายการทั้งหมด
-
+    learning_status: learning_status,
     next_cg_id: getNext[0] !== undefined ? getNext[0]?.cg_id : {},
     previous_cg_id: getPrevious[0] !== undefined ? getPrevious[0]?.cg_id : {},
     previous_lesson:
