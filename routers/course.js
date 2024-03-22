@@ -484,22 +484,30 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
+router.get("/lesson/list/options/q", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
   const cg_id = req.query.cg_id;
   const user_id = req.query.user_id;
-  const data = req.body;
-  const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
-  const search = data.search;
-  if (course_id === undefined || cg_id === undefined || user_id === undefined) {
+  const action = req.query.action;
+
+  if (
+    course_id === undefined ||
+    cg_id === undefined ||
+    user_id === undefined ||
+    action === undefined
+  ) {
     return res.status(404).json({
       status: 404,
       message: "Invalid  Data",
     });
   }
-  const offset = functions.setZero((current_page - 1) * per_page);
-  let search_param = [];
+  if (action !== "next" && action !== "previous") {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid  Data",
+    });
+  }
+
   let sql = `
   SELECT 
   app_course_lesson.cs_id,
@@ -553,46 +561,198 @@ router.post("/lesson/list/options/q", middleware, async (req, res, next) => {
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
-  if (search !== "" || search.length > 0) {
-    let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
-    sql += q;
-    sql_count += q;
-    search_param = [`%${search}%`, `%${search}%`];
-  }
-  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  const total_filter =
-    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
-  sql += `  ORDER BY app_course_lesson.cs_name DESC LIMIT ${offset},${per_page} `;
-  const getContent = await runQuery(sql, p.concat(search_param));
+  sql += `  ORDER BY app_course_lesson.cs_id ASC LIMIT 0,1 `;
+  const getContent = await runQuery(sql, p);
 
+  // ตรวจสอบว่ามี log หรือไม่
+  const checkLog = await runQuery(
+    "SELECT  *  FROM app_course_log  WHERE  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
+    [course_id, user_id]
+  );
+  const last_cl_id = checkLog[0] !== undefined ? checkLog[0]?.cl_id : 0;
+  const last_cs_id = checkLog[0] !== undefined ? checkLog[0]?.cs_id : 0;
   // บทเรียนที่แสดงข้อมูลอันดับแรก นำมาเก็บ log เพื่อเป็นประวัติเรียนล่าสุด
   const first_cs_id = getContent[0] !== undefined ? getContent[0].cs_id : 0;
 
-  if (first_cs_id !== undefined && first_cs_id !== "" && first_cs_id !== 0) {
+  if (
+    first_cs_id !== undefined &&
+    first_cs_id !== "" &&
+    first_cs_id !== 0 &&
+    last_cl_id === 0
+  ) {
     await runQuery(
       "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
       [first_cs_id, course_id, user_id, functions.dateAsiaThai()]
     );
+  } else {
+    // await runQuery(
+    //   "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+    //   [last_cs_id, course_id, user_id, functions.dateAsiaThai()]
+    // );
   }
-  // บทเรียนล่าสุด
-  const getLastLesson = await runQuery(
-    "SELECT app_course_lesson.* FROM app_course_log INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_log.cs_id WHERE  app_course_log.course_id=? AND app_course_log.cs_id=? AND app_course_log.user_id=? ORDER BY cl_id DESC LIMIT 0,1",
-    [course_id, first_cs_id, user_id]
+  // บทเรียนก่อนหน้านี้
+  const getPreviousLesson = await runQuery(
+    ` SELECT 
+    app_course_lesson.cs_id,
+    app_course_lesson.cs_cover,
+    app_course_lesson.cs_name,
+    app_course_lesson.cs_video,
+    app_course_lesson.cs_description,
+    app_course_lesson.crt_date,
+    app_course_lesson.udp_date,
+    app_course_cluster.course_id,
+    app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM app_course_cluster 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+    WHERE
+    app_course_group.cg_id = ? AND 
+    app_course_cluster.course_id = ? AND
+    app_course_cluster.cs_id < ? LIMIT 0 ,1`,
+    [cg_id, course_id, last_cs_id]
   );
 
-  const last_lesson = getLastLesson[0] !== undefined ? getLastLesson[0] : {};
+  // บทเรียนถัดไป
+  const getNextLesson = await runQuery(
+    ` SELECT 
+    app_course_lesson.cs_id,
+    app_course_lesson.cs_cover,
+    app_course_lesson.cs_name,
+    app_course_lesson.cs_video,
+    app_course_lesson.cs_description,
+    app_course_lesson.crt_date,
+    app_course_lesson.udp_date,
+    app_course_cluster.course_id,
+    app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM app_course_cluster 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+    WHERE
+    app_course_group.cg_id = ? AND 
+    app_course_cluster.course_id = ? AND
+    app_course_cluster.cs_id > ? LIMIT 0 ,1`,
+    [cg_id, course_id, last_cs_id]
+  );
+
+  if (action === "next") {
+    // บันทึก log บทเรียนถัดไป
+    if (
+      getNextLesson[0]?.cs_id !== 0 &&
+      getNextLesson[0]?.cs_id !== undefined
+    ) {
+      await runQuery(
+        "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+        [getNextLesson[0]?.cs_id, course_id, user_id, functions.dateAsiaThai()]
+      );
+    }
+  } else {
+    if (
+      getPreviousLesson[0]?.cs_id !== 0 &&
+      getPreviousLesson[0]?.cs_id !== undefined
+    ) {
+      await runQuery(
+        "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+        [
+          getPreviousLesson[0]?.cs_id,
+          course_id,
+          user_id,
+          functions.dateAsiaThai(),
+        ]
+      );
+    }
+  }
+
+  // บทเรียนปัจจุบัน
+  const getCurentLesson = await runQuery(
+    `SELECT
+    app_course_lesson.cs_id,
+    app_course_lesson.cs_cover,
+    app_course_lesson.cs_name,
+    app_course_lesson.cs_video,
+    app_course_lesson.cs_description,
+    app_course_lesson.crt_date,
+    app_course_lesson.udp_date,
+    app_course_log.course_id,
+    app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM app_course_log 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_log.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+     WHERE   
+     app_course_log.course_id=? AND 
+     app_course_log.user_id=? 
+     ORDER BY cl_id DESC LIMIT 0,1`,
+    [course_id, user_id]
+  );
+
+  const new_last_cs_id =
+    getCurentLesson[0] !== undefined ? getCurentLesson[0]?.cs_id : 0;
+  // console.log(new_last_cs_id);
+  // บทเรียนก่อนหน้านี้
+  const previous_lesson = await runQuery(
+    ` SELECT 
+      app_course_lesson.cs_id,
+      app_course_lesson.cs_cover,
+      app_course_lesson.cs_name,
+      app_course_lesson.cs_video,
+      app_course_lesson.cs_description,
+      app_course_lesson.crt_date,
+      app_course_lesson.udp_date,
+      app_course_cluster.course_id,
+      app_course_group.cg_id,
+      app_course_group.cg_name
+      FROM app_course_cluster 
+      INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+      INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+      WHERE
+      app_course_group.cg_id = ? AND 
+      app_course_cluster.course_id = ? AND
+      app_course_cluster.cs_id < ?  
+      LIMIT 0 ,1`,
+    [cg_id, course_id, new_last_cs_id]
+  );
+  const curent_lesson =
+    getCurentLesson[0] !== undefined ? getCurentLesson[0] : {};
+  // บทเรียนถัดไป
+  const next_lesson = await runQuery(
+    ` SELECT 
+    app_course_lesson.cs_id,
+    app_course_lesson.cs_cover,
+    app_course_lesson.cs_name,
+    app_course_lesson.cs_video,
+    app_course_lesson.cs_description,
+    app_course_lesson.crt_date,
+    app_course_lesson.udp_date,
+    app_course_cluster.course_id,
+    app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM app_course_cluster 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+    WHERE
+    app_course_group.cg_id = ? AND 
+    app_course_cluster.course_id = ? AND
+    app_course_cluster.cs_id > ? 
+    LIMIT 0 ,1`,
+    [cg_id, course_id, last_cl_id === 0 ? last_cl_id : new_last_cs_id]
+  );
+
   // console.log(getLastLesson);
   const response = {
     total: total, // จำนวนรายการทั้งหมด
-    total_filter: total_filter, // จำนวนรายการทั้งหมด
-    current_page: current_page, // หน้าที่กำลังแสดงอยู่
-    limit_page: per_page, // limit data
-    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
-    search: search, // คำค้นหา
+
     next_cg_id: getNext[0] !== undefined ? getNext[0]?.cg_id : {},
     previous_cg_id: getPrevious[0] !== undefined ? getPrevious[0]?.cg_id : {},
-    last_lesson: last_lesson,
-    data: getContent, // รายการข้อมูล
+    previous_lesson:
+      last_cl_id !== 0 && previous_lesson[0] !== undefined
+        ? previous_lesson[0]
+        : {},
+    curent_lesson: last_cl_id === 0 ? getContent[0] : curent_lesson,
+    next_lesson: next_lesson[0] !== undefined ? next_lesson[0] : {},
+
+    // data: getContent, // รายการข้อมูล
   };
   return res.json(response);
 });
