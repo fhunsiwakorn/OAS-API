@@ -762,7 +762,8 @@ router.get("/lesson/list/options/q", middleware, async (req, res, next) => {
         ? previous_lesson[0]
         : {},
     curent_lesson: last_cl_id === 0 ? getContent[0] : curent_lesson,
-    next_lesson: next_lesson[0] !== undefined ? next_lesson[0] : {},
+    next_lesson:
+      last_cl_id !== 0 && next_lesson[0] !== undefined ? next_lesson[0] : {},
 
     // data: getContent, // รายการข้อมูล
   };
