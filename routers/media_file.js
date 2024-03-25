@@ -37,7 +37,12 @@ router.get("/file/?", (req, res) => {
   const extension = mimeType.split("/")[0];
   //   console.log(extension);
   let file = path;
+  // console.log(extension);R
   if (extension === "image") {
+    fileToLoad = fs.readFileSync(file);
+    res.writeHead(200, { "Content-Type": mimeType });
+    res.end(fileToLoad, "binary");
+  } else if (extension === "application") {
     fileToLoad = fs.readFileSync(file);
     res.writeHead(200, { "Content-Type": mimeType });
     res.end(fileToLoad, "binary");

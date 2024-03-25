@@ -495,7 +495,7 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
     FROM app_course_cluster 
     INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
     INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE  app_course_cluster.course_id= ? ORDER BY  app_course_group.cg_id ASC
+    WHERE  app_course_cluster.course_id= ? GROUP BY app_course_group.cg_id ORDER BY  app_course_group.cg_id ASC
     `,
     [course_id]
   );
