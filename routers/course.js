@@ -487,7 +487,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
 
 router.get("/get/option/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
-
+  const user_id = req.query.user_id;
   const course_content = await runQuery(
     `SELECT
     app_course_group.cg_id,
@@ -512,14 +512,16 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
       app_course_lesson.cs_description,
       app_course_lesson.crt_date,
       app_course_lesson.udp_date,
-      app_course_cluster.course_id
+      app_course_cluster.course_id,
+      IF((SELECT COUNT(cs_id) AS total FROM app_course_log  WHERE user_id=? AND  cs_id=app_course_lesson.cs_id AND course_id=app_course_cluster.course_id ) < 1, "false", "true") AS learning_status
+       
       FROM app_course_cluster 
       INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
       INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
       WHERE  app_course_cluster.course_id= ? AND app_course_lesson.cg_id=?
       ORDER BY  app_course_lesson.cs_id ASC
       `,
-      [course_id, el?.cg_id]
+      [user_id, course_id, el?.cg_id]
     );
     let newObj = {
       cg_id: el?.cg_id,
@@ -754,7 +756,7 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
     learned_content?.length !== undefined ? learned_content?.length : 0;
   const progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
   const response = {
-    learning_status: progress >= 100 ? true : false,
+    learning_status: progress >= 100 ? "true" : "false",
     learned: totalLearned,
     total_lesson: totalLesson,
     progress: progress.toFixed(2),
