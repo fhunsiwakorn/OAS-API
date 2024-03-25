@@ -237,6 +237,7 @@ INSERT INTO `app_country` VALUES('196','เอกวาดอร์','Ecuador','
 -- Dumping data for table `app_course` 
 
 INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
+INSERT INTO `app_course` VALUES('2','008','12345','ขับรถ','ไม่มีอะไรเลย','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
 
 
 
@@ -246,6 +247,13 @@ INSERT INTO `app_course_cluster` VALUES('IK5JTikkf0','408','2');
 INSERT INTO `app_course_cluster` VALUES('NGQA3D1kha','404','2');
 INSERT INTO `app_course_cluster` VALUES('ononl1CfAv','406','2');
 INSERT INTO `app_course_cluster` VALUES('tJFjreB93X','405','2');
+
+
+
+-- Dumping data for table `app_course_condition` 
+
+INSERT INTO `app_course_condition` VALUES('7','30','2','4','1');
+INSERT INTO `app_course_condition` VALUES('8','30','2','3','1');
 
 
 
@@ -670,14 +678,22 @@ INSERT INTO `app_course_lesson` VALUES('402','static/upload/2024/1/files-DMmgfK7
 INSERT INTO `app_course_lesson` VALUES('403','static/upload/2024/1/files-AixcCnU6El.jpg','ມືແລງໄປບໍ່ສອງແກ້ວ','','ແຄມຂອງ','2024-01-15 00:00:21','2024-01-15 00:00:21','1','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('404','','42512512','','5125125125','2024-01-15 00:00:21','2024-01-15 00:00:21','0','85','85','1');
 INSERT INTO `app_course_lesson` VALUES('405','','24354656','','42354656','2024-01-15 15:12:27','2024-01-15 15:12:27','1','85','85','1');
-INSERT INTO `app_course_lesson` VALUES('406','','ข้อความทั่วไป','','ไม่มี','2024-01-15 15:12:27','2024-01-15 15:12:27','1','85','85','1');
+INSERT INTO `app_course_lesson` VALUES('406','','ข้อความทั่วไป','','ไม่มี','2024-01-15 15:12:27','2024-01-15 15:12:27','1','85','85','4');
 INSERT INTO `app_course_lesson` VALUES('408','url/image','ทดสอบfsafsafa','-','-','2024-03-02 09:21:16','2024-03-02 09:22:28','1','104','104','4');
 
 
 
 -- Dumping data for table `app_course_log` 
 
-INSERT INTO `app_course_log` VALUES('2','11','2','85','2024-02-05 16:53:47');
+INSERT INTO `app_course_log` VALUES('1','406','2','104','2024-03-22 19:46:14');
+INSERT INTO `app_course_log` VALUES('2','408','2','104','2024-03-22 19:46:14');
+INSERT INTO `app_course_log` VALUES('3','406','2','104','2024-03-22 19:46:32');
+INSERT INTO `app_course_log` VALUES('4','408','2','104','2024-03-22 19:46:40');
+INSERT INTO `app_course_log` VALUES('5','406','2','104','2024-03-22 19:50:01');
+INSERT INTO `app_course_log` VALUES('6','408','2','104','2024-03-22 19:50:08');
+INSERT INTO `app_course_log` VALUES('7','406','2','104','2024-03-22 19:52:48');
+INSERT INTO `app_course_log` VALUES('8','408','2','104','2024-03-22 19:56:59');
+INSERT INTO `app_course_log` VALUES('9','406','2','104','2024-03-22 20:27:01');
 
 
 

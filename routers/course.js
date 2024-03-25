@@ -193,6 +193,7 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
     }
   );
 });
+
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
@@ -484,7 +485,52 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-router.get("/lesson/list/options/q", middleware, async (req, res, next) => {
+router.get("/get/option/:course_id", middleware, async (req, res, next) => {
+  const { course_id } = req.params;
+
+  const course_content = await runQuery(
+    `SELECT
+    app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM app_course_cluster 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+    WHERE  app_course_cluster.course_id= ? ORDER BY  app_course_group.cg_id ASC
+    `,
+    [course_id]
+  );
+  let obj = [];
+  for (let i = 0; i < course_content.length; i++) {
+    let el = course_content[i];
+    let lessons = await runQuery(
+      `SELECT
+      app_course_lesson.cs_id,
+      app_course_lesson.cs_cover,
+      app_course_lesson.cs_name,
+      app_course_lesson.cs_video,
+      app_course_lesson.cs_description,
+      app_course_lesson.crt_date,
+      app_course_lesson.udp_date,
+      app_course_cluster.course_id
+      FROM app_course_cluster 
+      INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+      INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+      WHERE  app_course_cluster.course_id= ? AND app_course_lesson.cg_id=?
+      `,
+      [course_id, el?.cg_id]
+    );
+    let newObj = {
+      cg_id: el?.cg_id,
+      cg_name: el?.cg_name,
+      lessons: lessons,
+    };
+    obj.push(newObj);
+  }
+
+  return res.json(obj);
+});
+
+router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
   const cg_id = req.query.cg_id;
   const user_id = req.query.user_id;
@@ -799,22 +845,31 @@ router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
     }
   );
 });
-router.get("/learn/status?", middleware, (req, res, next) => {
-  const cs_id = req.query.cs_id;
+router.get("/learn/status?", middleware, async (req, res, next) => {
   const user_id = req.query.user_id;
   const course_id = req.query.course_id;
-  con.query(
-    " SELECT COUNT(cs_id) AS total_learing FROM app_course_log WHERE cs_id = ? AND user_id = ? AND course_id = ?",
-    [cs_id, user_id, course_id],
-    (err, rs) => {
-      const total = rs[0]?.total_learing;
-      if (total >= 1) {
-        return res.json({ studied: true });
-      } else {
-        return res.json({ studied: false });
-      }
-    }
+
+  const learned_content = await runQuery(
+    "SELECT * FROM app_course_log WHERE user_id = ? AND course_id = ? GROUP BY cs_id ",
+    [user_id, course_id]
   );
+  const lesson_content = await runQuery(
+    "SELECT * FROM app_course_cluster WHERE course_id = ? GROUP BY cs_id",
+    [course_id]
+  );
+  const totalLesson =
+    lesson_content?.length !== undefined ? lesson_content?.length : 0;
+
+  const totalLearned =
+    learned_content?.length !== undefined ? learned_content?.length : 0;
+  const progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
+  const response = {
+    learning_status: progress >= 100 ? true : false,
+    learned: totalLearned,
+    total_lesson: totalLesson,
+    progress: progress.toFixed(2),
+  };
+  return res.json(response);
 });
 
 router.post("/group/create", middleware, (req, res, next) => {
@@ -972,9 +1027,9 @@ router.delete("/document/delete/:id", middleware, (req, res, next) => {
     "SELECT * FROM app_course_document WHERE id = ?",
     [id],
     (err, rows) => {
-      const checkuser = rows.length;
+      const check_content = rows.length;
       const path = rows[0]?.cd_path;
-      if (checkuser <= 0) {
+      if (check_content <= 0) {
         return res.status(204).json({
           status: 204,
           message: "Document Error",
@@ -1007,6 +1062,163 @@ router.get("/document/get/:course_id", middleware, (req, res, next) => {
       return res.json(result);
     }
   );
+});
+
+router.post("/condition/create", middleware, async (req, res, next) => {
+  const data = req.body;
+  const cg_id = data.cg_id;
+  const course_id = data.course_id;
+
+  const getCourse = await runQuery(
+    "SELECT  * FROM  app_course WHERE  course_id= ? ",
+    [course_id]
+  );
+  const getCourseGroup = await runQuery(
+    "SELECT  * FROM  app_course_group WHERE  cg_id= ? ",
+    [cg_id]
+  );
+  const checkContent = await runQuery(
+    "SELECT  COUNT(*) as numRows FROM  app_course_condition WHERE  cg_id= ? AND course_id=?",
+    [cg_id, course_id]
+  );
+  const total_check =
+    checkContent[0] !== undefined ? checkContent[0]?.numRows : 0;
+  const check_course_id =
+    getCourse[0] !== undefined ? getCourse[0]?.course_id : 0;
+  const check_cg_id =
+    getCourseGroup[0] !== undefined ? getCourseGroup[0]?.cg_id : 0;
+  if (check_course_id === 0 || check_cg_id === 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid  Data",
+    });
+  }
+
+  if (total_check > 0) {
+    return res.status(404).json({
+      status: 404,
+      message:
+        "Data already exists in the system. Unable to proceed with the transaction.",
+    });
+  }
+  con.query(
+    "INSERT INTO app_course_condition (cc_value_a,cc_value_b,cg_id,course_id) VALUES (?,?,?,?)",
+    [data.cc_value_a, data.cc_value_b, cg_id, course_id],
+    function (err, result) {
+      if (err) throw err;
+      return res.json(result);
+    }
+  );
+});
+
+router.put("/condition/update/:id", middleware, async (req, res, next) => {
+  const { id } = req.params;
+  const data = req.body;
+  const cg_id = data.cg_id;
+  const course_id = data.course_id;
+
+  const checkMain = await runQuery(
+    "SELECT  * FROM  app_course_condition WHERE  id= ? ",
+    [id]
+  );
+  if (checkMain.length === 0 || checkMain === undefined) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid  Data",
+    });
+  }
+
+  const getCourse = await runQuery(
+    "SELECT  * FROM  app_course WHERE  app_course.course_id= ? ",
+    [course_id]
+  );
+  const getCourseGroup = await runQuery(
+    "SELECT  * FROM  app_course_group WHERE  app_course_group.cg_id= ? ",
+    [cg_id]
+  );
+  const checkContent = await runQuery(
+    "SELECT  COUNT(*) as numRows FROM  app_course_condition WHERE  cg_id= ? AND course_id=? AND id != ?",
+    [cg_id, course_id, id]
+  );
+  const total_check =
+    checkContent[0] !== undefined ? checkContent[0]?.numRows : 0;
+  if (total_check > 0) {
+    return res.status(404).json({
+      status: 404,
+      message:
+        "Data already exists in the system. Unable to proceed with the transaction.",
+    });
+  }
+
+  const check_course_id =
+    getCourse[0] !== undefined ? getCourse[0]?.course_id : 0;
+  const check_cg_id =
+    getCourseGroup[0] !== undefined ? getCourseGroup[0]?.cg_id : 0;
+  if (check_course_id === 0 && check_cg_id === 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid  Data",
+    });
+  }
+  con.query(
+    "UPDATE  app_course_condition SET cc_value_a=? ,cc_value_b=? , cg_id=? ,course_id=? WHERE id=?",
+    [data.cc_value_a, data.cc_value_b, cg_id, course_id, id],
+    function (err, result) {
+      if (err) throw err;
+      return res.json(result);
+    }
+  );
+});
+
+router.delete("/condition/delete/:id", middleware, (req, res, next) => {
+  const { id } = req.params;
+
+  con.query(
+    "SELECT * FROM app_course_condition WHERE id = ?",
+    [id],
+    (err, rows) => {
+      const check_content = rows.length;
+      if (check_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+
+      con.query(
+        "DELETE FROM app_course_condition WHERE id = ? ",
+        [id],
+        function (err, result) {
+          if (err) throw err;
+
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+
+router.get("/condition/list/?", middleware, async (req, res, next) => {
+  const course_id = req.query.course_id;
+
+  const checkContent = await runQuery(
+    "SELECT  SUM(cc_value_a) AS sum_val_a , SUM(cc_value_b) AS sum_val_b FROM  app_course_condition WHERE  course_id=?",
+    [course_id]
+  );
+  const content = await runQuery(
+    "SELECT  * FROM  app_course_condition WHERE   course_id=? ORDER BY id ASC",
+    [course_id]
+  );
+  const sum_val_a =
+    checkContent[0] !== undefined ? checkContent[0]?.sum_val_a : 0;
+  const sum_val_b =
+    checkContent[0] !== undefined ? checkContent[0]?.sum_val_b : 0;
+  const response = {
+    sum_val_a: sum_val_a,
+    sum_val_b: sum_val_b,
+    data: content,
+  };
+  return res.json(response);
 });
 
 module.exports = router;
