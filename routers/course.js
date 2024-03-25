@@ -491,7 +491,8 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
   const course_content = await runQuery(
     `SELECT
     app_course_group.cg_id,
-    app_course_group.cg_name
+    app_course_group.cg_name,
+    COUNT(app_course_cluster.cs_id) AS total_lesson
     FROM app_course_cluster 
     INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
     INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
@@ -523,6 +524,7 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
     let newObj = {
       cg_id: el?.cg_id,
       cg_name: el?.cg_name,
+      total_lesson: el?.total_lesson,
       lessons: lessons,
     };
     obj.push(newObj);
