@@ -857,6 +857,12 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
     "SELECT * FROM app_course_cluster WHERE course_id = ? GROUP BY cs_id",
     [course_id]
   );
+  if (learned_content.length <= 0 || lesson_content.length <= 0) {
+    return res.status(204).json({
+      status: 204,
+      message: "Data is null",
+    });
+  }
   const totalLesson =
     lesson_content?.length !== undefined ? lesson_content?.length : 0;
 
@@ -1206,7 +1212,7 @@ router.get("/condition/list/?", middleware, async (req, res, next) => {
     [course_id]
   );
   const content = await runQuery(
-    "SELECT  * FROM  app_course_condition WHERE   course_id=? ORDER BY id ASC",
+    "SELECT  app_course_condition.*, app_course_group.cg_name FROM  app_course_condition  INNER JOIN  app_course_group ON app_course_group.cg_id =app_course_condition.cg_id  WHERE   app_course_condition.course_id=? ORDER BY id ASC",
     [course_id]
   );
   const sum_val_a =
