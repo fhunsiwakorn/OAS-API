@@ -892,12 +892,12 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
       lesson_content?.length !== undefined ? lesson_content?.length : 0;
     let totalLearned =
       learned_content?.length !== undefined ? learned_content?.length : 0;
+
     let progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
+
     let newObj = {
-      learned:
-        lesson_content?.length !== undefined ? lesson_content?.length : 0,
-      total_lesson:
-        learned_content?.length !== undefined ? learned_content?.length : 0,
+      learned: totalLearned,
+      total_lesson: totalLesson,
       progress: progress.toFixed(2),
       last_date:
         learned_content?.udp_date !== undefined
