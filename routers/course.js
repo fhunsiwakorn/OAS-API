@@ -612,9 +612,20 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
    WHERE  
    app_course_group.cg_id < ? AND 
    app_course_cluster.course_id = ? LIMIT 0,1`;
+  let sql_curent = ` SELECT  
+   app_course_group.cg_id,
+    app_course_group.cg_name
+    FROM  
+    app_course_cluster 
+    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+    WHERE  
+    app_course_group.cg_id = ? AND 
+    app_course_cluster.course_id = ? LIMIT 0,1`;
   let p = [cg_id, course_id, cs_id];
   const getNext = await runQuery(sql_next, p);
   const getPrevious = await runQuery(sql_previous, p);
+  const getCurent = await runQuery(sql_curent, p);
 
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
@@ -724,7 +735,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     [debug_cs_id !== 0 ? debug_cs_id : cs_id, user_id, course_id]
   );
   const lesson_course = await runQuery(
-    "SELECT course_id ,course_cover,course_code,course_name,course_description FROM app_course WHERE course_id  = ? ",
+    "SELECT course_id ,course_cover,course_code,course_name,course_descriptionมcourse_remark_a,course_remark_b FROM app_course WHERE course_id  = ? ",
     [course_id]
   );
 
@@ -741,6 +752,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     total: total,
     learning_status: learning_status,
     next_couse_group: getNext[0] !== undefined ? getNext[0] : {},
+    curent_couse_group: getCurent[0] !== undefined ? getCurent[0] : {},
     previous_couse_group: getPrevious[0] !== undefined ? getPrevious[0] : {},
     previous_lesson:
       getPreviousLesson[0] !== undefined ? getPreviousLesson[0] : {},
@@ -811,7 +823,7 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
   );
 
   const lesson_course = await runQuery(
-    "SELECT course_id ,course_cover,course_code,course_name,course_description FROM app_course WHERE course_id  = ? ",
+    "SELECT course_id ,course_cover,course_code,course_name,course_description,course_remark_a,course_remark_b FROM app_course WHERE course_id  = ? ",
     [course_id]
   );
 
