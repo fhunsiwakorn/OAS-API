@@ -611,7 +611,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
    WHERE  
    app_course_group.cg_id < ? AND 
-   app_course_cluster.course_id = ? LIMIT 0,1`;
+   app_course_cluster.course_id = ? ORDER BY  app_course_group.cg_id DESC LIMIT 0,1`;
   let sql_curent = ` SELECT  
    app_course_group.cg_id,
     app_course_group.cg_name
@@ -621,7 +621,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
     WHERE  
     app_course_group.cg_id = ? AND 
-    app_course_cluster.course_id = ? LIMIT 0,1`;
+    app_course_cluster.course_id = ? ORDER BY  app_course_group.cg_id ASC LIMIT 0,1`;
   let p = [cg_id, course_id, cs_id];
   const getNext = await runQuery(sql_next, [cg_id, course_id]);
   const getPrevious = await runQuery(sql_previous, [cg_id, course_id]);
