@@ -900,8 +900,8 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
       total_lesson: totalLesson,
       progress: progress.toFixed(2),
       last_date:
-        learned_content?.udp_date !== undefined
-          ? learned_content?.udp_date
+        learned_content[0]?.udp_date !== undefined
+          ? learned_content[0]?.udp_date
           : "",
     };
     let data_merg = { ...el, ...newObj };
