@@ -847,7 +847,12 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
   let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.course_remark_a,app_course.course_remark_b,app_course.is_complete,app_course.crt_date,app_course.udp_date
    FROM app_course_log INNER JOIN app_course ON app_course.course_id=app_course_log.course_id  WHERE app_course_log.user_id =? `;
   let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_course_log WHERE  user_id =? GROUP BY   course_id";
+    " SELECT  app_course_log.* FROM  app_course_log INNER JOIN app_course ON app_course.course_id=app_course_log.course_id WHERE  app_course_log.user_id =? ";
+
+  sql_count_group = " GROUP BY  app_course_log.course_id ";
+  let getCountAll = await runQuery(sql_count + sql_count_group, p);
+  const total = getCountAll?.length !== undefined ? getCountAll?.length : 0;
+
   if (search !== "" || search.length > 0) {
     let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ? OR app_course.course_remark_a  LIKE  ? OR app_course.course_remark_b  LIKE  ?)`; //
     sql += q;
@@ -860,12 +865,13 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
       `%${search}%`,
     ];
   }
-  let getCountAll = await runQuery(sql_count, p);
-  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
-  let getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  let getCountFilter = await runQuery(
+    sql_count + sql_count_group,
+    p.concat(search_param)
+  );
   const total_filter =
-    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+    getCountFilter?.length !== undefined ? getCountFilter?.length : 0;
 
   sql += ` GROUP BY  app_course_log.course_id ORDER BY app_course_log.cl_id DESC LIMIT ${offset},${per_page} `;
 
