@@ -593,7 +593,8 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
    app_course_cluster.course_id = ? LIMIT 0,1`;
 
   let sql_next = ` SELECT  
-   app_course_lesson.cg_id
+   app_course_group.cg_id,
+   app_course_group.cg_name
    FROM  
    app_course_cluster 
    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
@@ -602,7 +603,8 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
    app_course_group.cg_id > ? AND 
    app_course_cluster.course_id = ? LIMIT 0,1`;
   let sql_previous = ` SELECT  
-   app_course_lesson.cg_id
+  app_course_group.cg_id,
+   app_course_group.cg_name
    FROM  
    app_course_cluster 
    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
