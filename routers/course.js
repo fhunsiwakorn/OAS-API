@@ -623,9 +623,9 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     app_course_group.cg_id = ? AND 
     app_course_cluster.course_id = ? LIMIT 0,1`;
   let p = [cg_id, course_id, cs_id];
-  const getNext = await runQuery(sql_next, p);
-  const getPrevious = await runQuery(sql_previous, p);
-  const getCurent = await runQuery(sql_curent, p);
+  const getNext = await runQuery(sql_next, [cg_id, course_id]);
+  const getPrevious = await runQuery(sql_previous, [cg_id, course_id]);
+  const getCurent = await runQuery(sql_curent, [cg_id, course_id]);
 
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
@@ -735,7 +735,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     [debug_cs_id !== 0 ? debug_cs_id : cs_id, user_id, course_id]
   );
   const lesson_course = await runQuery(
-    "SELECT course_id ,course_cover,course_code,course_name,course_descriptionมcourse_remark_a,course_remark_b FROM app_course WHERE course_id  = ? ",
+    "SELECT course_id ,course_cover,course_code,course_name,course_description,course_remark_a,course_remark_b FROM app_course WHERE course_id  = ? ",
     [course_id]
   );
 
