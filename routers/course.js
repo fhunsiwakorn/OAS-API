@@ -721,6 +721,11 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     "SELECT COUNT(cs_id) AS total_learing FROM app_course_log WHERE cs_id = ? AND user_id = ? AND course_id = ?",
     [debug_cs_id !== 0 ? debug_cs_id : cs_id, user_id, course_id]
   );
+  const lesson_course = await runQuery(
+    "SELECT course_id ,course_cover,course_code,course_name,course_description FROM app_course WHERE course_id  = ? ",
+    [course_id]
+  );
+
   let learning_status = "false";
   const total_learing =
     check_learning[0]?.total_learing !== undefined
@@ -740,6 +745,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     curent_lesson:
       getContent[0] !== undefined ? getContent[0] : debug_data_curent_lesson,
     next_lesson: getNextLesson[0] !== undefined ? getNextLesson[0] : {},
+    course: lesson_course[0] !== undefined ? lesson_course[0] : {},
   };
   return res.json(response);
 });
