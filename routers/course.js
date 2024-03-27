@@ -749,11 +749,11 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   }
   // console.log(getLastLesson);
   const response = {
-    total: total,
+    total_lesson: total,
     learning_status: learning_status,
     previous_couse_group: getPrevious[0] !== undefined ? getPrevious[0] : {},
-    next_couse_group: getNext[0] !== undefined ? getNext[0] : {},
     curent_couse_group: getCurent[0] !== undefined ? getCurent[0] : {},
+    next_couse_group: getNext[0] !== undefined ? getNext[0] : {},
     previous_lesson:
       getPreviousLesson[0] !== undefined ? getPreviousLesson[0] : {},
     curent_lesson:
