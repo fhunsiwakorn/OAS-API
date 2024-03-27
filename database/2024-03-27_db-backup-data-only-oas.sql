@@ -236,7 +236,9 @@ INSERT INTO `app_country` VALUES('196','เอกวาดอร์','Ecuador','
 
 -- Dumping data for table `app_course` 
 
-INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
+INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','','','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
+INSERT INTO `app_course` VALUES('2','008','12345','ขับรถ','ไม่มีอะไรเลย','','','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
+INSERT INTO `app_course` VALUES('3','url/image','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','ac','bc','0','2024-03-27 08:11:53','2024-03-27 08:12:23','1','104','104');
 
 
 
@@ -246,6 +248,13 @@ INSERT INTO `app_course_cluster` VALUES('IK5JTikkf0','408','2');
 INSERT INTO `app_course_cluster` VALUES('NGQA3D1kha','404','2');
 INSERT INTO `app_course_cluster` VALUES('ononl1CfAv','406','2');
 INSERT INTO `app_course_cluster` VALUES('tJFjreB93X','405','2');
+
+
+
+-- Dumping data for table `app_course_condition` 
+
+INSERT INTO `app_course_condition` VALUES('7','30','2','4','1');
+INSERT INTO `app_course_condition` VALUES('8','30','2','3','1');
 
 
 
@@ -677,15 +686,8 @@ INSERT INTO `app_course_lesson` VALUES('408','url/image','ทดสอบfsafsaf
 
 -- Dumping data for table `app_course_log` 
 
-INSERT INTO `app_course_log` VALUES('1','406','2','104','2024-03-22 19:46:14');
-INSERT INTO `app_course_log` VALUES('2','408','2','104','2024-03-22 19:46:14');
-INSERT INTO `app_course_log` VALUES('3','406','2','104','2024-03-22 19:46:32');
-INSERT INTO `app_course_log` VALUES('4','408','2','104','2024-03-22 19:46:40');
-INSERT INTO `app_course_log` VALUES('5','406','2','104','2024-03-22 19:50:01');
-INSERT INTO `app_course_log` VALUES('6','408','2','104','2024-03-22 19:50:08');
-INSERT INTO `app_course_log` VALUES('7','406','2','104','2024-03-22 19:52:48');
-INSERT INTO `app_course_log` VALUES('8','408','2','104','2024-03-22 19:56:59');
-INSERT INTO `app_course_log` VALUES('9','406','2','104','2024-03-22 20:27:01');
+INSERT INTO `app_course_log` VALUES('7','406','2','104','2024-03-25 23:17:25');
+INSERT INTO `app_course_log` VALUES('8','408','2','104','2024-03-25 23:17:39');
 
 
 

@@ -56,6 +56,8 @@ CREATE TABLE `app_course` (
   `course_code` varchar(128) NOT NULL,
   `course_name` varchar(128) NOT NULL,
   `course_description` varchar(512) NOT NULL,
+  `course_remark_a` varchar(512) NOT NULL,
+  `course_remark_b` varchar(512) NOT NULL,
   `is_complete` int(1) NOT NULL DEFAULT 0,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
@@ -63,7 +65,7 @@ CREATE TABLE `app_course` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_course_cluster`; 
 
@@ -75,6 +77,19 @@ CREATE TABLE `app_course_cluster` (
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`cct_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_course_condition`; 
+
+DROP TABLE IF EXISTS `app_course_condition`; 
+
+CREATE TABLE `app_course_condition` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cc_value_a` int(11) NOT NULL,
+  `cc_value_b` int(11) NOT NULL,
+  `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id',
+  `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_course_document`; 
 
@@ -133,7 +148,7 @@ CREATE TABLE `app_course_log` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`cl_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_dlt_card`; 
 

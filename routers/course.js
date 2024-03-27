@@ -703,7 +703,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     WHERE
     app_course_group.cg_id = ? AND 
     app_course_cluster.course_id = ? AND
-    app_course_cluster.cs_id < ? LIMIT 0 ,1`,
+    app_course_cluster.cs_id < ? ORDER BY app_course_cluster.cs_id DESC LIMIT 0 ,1`,
     [cg_id, course_id, debug_cs_id !== 0 ? debug_cs_id : cs_id]
   );
 
@@ -726,7 +726,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     WHERE
     app_course_group.cg_id = ? AND 
     app_course_cluster.course_id = ? AND
-    app_course_cluster.cs_id > ? LIMIT 0 ,1`,
+    app_course_cluster.cs_id > ? ORDER BY app_course_cluster.cs_id ASC LIMIT 0 ,1`,
     [cg_id, course_id, debug_cs_id !== 0 ? debug_cs_id : cs_id]
   );
 
