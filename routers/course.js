@@ -33,12 +33,14 @@ router.post("/create", middleware, (req, res, next) => {
       }
 
       con.query(
-        "INSERT INTO app_course (course_cover,course_code,course_name,course_description,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_course (course_cover,course_code,course_name,course_description,course_remark_a,course_remark_b,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?)",
         [
           data.course_cover,
           data.course_code,
           data.course_name,
           data.course_description,
+          data.course_remark_a,
+          data.course_remark_b,
           functions.dateAsiaThai(),
           functions.dateAsiaThai(),
           user_id,
@@ -71,12 +73,14 @@ router.put("/update/:course_id", middleware, (req, res, next) => {
       }
 
       con.query(
-        "UPDATE  app_course SET course_cover=? , course_code=? ,course_name=? ,course_description=?,udp_date=? , user_udp=? WHERE course_id=? ",
+        "UPDATE  app_course SET course_cover=? , course_code=? ,course_name=? ,course_description=?,course_remark_a=?,course_remark_b=?,udp_date=? , user_udp=? WHERE course_id=? ",
         [
           data.course_cover,
           data.course_code,
           data.course_name,
           data.course_description,
+          data.course_remark_a,
+          data.course_remark_b,
           functions.dateAsiaThai(),
           user_id,
           course_id,
@@ -127,7 +131,7 @@ router.post("/list", middleware, async (req, res, next) => {
   const offset = functions.setZero((current_page - 1) * per_page);
 
   let search_param = [];
-  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.is_complete,app_course.crt_date,app_course.udp_date ,
+  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.course_remark_a,app_course.course_remark_b,app_course.is_complete,app_course.crt_date,app_course.udp_date ,
    CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
    FROM app_course LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course.user_udp WHERE app_course.cancelled=1`;
 
@@ -138,10 +142,16 @@ router.post("/list", middleware, async (req, res, next) => {
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
-    let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
+    let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ? OR app_course.course_remark_a  LIKE  ? OR app_course.course_remark_b  LIKE  ?)`; //
     sql += q;
     sql_count += q;
-    search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
+    search_param = [
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+    ];
   }
 
   let getCountFilter = await runQuery(sql_count, search_param);
@@ -185,6 +195,8 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
         course_code: reslut?.course_code,
         course_name: reslut?.course_name,
         course_description: reslut?.course_description,
+        course_remark_a: reslut?.course_remark_a,
+        course_remark_b: reslut?.course_remark_b,
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
       };
@@ -832,15 +844,21 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
   const offset = functions.setZero((current_page - 1) * per_page);
   let p = [user_id];
   let search_param = [];
-  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.is_complete,app_course.crt_date,app_course.udp_date
+  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.course_remark_a,app_course.course_remark_b,app_course.is_complete,app_course.crt_date,app_course.udp_date
    FROM app_course_log INNER JOIN app_course ON app_course.course_id=app_course_log.course_id  WHERE app_course_log.user_id =? `;
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course_log WHERE  user_id =? GROUP BY   course_id";
   if (search !== "" || search.length > 0) {
-    let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ?)`; //
+    let q = ` AND (app_course.course_code  LIKE ? OR app_course.course_name  LIKE  ? OR app_course.course_description  LIKE  ? OR app_course.course_remark_a  LIKE  ? OR app_course.course_remark_b  LIKE  ?)`; //
     sql += q;
     sql_count += q;
-    search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
+    search_param = [
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+      `%${search}%`,
+    ];
   }
   let getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;

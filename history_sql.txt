@@ -29,3 +29,5 @@ CREATE TABLE `oas`.`app_course_document` (`id` INT NOT NULL AUTO_INCREMENT , `cd
 ALTER TABLE `app_course_lesson` CHANGE `cs_name` `cs_name` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 25/3/2024
 CREATE TABLE `oas`.`app_course_condition` (`id` INT NOT NULL AUTO_INCREMENT , `cc_value_a` INT NOT NULL , `cc_value_b` INT NOT NULL , `cg_id` INT NOT NULL COMMENT 'app_course_group.cg_id' , `course_id` INT NOT NULL COMMENT 'app_course.course_id' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+27/3/2024
+ALTER TABLE `app_course` ADD `course_remark_a` VARCHAR(512) NOT NULL AFTER `course_description`, ADD `course_remark_b` VARCHAR(512) NOT NULL AFTER `course_remark_a`;
