@@ -672,6 +672,10 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     );
     debug_cs_id = r[0]?.cs_id !== undefined ? r[0]?.cs_id : 0;
     debug_data_curent_lesson = r[0] !== undefined ? r[0] : {};
+    await runQuery(
+      "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
+      [debug_cs_id, course_id, user_id, functions.dateAsiaThai()]
+    );
   }
 
   if (
