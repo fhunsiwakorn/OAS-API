@@ -131,9 +131,25 @@ router.post("/list", middleware, async (req, res, next) => {
   const offset = functions.setZero((current_page - 1) * per_page);
 
   let search_param = [];
-  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.course_remark_a,app_course.course_remark_b,app_course.is_complete,app_course.crt_date,app_course.udp_date ,
-   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-   FROM app_course LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course.user_udp WHERE app_course.cancelled=1`;
+  let sql = `SELECT 
+  app_course.course_id,
+  app_course.course_cover,
+  app_course.course_code,
+  app_course.course_name,
+  app_course.course_description,
+  app_course.course_remark_a,
+  app_course.course_remark_b,
+  app_course.is_complete,
+  app_course.crt_date,
+  app_course.udp_date ,
+  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update ,
+  (SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1) AS total_course_group ,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  LIMIT 1) AS total_lesson ,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id AND  app_course_lesson.cs_video != ''   LIMIT 1) AS total_video
+  FROM app_course 
+   LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  
+   LEFT JOIN  app_user u2 ON u2.user_id = app_course.user_udp 
+   WHERE app_course.cancelled=1`;
 
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
@@ -158,7 +174,7 @@ router.post("/list", middleware, async (req, res, next) => {
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
-  sql += `  ORDER BY app_course.course_id DESC LIMIT ${offset},${per_page} `;
+  sql += `  ORDER BY app_course.course_id ASC LIMIT ${offset},${per_page} `;
 
   let getContent = await runQuery(sql, search_param);
   const response = {
