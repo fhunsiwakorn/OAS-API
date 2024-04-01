@@ -245,35 +245,34 @@ router.post("/image/create", middleware, (req, res, next) => {
   );
 });
 
-router.delete("/image/delete/:ni_id", middleware, (req, res, next) => {
+router.delete("/image/delete/:ni_id", middleware, async (req, res, next) => {
   const { ni_id } = req.params;
 
-  con.query(
-    "SELECT * FROM app_news_image WHERE ni_id = ?",
-    [ni_id],
-    (err, rows) => {
-      let _content = rows.length;
-      const path = rows[0]?.ni_path_file;
-      if (_content <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null",
-        });
-      }
-
-      con.query(
-        " DELETE FROM  app_news_image WHERE ni_id=? ",
-        [ni_id],
-        function (err, result) {
-          if (err) throw err;
-          if (path !== undefined && path !== "") {
-            delFile(path);
-          }
-          return res.json(result);
-        }
-      );
-    }
+  const getNewsImage = await runQuery(
+    "SELECT * FROM app_news_image WHERE ni_id=?",
+    [ni_id]
   );
+  const path =
+    getNewsImage[0] !== undefined ? getNewsImage[0]?.ni_path_file : "";
+
+  if (path === "") {
+    return res.status(204).json({
+      status: 204,
+      message: "Data is null",
+    });
+  }
+
+  const r = await runQuery("  DELETE FROM  app_news_image WHERE ni_id=?  ", [
+    ni_id,
+  ]);
+  // if (r?.affectedRows > 0) {
+  //   delFile(path);
+  // }
+  if (path !== "") {
+    delFile(path);
+  }
+
+  return res.json(r);
 });
 
 module.exports = router;
