@@ -143,7 +143,8 @@ router.post("/list", middleware, async (req, res, next) => {
   app_course.crt_date,
   app_course.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update ,
-  (SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1) AS total_course_group ,
+
+  IFNULL((SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1), 0) AS total_course_group,
   (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  LIMIT 1) AS total_lesson ,
   (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id AND  app_course_lesson.cs_video != ''   LIMIT 1) AS total_video,
   (SELECT COUNT(*)  AS total  FROM  app_course_document  WHERE app_course_document.course_id=app_course.course_id   LIMIT 1) AS total_document
