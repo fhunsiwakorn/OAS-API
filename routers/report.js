@@ -3,6 +3,7 @@ const router = express.Router();
 const con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
+const functions = require("../functions");
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
@@ -19,8 +20,6 @@ router.post("/register", middleware, async (req, res, next) => {
   const start_date = data.start_date;
   const end_date = data.end_date;
 
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
   let join_date = [start_date, end_date];
 
@@ -44,8 +43,8 @@ router.post("/register", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(t1.user_id) as numRows FROM  app_user t1  INNER JOIN app_user_detail t2 ON  t2.user_id = t1.user_id WHERE  t1.cancelled=1 AND t1.user_type=3 AND DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ?";
 
-  let getCountAll = await runQuery(sql_count, join_date.concat(search_param));
-  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const getCountAll = await runQuery(sql_count, join_date.concat(search_param));
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (t1.user_firstname  LIKE ? OR t1.user_lastname  LIKE  ? OR t1.user_email  LIKE  ? OR t2.identification_number  LIKE  ?) `; //
@@ -54,11 +53,11 @@ router.post("/register", middleware, async (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  let getCountFilter = await runQuery(
+  const getCountFilter = await runQuery(
     sql_count,
     join_date.concat(search_param)
   );
-  total_filter =
+  const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY t1.user_id DESC LIMIT ${offset},${per_page} `;
 
@@ -98,8 +97,6 @@ router.post("/appointment/reserve", middleware, async (req, res, next) => {
     });
   }
 
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
   let join_date = [start_date, end_date, dlt_code, ap_learn_type];
 
@@ -131,8 +128,8 @@ router.post("/appointment/reserve", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(t1.user_id) as numRows FROM  app_appointment_reserve t1 INNER JOIN app_appointment t2 ON  t2.ap_id = t1.ap_id  INNER JOIN app_user t3 ON  t3.user_id = t1.user_id    INNER JOIN app_user_detail t4 ON  t4.user_id = t1.user_id  WHERE  DATE(t1.udp_date) >= ? AND DATE(t1.udp_date) <= ? AND t2.dlt_code = ? AND  t2.ap_learn_type = ?";
 
-  let getCountAll = await runQuery(sql_count, join_date.concat(search_param));
-  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const getCountAll = await runQuery(sql_count, join_date.concat(search_param));
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (t3.user_firstname  LIKE ? OR t3.user_lastname  LIKE  ? OR t3.user_email  LIKE  ? OR t4.identification_number  LIKE  ?) `; //
@@ -141,15 +138,15 @@ router.post("/appointment/reserve", middleware, async (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  let getCountFilter = await runQuery(
+  const getCountFilter = await runQuery(
     sql_count,
     join_date.concat(search_param)
   );
-  total_filter =
+  const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY t1.ar_id DESC LIMIT ${offset},${per_page} `;
 
-  let getContent = await runQuery(sql, join_date.concat(search_param));
+  const getContent = await runQuery(sql, join_date.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -184,8 +181,6 @@ router.post("/exam", middleware, async (req, res, next) => {
     });
   }
 
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
   let join_date = [start_date, end_date, dlt_code];
 
@@ -217,8 +212,8 @@ router.post("/exam", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(t1.user_id) as numRows FROM  app_exam_result t1  INNER JOIN app_exam_main t2 ON  t2.em_id = t1.em_id   INNER JOIN app_user t3 ON  t3.user_id = t1.user_id  INNER JOIN app_user_detail t4 ON  t4.user_id = t1.user_id   WHERE  DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ? AND t2.dlt_code = ?";
 
-  let getCountAll = await runQuery(sql_count, join_date.concat(search_param));
-  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const getCountAll = await runQuery(sql_count, join_date.concat(search_param));
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (t3.user_firstname  LIKE ? OR t3.user_lastname  LIKE  ? OR t3.user_email  LIKE  ? OR t4.identification_number  LIKE  ?) `; //
@@ -227,15 +222,15 @@ router.post("/exam", middleware, async (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  let getCountFilter = await runQuery(
+  const getCountFilter = await runQuery(
     sql_count,
     join_date.concat(search_param)
   );
-  total_filter =
+  const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY t1.er_id DESC LIMIT ${offset},${per_page} `;
 
-  let getContent = await runQuery(sql, join_date.concat(search_param));
+  const getContent = await runQuery(sql, join_date.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -279,8 +274,6 @@ router.post("/main_result", middleware, async (req, res, next) => {
     });
   }
 
-  let total = 0;
-  let total_filter = 0;
   let search_param = [];
   let join_date = [start_date, end_date, dlt_code, mr_learn_type, mr_status];
 
@@ -305,8 +298,8 @@ router.post("/main_result", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(t1.user_id) as numRows FROM  app_main_result t1    INNER JOIN app_user t2 ON  t2.user_id = t1.user_id  INNER JOIN app_user_detail t3 ON  t3.user_id = t1.user_id   WHERE DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ? AND t1.dlt_code = ? AND t1.mr_learn_type = ? AND t1.mr_status=? ";
 
-  let getCountAll = await runQuery(sql_count, join_date.concat(search_param));
-  total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const getCountAll = await runQuery(sql_count, join_date.concat(search_param));
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
     let q = ` AND (t2.user_firstname  LIKE ? OR t2.user_lastname  LIKE  ? OR t2.user_email  LIKE  ? OR t3.identification_number  LIKE  ?) `; //
@@ -315,15 +308,15 @@ router.post("/main_result", middleware, async (req, res, next) => {
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
   }
 
-  let getCountFilter = await runQuery(
+  const getCountFilter = await runQuery(
     sql_count,
     join_date.concat(search_param)
   );
-  total_filter =
+  const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY t1.mr_id DESC LIMIT ${offset},${per_page} `;
 
-  let getContent = await runQuery(sql, join_date.concat(search_param));
+  const getContent = await runQuery(sql, join_date.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด

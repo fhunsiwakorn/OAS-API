@@ -1108,36 +1108,31 @@ router.post("/document/create", middleware, (req, res, next) => {
   );
 });
 
-router.delete("/document/delete/:id", middleware, (req, res, next) => {
+router.delete("/document/delete/:id", middleware, async (req, res, next) => {
   const { id } = req.params;
 
-  con.query(
+  const getContentImage = await runQuery(
     "SELECT * FROM app_course_document WHERE id = ?",
-    [id],
-    (err, rows) => {
-      const check_content = rows.length;
-      const path = rows[0]?.cd_path;
-      if (check_content <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Document Error",
-        });
-      }
-
-      con.query(
-        "DELETE FROM app_course_document WHERE id = ? ",
-        [id],
-        function (err, result) {
-          if (err) throw err;
-          if (path !== undefined && path !== "") {
-            delFile(path);
-          }
-
-          return res.json(result);
-        }
-      );
-    }
+    [id]
   );
+  const path =
+    getContentImage[0] !== undefined ? getContentImage[0]?.cd_path : "";
+
+  if (path === "") {
+    return res.status(204).json({
+      status: 204,
+      message: "Data is null",
+    });
+  }
+
+  const r = await runQuery("  DELETE FROM  app_course_document WHERE id=?  ", [
+    id,
+  ]);
+  if (path !== "") {
+    delFile(path);
+  }
+
+  return res.json(r);
 });
 
 router.get("/document/get/:course_id", middleware, (req, res, next) => {
