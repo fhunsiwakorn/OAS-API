@@ -12,10 +12,16 @@ async function runQuery(sql, param) {
 }
 async function delFile(path) {
   var filePath = path;
-  fs.unlinkSync(filePath);
-  res.end();
+  return new Promise((resolve, reject) => {
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(err);
+        return reject({ error: "Failed to delete the file." });
+      }
+      resolve({ message: "File deleted successfully." });
+    });
+  });
 }
-
 router.post("/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
@@ -33,9 +39,10 @@ router.post("/create", middleware, (req, res, next) => {
       }
 
       con.query(
-        "INSERT INTO app_news (news_cover,news_title,news_description,news_type,news_friendly,news_view,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_news (news_cover,news_video,news_title,news_description,news_type,news_friendly,news_view,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
           data.news_cover,
+          data.news_video,
           data.news_title,
           data.news_description,
           data.news_type,
@@ -73,9 +80,10 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
       }
 
       con.query(
-        "UPDATE  app_news SET news_cover=? , news_title=? ,news_description=? ,news_type=?,news_friendly=?,udp_date=? , user_udp=? WHERE news_id=? ",
+        "UPDATE  app_news SET news_cover=? ,news_video=? , news_title=? ,news_description=? ,news_type=?,news_friendly=?,udp_date=? , user_udp=? WHERE news_id=? ",
         [
           data.news_cover,
+          data.news_video,
           data.news_title,
           data.news_description,
           data.news_type,
@@ -96,7 +104,7 @@ router.put("/update/:news_id", middleware, (req, res, next) => {
 
 router.get("/get/:news_id", middleware, async (req, res, next) => {
   const { news_id } = req.params;
-  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly,app_news.news_view, app_news.crt_date,app_news.udp_date ,
+  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_video,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly,app_news.news_view, app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1 AND app_news.news_id=?`;
 
@@ -176,7 +184,7 @@ router.post("/list", middleware, async (req, res, next) => {
   let search_param = [];
   let u = "";
 
-  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly,app_news.news_view,app_news.crt_date,app_news.udp_date ,
+  let sql = `SELECT app_news.news_id,app_news.news_cover,app_news.news_video,app_news.news_title,app_news.news_description,app_news.news_type,app_news.news_friendly,app_news.news_view,app_news.crt_date,app_news.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
   FROM app_news LEFT JOIN  app_user u1 ON u1.user_id = app_news.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_news.user_udp WHERE app_news.cancelled=1`;
   let sql_count =
@@ -265,11 +273,8 @@ router.delete("/image/delete/:ni_id", middleware, async (req, res, next) => {
   const r = await runQuery("  DELETE FROM  app_news_image WHERE ni_id=?  ", [
     ni_id,
   ]);
-  // if (r?.affectedRows > 0) {
-  //   delFile(path);
-  // }
   if (path !== "") {
-    delFile(path);
+    await delFile(path);
   }
 
   return res.json(r);

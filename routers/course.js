@@ -12,8 +12,15 @@ async function runQuery(sql, param) {
 }
 async function delFile(path) {
   var filePath = path;
-  fs.unlinkSync(filePath);
-  res.end();
+  return new Promise((resolve, reject) => {
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(err);
+        return reject({ error: "Failed to delete the file." });
+      }
+      resolve({ message: "File deleted successfully." });
+    });
+  });
 }
 
 router.post("/create", middleware, (req, res, next) => {
@@ -1131,7 +1138,7 @@ router.delete("/document/delete/:id", middleware, async (req, res, next) => {
     id,
   ]);
   if (path !== "") {
-    delFile(path);
+    await delFile(path);
   }
 
   return res.json(r);
