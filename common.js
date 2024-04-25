@@ -2,47 +2,63 @@ const d = {};
 d.drivinglicense_type = [
   {
     dlt_code: "A",
-    dlt_description:
-      "ใบอนุญาตขับรถประเภท A รถจักรยานยนต์สองล้อ เครื่องยนต์ไม่เกิน 125 cc.",
+    dlt_description: "A : Two-wheels motocycle engine not exceed 125 cc",
   },
   {
     dlt_code: "A1",
-    dlt_description:
-      "ใบอนุญาตขับรถประเภท A1 รถจักรยานยนต์สองล้อ เครื่องยนต์ 125 cc. ขึ้นไป",
+    dlt_description: "A1 : Two-wheels motorcycle engine 125 cc and above",
   },
   {
     dlt_code: "A2",
     dlt_description:
-      "ใบอนุญาตขับรถประเภท A2 รถสามล้อส่วนตัว, รถสองล้อ และรถสามล้อโดยสาร",
+      "A2 : Private three-wheels vehicle, Passenger vehicle with two-wheels and three-wheels",
   },
   {
     dlt_code: "A3",
-    dlt_description: "ใบอนุญาตขับรถประเภท A3 รถแทรกเตอร์แบบมีล้อ และรถปราบดิน",
+    dlt_description:
+      "A3 : Two-wheels tractor with trailer and Walk-behide Tractor",
   },
   {
     dlt_code: "B",
     dlt_description:
-      "ใบอนุญาตขับรถประเภท B รถยนต์ที่น้าหนักรวมน้อยกว่า 3,500 กิโลกรัม ไม่เกิน 9 ที่นั่ง รวมผู้ขับรถ",
+      "B : Car with four-wheels, total weight not exceed 3,500 kilograms, and not more than 9 seats including driver",
   },
   {
     dlt_code: "C",
     dlt_description:
-      "ใบอนุญาตขับรถประเภท C รถขนส่งสินค้าน้าหนักรวมตั้งแต่ 3,500 ถึง 7,500 กิโลกรัม",
+      "C : Cargo truck, total weight from 3,500 to 7,500 kilograms",
   },
   {
     dlt_code: "C1",
     dlt_description:
-      "ใบอนุญาตขับรถประเภท C1 รถขนส่งสินค้าน้าหนักรวมตั้งแต่ 7,500 ถึง 15,000 กิโลกรัม",
+      "C1 : Cargo truck, total weight exceed 7,500 kilogram up to 15,000 kilograms",
   },
   {
     dlt_code: "C2",
-    dlt_description:
-      "ใบอนุญาตขับรถประเภท C2 รถขนส่งสินค้า น้าหนักรวม 15,000 กิโลกรัม ขึ้นไป",
+    dlt_description: "C2 : Cargo truck, total weight exceed 15,000 kilograms",
   },
   {
     dlt_code: "D",
     dlt_description:
-      "ใบอนุญาตขับรถประเภท D รถขนส่งผู้โดยสาร ประเภท 4 ล้อขึ้นไป ไม่เกิน 15 ที่นั่ง",
+      "D : Passenger vehicle with 4 wheels or more, not more than 15 seats",
+  },
+  {
+    dlt_code: "D1",
+    dlt_description: "D1 : Passenger vehicle from 16 seats to 35 seats",
+  },
+  {
+    dlt_code: "D2",
+    dlt_description: "D2 : Passenger vehicle from 36 seats or more",
+  },
+  {
+    dlt_code: "E",
+    dlt_description:
+      "E : Car (B), Cargo truck (C) and Passenger vehicle (D), having trailer total weight not exceed 750 kilograms",
+  },
+  {
+    dlt_code: "E1",
+    dlt_description:
+      "E1 : Cargo truck (C2) having trailer total weight exceed 750 kilograms",
   },
 ];
 d.sms_token =

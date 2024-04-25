@@ -101,7 +101,7 @@ CREATE TABLE `app_course_document` (
   `cd_name` varchar(128) NOT NULL,
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_course_group`; 
 
@@ -285,6 +285,7 @@ DROP TABLE IF EXISTS `app_news`;
 CREATE TABLE `app_news` (
   `news_id` int(11) NOT NULL AUTO_INCREMENT,
   `news_cover` varchar(128) NOT NULL,
+  `news_video` varchar(128) NOT NULL,
   `news_title` varchar(128) NOT NULL,
   `news_description` text NOT NULL,
   `news_type` int(1) NOT NULL,
@@ -296,7 +297,7 @@ CREATE TABLE `app_news` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`news_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_news_image`; 
 
