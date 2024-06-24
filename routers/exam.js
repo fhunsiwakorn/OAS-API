@@ -160,6 +160,125 @@ router.put("/main/update/:em_id", middleware, async (req, res, next) => {
   );
 });
 
+router.post("/main/list/:course_id", middleware, async (req, res, next) => {
+  const { course_id } = req.params;
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const search = data.search;
+  const offset = functions.setZero((current_page - 1) * per_page);
+  let search_param = [];
+  const p = [course_id]
+  let sql = `SELECT 
+    app_exam_main.em_id,
+    app_exam_main.em_code,
+    app_exam_main.em_name,
+    app_exam_main.em_cover,
+    app_exam_main.em_description,
+    app_exam_main.em_random_amount,
+    app_exam_main.em_time,
+    app_exam_main.em_measure,
+    app_exam_main.dlt_code,
+    app_exam_main.crt_date,
+    app_exam_main.udp_date,
+    app_exam_main.course_id ,
+     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
+    CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, 
+     (SELECT COUNT(*) FROM app_exam_question INNER JOIN app_course_cluster ON app_course_cluster.cg_id = app_exam_question.cg_id   WHERE app_course_cluster.course_id=app_exam_main.course_id) AS total_question
+     FROM app_exam_main 
+     LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
+     LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
+     WHERE 
+     app_exam_main.cancelled=1 AND 
+     app_exam_main.course_id = ? `;
+  let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1 AND app_exam_main.course_id = ? ";
+
+    const getCountAll = await runQuery(sql_count,p.concat(search_param));
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
+  if (search !== "" || search.length > 0) {
+    let q = ` AND (app_exam_main.em_code  LIKE ? OR app_exam_main.em_name  LIKE  ? OR app_exam_main.em_description  LIKE  ?)`; //
+    sql += q;
+    sql_count += q;
+    search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
+  }
+
+  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  const total_filter = getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+  // query ข้อมูล
+  const getContent = await runQuery(sql  + order, p.concat(search_param));
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
+});
+
+router.delete("/main/delete/:em_id", middleware, (req, res, next) => {
+  const { em_id } = req.params;
+  con.query(
+    "SELECT em_id FROM app_exam_main WHERE em_id = ?",
+    [em_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      con.query(
+        "UPDATE  app_exam_main SET cancelled=0 WHERE em_id=? ",
+        [em_id],
+        function (err, result) {
+          if (err) throw err;
+          // console.log("1 record inserted");
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+
+router.get("/main/get/:em_id", middleware, (req, res, next) => {
+  const { em_id } = req.params;
+  con.query(
+    "SELECT * FROM app_exam_main WHERE   cancelled = 1 AND (em_id = ? OR course_id = ?)",
+    [em_id,em_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      const reslut = rows[0];
+      const response = {
+        em_id: reslut?.em_id,
+        em_code: reslut?.em_code,
+        em_name: reslut?.em_name,
+        em_cover: reslut?.em_cover,
+        em_description: reslut?.em_description,
+        crt_date: reslut?.crt_date,
+        udp_date: reslut?.udp_date,
+        course_id: reslut?.course_id,
+      };
+      return res.json(response);
+    }
+  );
+});
+
+
 router.post("/question/create", middleware, async (req, res, next) => {
   const data = req.body;
 
@@ -313,6 +432,41 @@ router.delete("/question/delete/:eq_id", middleware, (req, res, next) => {
   );
 });
 
+router.get("/question/get/:eq_id", middleware,async (req, res, next) => {
+  const { eq_id } = req.params;
+  const choices = await runQuery(
+    "SELECT * FROM `app_exam_choice` WHERE app_exam_choice.cancelled =1 AND  app_exam_choice.eq_id = ?",
+    [eq_id]
+  );
+
+  con.query(
+    "SELECT * FROM app_exam_question WHERE  cancelled = 1 AND eq_id = ?",
+    [eq_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+     
+      const reslut = rows[0];
+      const response = {
+        eq_id: reslut?.eq_id,
+        eq_name: reslut?.eq_name,
+        eq_image: reslut?.eq_image,
+        eq_answer: reslut?.eq_answer,
+        cg_id: reslut?.cg_id,
+        choices:choices
+      };
+      return res.json(response);
+    }
+  );
+});
+
+
 router.post("/choice/create", middleware, async (req, res, next) => {
   const data = req.body;
   const getQuestion = await runQuery(
@@ -423,6 +577,34 @@ router.delete("/choice/delete/:ec_id", middleware, (req, res, next) => {
     [ec_id],
     function (err, results) {
       return res.json(results);
+    }
+  );
+});
+
+router.get("/choice/get/:ec_id", middleware, (req, res, next) => {
+  const { ec_id } = req.params;
+  con.query(
+    "SELECT * FROM app_exam_choice WHERE  cancelled = 1 AND ec_id = ?",
+    [ec_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      const reslut = rows[0];
+      const response = {
+        ec_id: reslut?.ec_id ,
+        ec_index: reslut?.ec_index,
+        ec_name: reslut?.ec_name,
+        ec_image: reslut?.ec_image,
+        eq_id: reslut?.eq_id,
+        cg_id: reslut?.cg_id
+      };
+      return res.json(response);
     }
   );
 });

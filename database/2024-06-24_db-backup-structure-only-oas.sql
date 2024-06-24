@@ -150,24 +150,38 @@ CREATE TABLE `app_course_log` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`cl_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_dlt_card`; 
 
 DROP TABLE IF EXISTS `app_dlt_card`; 
 
 CREATE TABLE `app_dlt_card` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(128) NOT NULL,
+  `card_number` varchar(64) NOT NULL,
+  `full_name` varchar(128) NOT NULL,
+  `address` varchar(512) NOT NULL,
   `front_img` varchar(128) NOT NULL,
   `back_img` varchar(128) NOT NULL,
-  `dlt_code` varchar(3) NOT NULL,
   `issue_date` date NOT NULL,
   `expiry_date` date NOT NULL,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
+  `user_create` int(11) NOT NULL COMMENT 'app_user.user_id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Table structure for table `app_dlt_card_type`; 
+
+DROP TABLE IF EXISTS `app_dlt_card_type`; 
+
+CREATE TABLE `app_dlt_card_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dlt_code` varchar(3) NOT NULL,
+  `dlt_card_id` varchar(128) NOT NULL COMMENT 'app_dlt_card.id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_cache`; 
 
@@ -179,11 +193,12 @@ CREATE TABLE `app_exam_cache` (
   `is_complete` int(1) NOT NULL DEFAULT 0,
   `ec_id` int(11) NOT NULL COMMENT 'app_exam_choice',
   `eq_id` int(11) NOT NULL COMMENT 'app_exam_question.eq_id',
+  `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id',
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_choice`; 
 
@@ -198,7 +213,7 @@ CREATE TABLE `app_exam_choice` (
   `eq_id` int(11) NOT NULL COMMENT 'app_exam_question.eq_id',
   `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id	',
   PRIMARY KEY (`ec_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_main`; 
 
@@ -245,12 +260,13 @@ CREATE TABLE `app_exam_result` (
   `er_id` int(11) NOT NULL AUTO_INCREMENT,
   `er_score_total` int(11) NOT NULL,
   `er_question_total` int(11) NOT NULL,
+  `er_use_time` time NOT NULL,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
-  `em_id` int(11) NOT NULL COMMENT 'app_exam_main.em_id',
+  `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`er_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_time`; 
 
@@ -327,7 +343,7 @@ CREATE TABLE `app_user` (
   `user_lastname` varchar(64) NOT NULL,
   `user_email` varchar(64) NOT NULL,
   `user_phone` varchar(64) NOT NULL,
-  `user_type` int(1) NOT NULL,
+  `user_type` int(1) NOT NULL COMMENT '1 = Super Admin , 2 = Staff , 3 = People',
   `active` int(1) NOT NULL DEFAULT 1,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,

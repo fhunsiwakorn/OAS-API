@@ -151,9 +151,9 @@ router.post("/list", middleware, async (req, res, next) => {
   app_course.udp_date ,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update ,
 
-  IFNULL((SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1), 0) AS total_course_group,
-  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id  LIMIT 1) AS total_lesson ,
-  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cs_id = app_course_lesson.cs_id  WHERE app_course_cluster.course_id=app_course.course_id AND  app_course_lesson.cs_video != ''   LIMIT 1) AS total_video,
+  IFNULL((SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1), 0) AS total_course_group,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id  LIMIT 1) AS total_lesson ,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id AND  app_course_lesson.cs_video != ''   LIMIT 1) AS total_video,
   (SELECT COUNT(*)  AS total  FROM  app_course_document  WHERE app_course_document.course_id=app_course.course_id   LIMIT 1) AS total_document
   FROM app_course 
    LEFT JOIN  app_user u1 ON u1.user_id = app_course.user_crt  
@@ -230,6 +230,155 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
   );
 });
 
+router.post("/group/create", middleware, (req, res, next) => {
+  const data = req.body;
+  const user_id = data.user_id;
+
+  con.query(
+    "SELECT user_id FROM app_user WHERE user_id = ?",
+    [user_id],
+    (err, rows) => {
+      let checkuser = rows?.length;
+      if (checkuser <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Username Error", // error.sqlMessage
+        });
+      }
+
+      con.query(
+        "INSERT INTO app_course_group (cg_name,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?)",
+        [
+          data.cg_name,
+          functions.dateAsiaThai(),
+          functions.dateAsiaThai(),
+          user_id,
+          user_id,
+        ],
+        function (err, result) {
+          if (err) throw err;
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+
+router.put("/group/update/:cg_id", middleware, (req, res, next) => {
+  const { cg_id } = req.params;
+  const data = req.body;
+
+  const user_id = data.user_id;
+  con.query(
+    "SELECT user_id FROM app_user WHERE user_id = ?",
+    [user_id],
+    (err, rows) => {
+      let checkuser = rows.length;
+      if (checkuser <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Username Error", // error.sqlMessage
+        });
+      }
+
+      con.query(
+        "UPDATE  app_course_group SET cg_name=? ,udp_date=? , user_udp=? WHERE cg_id=? ",
+        [data.cg_name, functions.dateAsiaThai(), user_id, cg_id],
+        function (err, result) {
+          if (err) throw err;
+
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+router.delete("/group/delete/:cg_id", middleware, (req, res, next) => {
+  const { cg_id } = req.params;
+  con.query(
+    "UPDATE  app_course_group SET cancelled = 0 WHERE cg_id=? ",
+    [cg_id],
+    function (err, result) {
+      if (err) throw err;
+
+      return res.json(result);
+    }
+  );
+});
+
+router.post("/group/all", middleware, async (req, res, next) => {
+  const data = req.body;
+  const current_page = data.page;
+  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const search = data.search;
+  const offset = functions.setZero((current_page - 1) * per_page);
+
+  let search_param = [];
+  let sql = `SELECT app_course_group.cg_id,app_course_group.cg_name,app_course_group.crt_date,app_course_group.udp_date ,
+     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
+     FROM app_course_group LEFT JOIN  app_user u1 ON u1.user_id = app_course_group.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_group.user_udp WHERE app_course_group.cancelled=1`;
+  let p = [];
+
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_course_group WHERE  app_course_group.cancelled=1 ";
+
+  const getCountAll = await runQuery(sql_count, p);
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+
+  if (search !== "" || search.length > 0) {
+    let q = ` AND (app_course_group.cg_name  LIKE ?)`; //
+    sql += q;
+    sql_count += q;
+    search_param = [`%${search}%`, `%${search}%`];
+  }
+
+  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
+  const total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+
+  sql += `  ORDER BY app_course_group.cg_name ASC LIMIT ${offset},${per_page} `;
+  const getContent = await runQuery(sql, p.concat(search_param));
+  const response = {
+    total: total, // จำนวนรายการทั้งหมด
+    total_filter: total_filter, // จำนวนรายการทั้งหมด
+    current_page: current_page, // หน้าที่กำลังแสดงอยู่
+    limit_page: per_page, // limit data
+    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
+    search: search, // คำค้นหา
+    data: getContent, // รายการข้อมูล
+  };
+  return res.json(response);
+});
+
+router.get("/group/get/:cg_id", middleware, (req, res, next) => {
+  const { cg_id } = req.params;
+  con.query(
+    "SELECT * FROM app_course_group WHERE cg_id = ? AND cancelled = 1",
+    [cg_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      const reslut = rows[0];
+      const response = {
+        cg_id: reslut?.cg_id,
+        cg_name: reslut?.cg_name,
+        cg_amount_random: reslut?.cg_amount_random,
+        crt_date: reslut?.crt_date,
+        udp_date: reslut?.udp_date,
+        user_crt: reslut?.user_crt,
+        user_udp: reslut?.user_udp,
+      };
+      return res.json(response);
+    }
+  );
+});
+
 router.post("/lesson/create", middleware, (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
@@ -300,6 +449,37 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
           return res.json(result);
         }
       );
+    }
+  );
+});
+
+router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
+  const { cs_id } = req.params;
+  con.query(
+    "SELECT * FROM app_course_lesson WHERE cs_id = ? AND cancelled = 1",
+    [cs_id],
+    (err, rows) => {
+      let _content = rows.length;
+
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      const reslut = rows[0];
+      const response = {
+        cs_id: reslut?.cs_id,
+        cs_cover: reslut?.cs_cover,
+        cs_name: reslut?.cs_name,
+        cs_video: reslut?.cs_video,
+        cs_description: reslut?.cs_description,
+        crt_date: reslut?.crt_date,
+        udp_date: reslut?.udp_date,
+        user_crt: reslut?.user_crt,
+        user_udp: reslut?.user_udp,
+      };
+      return res.json(response);
     }
   );
 });
@@ -760,35 +940,6 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
-  const { cs_id } = req.params;
-  con.query(
-    "SELECT * FROM app_course_lesson WHERE cs_id = ? AND cancelled = 1",
-    [cs_id],
-    (err, rows) => {
-      let _content = rows.length;
-
-      if (_content <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null",
-        });
-      }
-
-      const reslut = rows[0];
-      const response = {
-        cs_id: reslut?.cs_id,
-        cs_cover: reslut?.cs_cover,
-        cs_name: reslut?.cs_name,
-        cs_video: reslut?.cs_video,
-        cs_description: reslut?.cs_description,
-        crt_date: reslut?.crt_date,
-        udp_date: reslut?.udp_date,
-      };
-      return res.json(response);
-    }
-  );
-});
 router.get("/learn/status?", middleware, async (req, res, next) => {
   const user_id = req.query.user_id;
   const course_id = req.query.course_id;
@@ -855,18 +1006,32 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
   const { user_id } = req.params;
   const data = req.body;
   const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const per_page = data.per_page <= 150 ? data.per_page : 150;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let p = [user_id];
   let search_param = [];
-  let sql = `SELECT app_course.course_id,app_course.course_cover,app_course.course_code,app_course.course_name,app_course.course_description,app_course.course_remark_a,app_course.course_remark_b,app_course.is_complete,app_course.crt_date,app_course.udp_date
-   FROM app_course_log INNER JOIN app_course ON app_course.course_id=app_course_log.course_id  WHERE app_course_log.user_id =? `;
+  let sql = `SELECT 
+  app_course.course_id,
+  app_course.course_cover,
+  app_course.course_code,
+  app_course.course_name,
+  app_course.course_description,
+  app_course.course_remark_a,
+  app_course.course_remark_b,
+  app_course.is_complete,
+  app_course.crt_date,
+  app_course.udp_date,
+  app_course_lesson.cg_id
+  FROM app_course_log 
+  INNER JOIN app_course ON app_course.course_id=app_course_log.course_id  
+  INNER JOIN app_course_lesson ON app_course_lesson.cs_id	= app_course_log.cs_id AND app_course_lesson.cg_id != 0
+  WHERE app_course_log.user_id =? `;
   let sql_count =
     " SELECT  app_course_log.* FROM  app_course_log INNER JOIN app_course ON app_course.course_id=app_course_log.course_id WHERE  app_course_log.user_id =? ";
 
   sql_count_group = " GROUP BY  app_course_log.course_id ";
-  let getCountAll = await runQuery(sql_count + sql_count_group, p);
+  const getCountAll = await runQuery(sql_count + sql_count_group, p);
   const total = getCountAll?.length !== undefined ? getCountAll?.length : 0;
 
   if (search !== "" || search.length > 0) {
@@ -891,28 +1056,31 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
 
   sql += ` GROUP BY  app_course_log.course_id ORDER BY app_course_log.cl_id DESC LIMIT ${offset},${per_page} `;
 
-  let getContent = await runQuery(sql, p.concat(search_param));
+  const getContent = await runQuery(sql, p.concat(search_param));
 
   let obj = [];
   for (let i = 0; i < getContent.length; i++) {
-    let el = getContent[i];
-    let learned_content = await runQuery(
-      "SELECT * FROM app_course_log WHERE user_id = ? AND course_id = ? GROUP BY cs_id ",
+    const el = getContent[i];
+    const learned_content = await runQuery(
+      "SELECT COUNT(*) AS numRows FROM app_course_log WHERE user_id = ? AND course_id = ? LIMIT 0,1",
       [user_id, el?.course_id]
     );
-    let lesson_content = await runQuery(
-      "SELECT * FROM app_course_cluster WHERE course_id = ? GROUP BY cs_id",
+    const group_content = await runQuery(
+      "SELECT COUNT(*) AS numRows FROM app_course_cluster WHERE course_id = ?  LIMIT 0,1",
       [el?.course_id]
     );
-    let totalLesson =
-      lesson_content?.length !== undefined ? lesson_content?.length : 0;
-    let totalLearned =
-      learned_content?.length !== undefined ? learned_content?.length : 0;
+    const lesson_content = await runQuery(
+      "SELECT COUNT(*) AS numRows FROM app_course_lesson WHERE cancelled=1 AND cg_id = ? LIMIT 0,1",
+      [el?.cg_id]
+    );
+    const totalGroup = group_content[0] !== undefined ? group_content[0]?.numRows : 0;
+    const totalLesson = lesson_content[0] !== undefined ? lesson_content[0]?.numRows : 0;
+    const totalLearned = learned_content[0] !== undefined ? learned_content[0].numRows : 0;
+    const progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
 
-    let progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
-
-    let newObj = {
+      const newObj = {
       learned: totalLearned,
+      total_group: totalGroup,
       total_lesson: totalLesson,
       progress: progress.toFixed(2),
       last_date:
@@ -920,7 +1088,7 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
           ? learned_content[0]?.udp_date
           : "",
     };
-    let data_merg = { ...el, ...newObj };
+    const data_merg = { ...el, ...newObj };
     obj.push(data_merg);
   }
   const response = {
@@ -931,126 +1099,6 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
     total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
     search: search, // คำค้นหา
     data: obj, // รายการข้อมูล
-  };
-  return res.json(response);
-});
-
-router.post("/group/create", middleware, (req, res, next) => {
-  const data = req.body;
-  const user_id = data.user_id;
-
-  con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ?",
-    [user_id],
-    (err, rows) => {
-      let checkuser = rows?.length;
-      if (checkuser <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Username Error", // error.sqlMessage
-        });
-      }
-
-      con.query(
-        "INSERT INTO app_course_group (cg_name,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?)",
-        [
-          data.cg_name,
-          functions.dateAsiaThai(),
-          functions.dateAsiaThai(),
-          user_id,
-          user_id,
-        ],
-        function (err, result) {
-          if (err) throw err;
-          return res.json(result);
-        }
-      );
-    }
-  );
-});
-
-router.put("/group/update/:cg_id", middleware, (req, res, next) => {
-  const { cg_id } = req.params;
-  const data = req.body;
-
-  const user_id = data.user_id;
-  con.query(
-    "SELECT user_id FROM app_user WHERE user_id = ?",
-    [user_id],
-    (err, rows) => {
-      let checkuser = rows.length;
-      if (checkuser <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Username Error", // error.sqlMessage
-        });
-      }
-
-      con.query(
-        "UPDATE  app_course_group SET cg_name=? ,udp_date=? , user_udp=? WHERE cg_id=? ",
-        [data.cg_name, functions.dateAsiaThai(), user_id, cg_id],
-        function (err, result) {
-          if (err) throw err;
-
-          return res.json(result);
-        }
-      );
-    }
-  );
-});
-router.delete("/group/delete/:cg_id", middleware, (req, res, next) => {
-  const { cg_id } = req.params;
-  con.query(
-    "UPDATE  app_course_group SET cancelled = 0 WHERE cg_id=? ",
-    [cg_id],
-    function (err, result) {
-      if (err) throw err;
-
-      return res.json(result);
-    }
-  );
-});
-
-router.post("/group/all", middleware, async (req, res, next) => {
-  const data = req.body;
-  const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
-  const search = data.search;
-  const offset = functions.setZero((current_page - 1) * per_page);
-
-  let search_param = [];
-  let sql = `SELECT app_course_group.cg_id,app_course_group.cg_name,app_course_group.crt_date,app_course_group.udp_date ,
-     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM app_course_group LEFT JOIN  app_user u1 ON u1.user_id = app_course_group.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_group.user_udp WHERE app_course_group.cancelled=1`;
-  let p = [];
-
-  let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_course_group WHERE  app_course_group.cancelled=1 ";
-
-  const getCountAll = await runQuery(sql_count, p);
-  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
-
-  if (search !== "" || search.length > 0) {
-    let q = ` AND (app_course_group.cg_name  LIKE ?)`; //
-    sql += q;
-    sql_count += q;
-    search_param = [`%${search}%`, `%${search}%`];
-  }
-
-  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  const total_filter =
-    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
-
-  sql += `  ORDER BY app_course_group.cg_name ASC LIMIT ${offset},${per_page} `;
-  const getContent = await runQuery(sql, p.concat(search_param));
-  const response = {
-    total: total, // จำนวนรายการทั้งหมด
-    total_filter: total_filter, // จำนวนรายการทั้งหมด
-    current_page: current_page, // หน้าที่กำลังแสดงอยู่
-    limit_page: per_page, // limit data
-    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
-    search: search, // คำค้นหา
-    data: getContent, // รายการข้อมูล
   };
   return res.json(response);
 });

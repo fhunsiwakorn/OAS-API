@@ -274,7 +274,7 @@ INSERT INTO `app_course_group` VALUES('4','ABC Test','5','2024-03-02 09:10:16','
 
 -- Dumping data for table `app_course_lesson` 
 
-INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','1','85','85','0');
+INSERT INTO `app_course_lesson` VALUES('1','007','12345','-','-','2023-07-07 15:23:43','2023-07-07 15:23:43','0','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('2','url/image','6789','-','-','2023-10-12 19:33:01','2023-10-12 19:33:01','1','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('3','static/upload/2023/11/files-lkNYJh3qmI.jpg','-','https://www.youtube.com/watch?v=DCh2jlZzC1g','-','2023-12-08 12:27:46','2023-12-08 12:27:46','0','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('4','','-','-','-','2023-12-08 12:27:46','2023-12-08 12:27:46','0','85','85','0');
@@ -687,6 +687,7 @@ INSERT INTO `app_course_lesson` VALUES('408','url/image','ทดสอบfsafsaf
 -- Dumping data for table `app_course_log` 
 
 INSERT INTO `app_course_log` VALUES('10','404','2','104','2024-06-20 16:14:08');
+INSERT INTO `app_course_log` VALUES('11','11','2','85','2024-06-24 10:41:41');
 
 
 
