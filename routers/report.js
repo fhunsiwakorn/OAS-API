@@ -204,13 +204,13 @@ router.post("/exam", middleware, async (req, res, next) => {
   t4.identification_number,
   t4.user_img
   FROM app_exam_result t1 
-  INNER JOIN app_exam_main t2 ON  t2.em_id = t1.em_id 
+  INNER JOIN app_exam_main t2 ON  t2.course_id = t1.course_id 
   INNER JOIN app_user t3 ON  t3.user_id = t1.user_id 
-  INNER JOIN app_user_detail t4 ON  t4.user_id = t1.user_id 
+  LEFT JOIN app_user_detail t4 ON  t4.user_id = t1.user_id 
   WHERE 
   DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ? AND t2.dlt_code = ? `;
   let sql_count =
-    " SELECT  COUNT(t1.user_id) as numRows FROM  app_exam_result t1  INNER JOIN app_exam_main t2 ON  t2.em_id = t1.em_id   INNER JOIN app_user t3 ON  t3.user_id = t1.user_id  INNER JOIN app_user_detail t4 ON  t4.user_id = t1.user_id   WHERE  DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ? AND t2.dlt_code = ?";
+    " SELECT  COUNT(t1.user_id) as numRows FROM  app_exam_result t1  INNER JOIN app_exam_main t2 ON  t2.course_id = t1.course_id   INNER JOIN app_user t3 ON  t3.user_id = t1.user_id  INNER JOIN app_user_detail t4 ON  t4.user_id = t1.user_id   WHERE  DATE(t1.crt_date) >= ? AND DATE(t1.crt_date) <= ? AND t2.dlt_code = ?";
 
   const getCountAll = await runQuery(sql_count, join_date.concat(search_param));
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;

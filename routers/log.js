@@ -147,7 +147,7 @@ router.get("/exam/:dlt_code/:year", middleware, async (req, res, next) => {
   let obj = [];
   for (let i = 1; i <= 12; i++) {
     let getLog = await runQuery(
-      "SELECT COUNT(t1.er_id) AS total FROM app_exam_result t1 INNER JOIN  app_exam_main t2 ON t2.em_id =t1.em_id  WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t2.dlt_code = ? ",
+      "SELECT COUNT(t1.er_id) AS total FROM app_exam_result t1 INNER JOIN  app_exam_main t2 ON t2.course_id = t1.course_id  WHERE  MONTH(t1.udp_date) = ?  AND  YEAR(t1.udp_date) = ? AND t2.dlt_code = ? ",
       [i, year, dlt_code]
     );
     let newObj = {
