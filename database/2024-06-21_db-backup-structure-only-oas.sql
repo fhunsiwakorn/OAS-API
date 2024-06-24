@@ -16,7 +16,7 @@ CREATE TABLE `app_appointment` (
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id	',
   PRIMARY KEY (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_appointment_reserve`; 
 
@@ -55,7 +55,7 @@ CREATE TABLE `app_course` (
   `course_cover` varchar(128) NOT NULL,
   `course_code` varchar(128) NOT NULL,
   `course_name` varchar(128) NOT NULL,
-  `course_description` varchar(512) NOT NULL,
+  `course_description` varchar(1024) NOT NULL,
   `course_remark_a` varchar(512) NOT NULL,
   `course_remark_b` varchar(512) NOT NULL,
   `is_complete` int(1) NOT NULL DEFAULT 0,
@@ -73,7 +73,8 @@ DROP TABLE IF EXISTS `app_course_cluster`;
 
 CREATE TABLE `app_course_cluster` (
   `cct_id` varchar(48) NOT NULL,
-  `cs_id` int(11) NOT NULL COMMENT 'app_course_lesson.cs_id',
+  `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id',
+  `cg_amount_random` int(3) NOT NULL DEFAULT 0,
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`cct_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -110,6 +111,7 @@ DROP TABLE IF EXISTS `app_course_group`;
 CREATE TABLE `app_course_group` (
   `cg_id` int(11) NOT NULL AUTO_INCREMENT,
   `cg_name` varchar(256) NOT NULL,
+  `cg_amount_random` int(3) NOT NULL DEFAULT 0,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `cancelled` int(1) NOT NULL DEFAULT 1,
@@ -148,7 +150,7 @@ CREATE TABLE `app_course_log` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`cl_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_dlt_card`; 
 
@@ -177,7 +179,7 @@ CREATE TABLE `app_exam_cache` (
   `is_complete` int(1) NOT NULL DEFAULT 0,
   `ec_id` int(11) NOT NULL COMMENT 'app_exam_choice',
   `eq_id` int(11) NOT NULL COMMENT 'app_exam_question.eq_id',
-  `em_id` int(11) NOT NULL COMMENT 'app_exam_main.em_id',
+  `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -194,9 +196,9 @@ CREATE TABLE `app_exam_choice` (
   `ec_image` varchar(128) NOT NULL,
   `cancelled` int(1) NOT NULL DEFAULT 1,
   `eq_id` int(11) NOT NULL COMMENT 'app_exam_question.eq_id',
-  `em_id` int(11) NOT NULL COMMENT 'app_exam_main.em_id',
+  `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id	',
   PRIMARY KEY (`ec_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_main`; 
 
@@ -217,8 +219,9 @@ CREATE TABLE `app_exam_main` (
   `cancelled` int(11) NOT NULL DEFAULT 1,
   `user_crt` int(11) NOT NULL COMMENT 'app_user.user_id',
   `user_udp` int(11) NOT NULL COMMENT 'app_user.user_id',
+  `course_id` int(11) NOT NULL COMMENT 'app_course.	course_id',
   PRIMARY KEY (`em_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_question`; 
 
@@ -230,9 +233,9 @@ CREATE TABLE `app_exam_question` (
   `eq_image` varchar(128) NOT NULL,
   `eq_answer` int(3) NOT NULL,
   `cancelled` int(1) NOT NULL DEFAULT 1,
-  `em_id` int(11) NOT NULL COMMENT 'app_exam_main.em_id',
+  `cg_id` int(11) NOT NULL COMMENT 'app_course_group.cg_id',
   PRIMARY KEY (`eq_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_result`; 
 

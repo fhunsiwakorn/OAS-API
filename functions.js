@@ -46,4 +46,25 @@ f.dateAsiaThai = () => {
   return localISOTime;
 };
 
+f.yyyymmdd = () => {
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are 0-based in JavaScript
+  let day = ("0" + date.getDate()).slice(-2);
+  let formattedDate = year + month + day;
+  // console.log(formattedDate);
+  return formattedDate;
+};
+
+f.treeDigit = (number) => {
+  let n = 1;
+  if (parseInt(number) > 0){
+    n = number;
+  }
+  const formattedNum = String(n).padStart(3, '0');
+  // console.log(formattedNum); // Outputs: 001
+  return formattedNum;
+};
+
+
 module.exports = f;

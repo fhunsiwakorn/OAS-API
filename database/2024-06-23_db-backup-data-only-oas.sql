@@ -20,6 +20,8 @@ INSERT INTO `app_appointment` VALUES('17','2','120','2023-09-05 19:05:31','2023-
 INSERT INTO `app_appointment` VALUES('18','2','120','2023-09-05 19:05:31','2023-09-05 20:05:31','Test','A','2023-09-04 15:35:08','2023-09-04 15:35:08','1','1','1');
 INSERT INTO `app_appointment` VALUES('19','2','120','2023-10-03 16:05:15','2023-10-04 16:05:31','Test','A','2023-09-06 13:38:33','2023-09-06 13:38:33','1','1','1');
 INSERT INTO `app_appointment` VALUES('20','2','120','2023-10-04 16:05:15','2023-10-04 16:05:31','Test','A','2023-09-06 13:38:33','2023-09-06 13:38:33','1','1','1');
+INSERT INTO `app_appointment` VALUES('21','2','120','2023-04-26 08:00:00','2023-04-26 12:00:00','Test','D','2024-04-25 17:09:48','2024-04-25 17:09:48','1','104','104');
+INSERT INTO `app_appointment` VALUES('22','2','120','2024-04-26 08:00:00','2024-04-26 12:00:00','Test','D','2024-04-25 17:22:57','2024-04-25 17:22:57','1','104','104');
 
 
 
@@ -237,17 +239,15 @@ INSERT INTO `app_country` VALUES('196','เอกวาดอร์','Ecuador','
 -- Dumping data for table `app_course` 
 
 INSERT INTO `app_course` VALUES('1','007','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','','','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
-INSERT INTO `app_course` VALUES('2','008','12345','ขับรถ','ไม่มีอะไรเลย','','','0','2023-07-07 15:23:43','2023-07-07 15:23:43','1','1','1');
+INSERT INTO `app_course` VALUES('2','008','12345','ขับรถ','ไม่มีอะไรเลย','','','1','2023-07-07 15:23:43','2024-06-21 14:09:01','1','1','1');
 INSERT INTO `app_course` VALUES('3','url/image','12345','เขียนโปรแกรม','ไม่มีอะไรเลย','ac','bc','0','2024-03-27 08:11:53','2024-03-27 08:12:23','1','104','104');
 
 
 
 -- Dumping data for table `app_course_cluster` 
 
-INSERT INTO `app_course_cluster` VALUES('IK5JTikkf0','408','2');
-INSERT INTO `app_course_cluster` VALUES('NGQA3D1kha','404','2');
-INSERT INTO `app_course_cluster` VALUES('ononl1CfAv','406','2');
-INSERT INTO `app_course_cluster` VALUES('tJFjreB93X','405','2');
+INSERT INTO `app_course_cluster` VALUES('UXqBuV0iNz','4','5','2');
+INSERT INTO `app_course_cluster` VALUES('v5KuveBWTa','1','2','2');
 
 
 
@@ -265,10 +265,10 @@ INSERT INTO `app_course_condition` VALUES('8','30','2','3','1');
 
 -- Dumping data for table `app_course_group` 
 
-INSERT INTO `app_course_group` VALUES('1','Test 2','2024-03-02 08:56:49','2024-03-02 09:04:46','1','104','104');
-INSERT INTO `app_course_group` VALUES('2','Test','2024-03-02 08:58:07','2024-03-02 08:58:07','1','104','104');
-INSERT INTO `app_course_group` VALUES('3','Test','2024-03-02 09:01:54','2024-03-02 09:01:54','1','104','104');
-INSERT INTO `app_course_group` VALUES('4','ABC Test','2024-03-02 09:10:16','2024-03-02 09:10:16','1','104','104');
+INSERT INTO `app_course_group` VALUES('1','Test 2','2','2024-03-02 08:56:49','2024-03-02 09:04:46','1','104','104');
+INSERT INTO `app_course_group` VALUES('2','Test','0','2024-03-02 08:58:07','2024-03-02 08:58:07','1','104','104');
+INSERT INTO `app_course_group` VALUES('3','Test','3','2024-03-02 09:01:54','2024-03-02 09:01:54','1','104','104');
+INSERT INTO `app_course_group` VALUES('4','ABC Test','5','2024-03-02 09:10:16','2024-03-02 09:10:16','1','104','104');
 
 
 
@@ -677,7 +677,7 @@ INSERT INTO `app_course_lesson` VALUES('400','static/upload/2024/1/files-nE1hv6v
 INSERT INTO `app_course_lesson` VALUES('401','static/upload/2024/1/files-iEbpZjNdSg.jpg','ແພໃໝຍູໃສ','','ສະຫວັນນນະເຂດ','2024-01-15 00:00:21','2024-01-15 00:00:21','1','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('402','static/upload/2024/1/files-DMmgfK72tx.jpg','ເຂົ້າປຽກອ່ຽນແຊບບໍ່','','ຍັງບໍ່ທັນໄດ້ກິນ','2024-01-15 00:00:21','2024-01-15 00:00:21','1','85','85','0');
 INSERT INTO `app_course_lesson` VALUES('403','static/upload/2024/1/files-AixcCnU6El.jpg','ມືແລງໄປບໍ່ສອງແກ້ວ','','ແຄມຂອງ','2024-01-15 00:00:21','2024-01-15 00:00:21','1','85','85','0');
-INSERT INTO `app_course_lesson` VALUES('404','','42512512','','5125125125','2024-01-15 00:00:21','2024-01-15 00:00:21','0','85','85','1');
+INSERT INTO `app_course_lesson` VALUES('404','','42512512','','5125125125','2024-01-15 00:00:21','2024-01-15 00:00:21','1','85','85','1');
 INSERT INTO `app_course_lesson` VALUES('405','','24354656','','42354656','2024-01-15 15:12:27','2024-01-15 15:12:27','1','85','85','1');
 INSERT INTO `app_course_lesson` VALUES('406','','ข้อความทั่วไป','','ไม่มี','2024-01-15 15:12:27','2024-01-15 15:12:27','1','85','85','4');
 INSERT INTO `app_course_lesson` VALUES('408','url/image','ทดสอบfsafsafa','-','-','2024-03-02 09:21:16','2024-03-02 09:22:28','1','104','104','4');
@@ -686,64 +686,76 @@ INSERT INTO `app_course_lesson` VALUES('408','url/image','ทดสอบfsafsaf
 
 -- Dumping data for table `app_course_log` 
 
-INSERT INTO `app_course_log` VALUES('7','406','2','104','2024-03-25 23:17:25');
-INSERT INTO `app_course_log` VALUES('8','408','2','104','2024-03-25 23:17:39');
+INSERT INTO `app_course_log` VALUES('10','404','2','104','2024-06-20 16:14:08');
 
 
 
 -- Dumping data for table `app_dlt_card` 
 
-INSERT INTO `app_dlt_card` VALUES('1','url/image','url/image','A1','2020-01-08','2023-12-31','2023-09-19 18:55:36','2023-09-19 18:55:36','1');
+INSERT INTO `app_dlt_card` VALUES('Q0Z7LTUR38','20240622001','url/image','url/image','url/image','url/image','2020-01-08','2024-11-25','2024-06-22 19:51:55','2024-06-22 20:07:57','104','104');
+
+
+
+-- Dumping data for table `app_dlt_card_type` 
+
+INSERT INTO `app_dlt_card_type` VALUES('3','A1','1');
+INSERT INTO `app_dlt_card_type` VALUES('4','A2','1');
+INSERT INTO `app_dlt_card_type` VALUES('10','A1','Q0Z7LTUR38');
+INSERT INTO `app_dlt_card_type` VALUES('11','A2','Q0Z7LTUR38');
+INSERT INTO `app_dlt_card_type` VALUES('12','B','Q0Z7LTUR38');
 
 
 
 -- Dumping data for table `app_exam_cache` 
 
-INSERT INTO `app_exam_cache` VALUES('1','0','0','0','2','2','85','2024-02-05 17:10:48');
-INSERT INTO `app_exam_cache` VALUES('2','0','0','0','1','2','85','2024-02-05 17:10:48');
-INSERT INTO `app_exam_cache` VALUES('3','0','0','0','5','2','85','2024-02-05 17:10:48');
+INSERT INTO `app_exam_cache` VALUES('46','0','1','3','2','1','2','99','2024-06-21 15:17:49');
+INSERT INTO `app_exam_cache` VALUES('47','1','1','2','8','1','2','99','2024-06-21 15:17:49');
+INSERT INTO `app_exam_cache` VALUES('49','0','1','0','3','4','2','99','2024-06-21 15:17:49');
+INSERT INTO `app_exam_cache` VALUES('50','0','1','0','4','4','2','99','2024-06-21 15:17:49');
 
 
 
 -- Dumping data for table `app_exam_choice` 
 
-INSERT INTO `app_exam_choice` VALUES('1','1','ขับรถนะ ','url/image','1','1','2');
-INSERT INTO `app_exam_choice` VALUES('2','2','บ้านไผ่อยู่ จังหวัดไหน ?','url/image','1','1','2');
-INSERT INTO `app_exam_choice` VALUES('3','1','เมืองพลอยู่ จังหวัดไหน ?','url/image','1','2','2');
-INSERT INTO `app_exam_choice` VALUES('4','1','เมืองพลอยู่ จังหวัดไหน ?','url/image','1','3','1');
-INSERT INTO `app_exam_choice` VALUES('5','3','เมืองพลอยู่ จังหวัดไหน ?','url/image','1','3','1');
+INSERT INTO `app_exam_choice` VALUES('1','1','เมืองพลอยู่ จังหวัดไหน ?','url/image','1','8','1');
+INSERT INTO `app_exam_choice` VALUES('2','2','กระต่าย ?','url/image','1','8','1');
+INSERT INTO `app_exam_choice` VALUES('3','3','เต่า ?','url/image','1','8','1');
+INSERT INTO `app_exam_choice` VALUES('4','4','งู ?','url/image','1','8','1');
 
 
 
 -- Dumping data for table `app_exam_main` 
 
-INSERT INTO `app_exam_main` VALUES('2','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','10','B','2023-08-05 16:05:31','2023-08-30 15:10:55','1','1','1');
-INSERT INTO `app_exam_main` VALUES('4','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','45','B','2023-08-26 10:52:48','2024-01-27 08:40:28','1','1','99');
-INSERT INTO `app_exam_main` VALUES('5','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:56:52','2023-08-28 15:56:52','1','1','1');
-INSERT INTO `app_exam_main` VALUES('6','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
-INSERT INTO `app_exam_main` VALUES('7','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1');
-INSERT INTO `app_exam_main` VALUES('8','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','0','B','2023-08-28 15:57:50','2023-08-28 15:57:50','1','1','1');
-INSERT INTO `app_exam_main` VALUES('9','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','45','B','2024-01-27 08:39:59','2024-01-27 08:39:59','1','99','99');
+INSERT INTO `app_exam_main` VALUES('2','007','ขับรถยนต์','https://i.imgur.com/HwwIeaF.jpg','ไม่มีอะไรเลย','50','00:59:00','45','B','2023-08-05 16:05:31','2024-06-21 09:58:12','1','1','99','0');
+INSERT INTO `app_exam_main` VALUES('4','007','ขับรถยนต์','url/image','ไม่มีอะไรเลย','50','00:59:00','45','B','2023-08-26 10:52:48','2024-01-27 08:40:28','1','1','99','0');
+INSERT INTO `app_exam_main` VALUES('5','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:56:52','2023-08-28 15:56:52','1','1','1','0');
+INSERT INTO `app_exam_main` VALUES('6','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1','0');
+INSERT INTO `app_exam_main` VALUES('7','013','New Jean','url/image','ไม่มีอะไรเลย','40','00:59:00','0','AS','2023-08-28 15:57:32','2023-08-28 15:57:32','1','1','1','0');
+INSERT INTO `app_exam_main` VALUES('8','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','0','B','2023-08-28 15:57:50','2023-08-28 15:57:50','1','1','1','0');
+INSERT INTO `app_exam_main` VALUES('9','013','New Jean2','url/image','ไม่มีอะไรเลย','40','00:59:00','45','B','2024-01-27 08:39:59','2024-01-27 08:39:59','1','99','99','0');
+INSERT INTO `app_exam_main` VALUES('11','013','New Jean2','-','ไม่มีอะไรเลย','40','00:59:00','45','B','2024-06-21 09:20:02','2024-06-21 09:20:02','1','99','99','2');
+INSERT INTO `app_exam_main` VALUES('12','007','ขับรถยนต์','https://i.imgur.com/HwwIeaF.jpg','ไม่มีอะไรเลย','50','00:59:00','45','B','2024-06-21 09:29:18','2024-06-21 10:00:52','1','99','99','1');
 
 
 
 -- Dumping data for table `app_exam_question` 
 
-INSERT INTO `app_exam_question` VALUES('1','ม้าอะไรบินได้','url/image','1','1','2');
-INSERT INTO `app_exam_question` VALUES('2','2 + 2 เท่ากับ','url/image','2','1','2');
-INSERT INTO `app_exam_question` VALUES('3','2 + 2 เท่ากับ','url/image','2','1','1');
-INSERT INTO `app_exam_question` VALUES('4','3 + 2 เท่ากับ','url/image','2','1','1');
-INSERT INTO `app_exam_question` VALUES('5','3 + 2 เท่ากับ','url/image','2','1','2');
+INSERT INTO `app_exam_question` VALUES('1','ม้าอะไรบินได้','url/image','1','1','1');
+INSERT INTO `app_exam_question` VALUES('2','2 + 2 เท่ากับ','url/image','2','1','1');
+INSERT INTO `app_exam_question` VALUES('3','SS','url/image','2','1','4');
+INSERT INTO `app_exam_question` VALUES('4','BB','url/image','2','1','4');
+INSERT INTO `app_exam_question` VALUES('5','3 + 2 เท่ากับ','url/image','2','1','0');
+INSERT INTO `app_exam_question` VALUES('6','3 + 2 เท่ากับ','url/image','2','1','2');
+INSERT INTO `app_exam_question` VALUES('7','3 + 2 เท่ากับ','url/image','2','1','2');
+INSERT INTO `app_exam_question` VALUES('8','3 + 2 เท่ากับ 55','url/image','2','1','1');
 
 
 
 -- Dumping data for table `app_exam_result` 
 
-INSERT INTO `app_exam_result` VALUES('1','1','2','2023-08-23 12:55:26','2023-08-23 12:55:26','104','2');
-INSERT INTO `app_exam_result` VALUES('2','0','2','2023-08-23 14:39:01','2023-08-23 14:39:01','104','2');
-INSERT INTO `app_exam_result` VALUES('3','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','104','2');
-INSERT INTO `app_exam_result` VALUES('4','1','2','2023-08-23 15:02:00','2023-08-23 15:02:00','114','2');
-INSERT INTO `app_exam_result` VALUES('5','1','2','2023-09-28 19:27:26','2023-09-28 19:27:26','114','38');
+INSERT INTO `app_exam_result` VALUES('1','0','4','00:00:00','2024-06-21 16:06:54','2024-06-21 16:06:54','99','2');
+INSERT INTO `app_exam_result` VALUES('2','1','4','00:00:00','2024-06-21 16:10:17','2024-06-21 16:10:17','99','2');
+INSERT INTO `app_exam_result` VALUES('3','1','4','00:12:00','2024-06-21 20:53:28','2024-06-21 20:53:28','99','2');
 
 
 

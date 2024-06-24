@@ -33,3 +33,22 @@ CREATE TABLE `oas`.`app_course_condition` (`id` INT NOT NULL AUTO_INCREMENT , `c
 ALTER TABLE `app_course` ADD `course_remark_a` VARCHAR(512) NOT NULL AFTER `course_description`, ADD `course_remark_b` VARCHAR(512) NOT NULL AFTER `course_remark_a`;
 11/4/2024
 ALTER TABLE `app_news` ADD `news_video` VARCHAR(128) NOT NULL AFTER `news_cover`;
+26/4/2024
+ALTER TABLE `app_course` CHANGE `course_description` `course_description` VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+19/6/2024
+ALTER TABLE `app_exam_question` CHANGE `em_id` `course_id` INT(11) NOT NULL COMMENT 'app_course.course_id';
+ALTER TABLE `app_course_group` ADD `cg_amount_random` INT(3) NOT NULL DEFAULT '0' AFTER `cg_name`;
+ALTER TABLE `app_course_cluster` CHANGE `cs_id` `cg_id` INT(11) NOT NULL COMMENT 'app_course_group.cg_id';
+ALTER TABLE `app_course_cluster` ADD `cg_amount_random` INT(3) NOT NULL DEFAULT '0' AFTER `cg_id`;
+ALTER TABLE `app_exam_question` ADD `cg_id` INT NOT NULL COMMENT 'app_course_group.cg_id' AFTER `cancelled`;
+ALTER TABLE `app_exam_question` DROP `course_id`;
+ALTER TABLE `app_exam_cache` CHANGE `em_id` `course_id` INT(11) NOT NULL COMMENT 'app_course.course_id';
+ALTER TABLE `app_exam_main` ADD `course_id` INT NOT NULL COMMENT 'app_course. course_id' AFTER `user_udp`;
+ALTER TABLE `app_exam_choice` CHANGE `em_id` `cg_id` INT(11) NOT NULL COMMENT 'app_course_group.cg_id ';
+ALTER TABLE `app_exam_cache` ADD `cg_id` INT NOT NULL COMMENT 'app_course_group.cg_id' AFTER `eq_id`;
+ALTER TABLE `app_exam_result` CHANGE `em_id` `course_id` INT(11) NOT NULL COMMENT 'app_course.course_id';
+ALTER TABLE `app_exam_result` ADD `er_use_time` TIME NOT NULL AFTER `er_question_total`;
+ALTER TABLE `app_user` CHANGE `user_type` `user_type` INT(1) NOT NULL COMMENT '1 = Super Admin , 2 = Staff , 3 = People';
+ALTER TABLE `app_dlt_card` CHANGE `id` `id` VARCHAR(128) NOT NULL;
+ALTER TABLE `app_dlt_card` ADD `card_number` VARCHAR(64) NOT NULL AFTER `id`, ADD `issued_by` VARCHAR(64) NOT NULL AFTER `card_number`, ADD `full_name` VARCHAR(128) NOT NULL AFTER `issued_by`, ADD `address` VARCHAR(512) NOT NULL AFTER `full_name`;
+ALTER TABLE `app_dlt_card` ADD `user_create` INT NOT NULL COMMENT 'app_user.user_id' AFTER `user_id`;

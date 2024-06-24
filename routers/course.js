@@ -304,69 +304,6 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/lesson/all", middleware, async (req, res, next) => {
-  const data = req.body;
-  const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
-  const search = data.search;
-  const exclude = data.exclude;
-  const offset = functions.setZero((current_page - 1) * per_page);
-  const cg_id = req.query.cg_id;
-  let ex = '("0")';
-  if (exclude.length > 0) {
-    const toArr = exclude.toString();
-    ex = `(${toArr})`;
-  }
-  let search_param = [];
-  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description,app_course_lesson.crt_date,app_course_lesson.udp_date ,app_course_lesson.cg_id ,
-  cg.cg_name,   
-  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM app_course_lesson  LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp  LEFT JOIN  app_course_group cg ON cg.cg_id  = app_course_lesson.cg_id 
-WHERE 
-app_course_lesson.cancelled=1 AND 
-app_course_lesson.cs_id NOT IN ${ex}
-`;
-  let p = [];
-
-  let sql_count = ` SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cancelled=1 AND app_course_lesson.cs_id NOT IN ${ex}`;
-  if (cg_id !== "" && cg_id !== 0 && cg_id !== undefined) {
-    let x = ` AND app_course_lesson.cg_id ='${cg_id}'`; //
-    sql += x;
-    sql_count += x;
-  } else {
-    let x = ` AND app_course_lesson.cg_id > 0`; //
-    sql += x;
-    sql_count += x;
-  }
-
-  const getCountAll = await runQuery(sql_count, p);
-  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
-
-  if (search !== "" || search.length > 0) {
-    let q = ` AND (app_course_lesson.cs_name  LIKE ? OR app_course_lesson.cs_description  LIKE  ?)`; //
-    sql += q;
-    sql_count += q;
-    search_param = [`%${search}%`, `%${search}%`];
-  }
-
-  const getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  const total_filter =
-    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
-
-  sql += `  ORDER BY app_course_lesson.cs_id ASC LIMIT ${offset},${per_page} `;
-  const getContent = await runQuery(sql, p.concat(search_param));
-  const response = {
-    total: total, // จำนวนรายการทั้งหมด
-    total_filter: total_filter, // จำนวนรายการทั้งหมด
-    current_page: current_page, // หน้าที่กำลังแสดงอยู่
-    limit_page: per_page, // limit data
-    total_page: Math.ceil(total_filter / per_page), // จำนวนหน้าทั้งหมด
-    search: search, // คำค้นหา
-    data: getContent, // รายการข้อมูล
-  };
-  return res.json(response);
-});
-
 router.delete("/lesson/delete/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   con.query(
@@ -418,16 +355,35 @@ router.post(
       [functions.dateAsiaThai(), course_id]
     );
     let sql =
-      " INSERT INTO app_course_cluster (cct_id,cs_id,course_id) VALUES ? ";
+      " INSERT INTO app_course_cluster (cct_id,cg_id,cg_amount_random,course_id) VALUES ? ";
     let obj = [];
-    data.forEach((el) => {
+    for (let i = 0; i < data.length; i++) {
+      const el = data[i];
+      const getCourseGroup = await runQuery(
+        "SELECT * FROM `app_course_group` WHERE cg_id =?",
+        [el?.cg_id]
+      );
+      const cg_amount_random =
+        getCourseGroup[0]?.cg_amount_random !== undefined
+          ? getCourseGroup[0]?.cg_amount_random
+          : 0;
       let newObj = [
         `${functions.randomCode()}`,
-        `${el?.cs_id}`,
+        `${el?.cg_id}`,
+        `${cg_amount_random}`,
         `${course_id}`,
       ];
       obj.push(newObj);
-    });
+    }
+    // data.forEach((el) => {
+
+    //   let newObj = [
+    //     `${functions.randomCode()}`,
+    //     `${el?.cg_id}`,
+    //     `${course_id}`,
+    //   ];
+    //   obj.push(newObj);
+    // });
 
     const r = await runQuery(sql, [obj]);
     return res.json(r);
@@ -465,28 +421,34 @@ router.delete("/cluster/delete", middleware, (req, res, next) => {
   );
 });
 
-router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
-  const { course_id } = req.params;
-
+router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
+  const { cg_id } = req.params;
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let search_param = [];
-  let sql = `SELECT app_course_lesson.cs_id,app_course_lesson.cs_cover,app_course_lesson.cs_name,app_course_lesson.cs_video,app_course_lesson.cs_description ,app_course_lesson.crt_date,app_course_lesson.udp_date ,
-  cg.cg_name,     
-  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
-     FROM  app_course_cluster 
-     INNER JOIN  app_course_lesson  ON app_course_lesson.cs_id = app_course_cluster.cs_id  
-     LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp 
-     LEFT JOIN  app_course_group cg ON cg.cg_id  = app_course_lesson.cg_id 
-     WHERE app_course_lesson.cancelled=1 AND app_course_cluster.course_id=?`;
-  let p = [course_id];
-
+  let sql = `SELECT 
+  app_course_lesson.cs_id,
+  app_course_lesson.cs_cover,
+  app_course_lesson.cs_name,
+  app_course_lesson.cs_video,
+  app_course_lesson.cs_description ,
+  app_course_lesson.crt_date,
+  app_course_lesson.udp_date,
+  app_course_group.cg_name,     
+  CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
+  CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
+     FROM  app_course_lesson 
+     LEFT JOIN  app_user u1 ON u1.user_id = app_course_lesson.user_crt  
+     LEFT JOIN  app_user u2 ON u2.user_id = app_course_lesson.user_udp 
+     INNER JOIN  app_course_group ON app_course_group.cg_id  = app_course_lesson.cg_id 
+     WHERE app_course_lesson.cancelled=1 AND 
+     app_course_lesson.cg_id=?`;
+  let p = [cg_id];
   let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  app_course_cluster.course_id =? ";
-
+    " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  app_course_lesson.cg_id =? ";
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
   if (total <= 0) {
@@ -507,7 +469,7 @@ router.post("/lesson/list/:course_id", middleware, async (req, res, next) => {
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
-  sql += ` GROUP BY app_course_lesson.cs_id ORDER BY app_course_lesson.cs_name DESC LIMIT ${offset},${per_page} `;
+  sql += `ORDER BY app_course_lesson.cs_id ASC LIMIT ${offset},${per_page}`;
   const getContent = await runQuery(sql, p.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
@@ -526,20 +488,20 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
   const user_id = req.query.user_id;
   const course_content = await runQuery(
     `SELECT
-    app_course_group.cg_id,
-    app_course_group.cg_name,
-    COUNT(app_course_cluster.cs_id) AS total_lesson
+    app_course_group.*,
+    (SELECT COUNT(*) FROM app_course_lesson WHERE cg_id=app_course_group.cg_id) AS total_lesson
     FROM app_course_cluster 
-    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE  app_course_cluster.course_id= ? GROUP BY app_course_group.cg_id ORDER BY  app_course_group.cg_id ASC
+    INNER JOIN app_course_group ON app_course_cluster.cg_id = app_course_group.cg_id
+    WHERE app_course_cluster.course_id = ? 
+    GROUP BY app_course_group.cg_id 
+    ORDER BY  app_course_group.cg_id ASC
     `,
     [course_id]
   );
   let obj = [];
   for (let i = 0; i < course_content.length; i++) {
-    let el = course_content[i];
-    let lessons = await runQuery(
+    const el = course_content[i];
+    const lessons = await runQuery(
       `SELECT
       app_course_lesson.cs_id,
       app_course_lesson.cs_cover,
@@ -548,13 +510,11 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
       app_course_lesson.cs_description,
       app_course_lesson.crt_date,
       app_course_lesson.udp_date,
-      app_course_cluster.course_id,
-      IF((SELECT COUNT(cs_id) AS total FROM app_course_log  WHERE user_id=? AND  cs_id=app_course_lesson.cs_id AND course_id=app_course_cluster.course_id ) < 1, "false", "true") AS learning_status
-       
-      FROM app_course_cluster 
-      INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-      INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-      WHERE  app_course_cluster.course_id= ? AND app_course_lesson.cg_id=?
+      IF((SELECT COUNT(cs_id) AS total FROM app_course_log  WHERE user_id=? AND  cs_id=app_course_lesson.cs_id AND course_id=? ) < 1, "false", "true") AS learning_status
+      FROM app_course_lesson 
+      WHERE 
+      app_course_lesson.cancelled=1 AND
+      app_course_lesson.cg_id=?
       ORDER BY  app_course_lesson.cs_id ASC
       `,
       [user_id, course_id, el?.cg_id]
@@ -588,7 +548,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     });
   }
 
-  let sql = `
+  const sql = `
   SELECT 
   app_course_lesson.cs_id,
   app_course_lesson.cs_cover,
@@ -597,102 +557,106 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_description,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
-  app_course_cluster.course_id,
   app_course_group.cg_id,
   app_course_group.cg_name
-  FROM app_course_cluster 
-  INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
+  FROM app_course_lesson 
   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  INNER JOIN app_course_cluster ON app_course_lesson.cg_id = app_course_cluster.cg_id
   WHERE
-  app_course_group.cg_id = ? AND 
-  app_course_cluster.course_id = ? AND
-  app_course_cluster.cs_id = ?
-   `;
-  let sql_count = ` SELECT  COUNT(*) as numRows 
-   FROM  
-   app_course_cluster 
-   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-   WHERE  
-   app_course_group.cg_id = ? AND 
-   app_course_cluster.course_id = ? LIMIT 0,1`;
+  app_course_lesson.cancelled= 1 AND
+  app_course_lesson.cg_id = ? AND 
+  app_course_lesson.cs_id = ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY app_course_lesson.cs_id ASC`;
 
-  let sql_next = ` SELECT  
-   app_course_group.cg_id,
-   app_course_group.cg_name
-   FROM  
-   app_course_cluster 
-   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-   WHERE  
-   app_course_group.cg_id > ? AND 
-   app_course_cluster.course_id = ? ORDER BY  app_course_group.cg_id ASC  LIMIT 0,1`;
-  let sql_previous = ` SELECT  
+  const sql_count = ` SELECT  COUNT(*) as numRows 
+  FROM  
+  app_course_lesson 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  INNER JOIN app_course_cluster ON app_course_lesson.cg_id = app_course_cluster.cg_id
+  WHERE  
+  app_course_lesson.cancelled= 1 AND
+  app_course_lesson.cg_id = ? AND 
+  app_course_cluster.course_id = ? `;
+
+  const sql_next = ` SELECT  
   app_course_group.cg_id,
-   app_course_group.cg_name
-   FROM  
-   app_course_cluster 
-   INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-   WHERE  
-   app_course_group.cg_id < ? AND 
-   app_course_cluster.course_id = ? ORDER BY  app_course_group.cg_id DESC LIMIT 0,1`;
+  app_course_group.cg_name
+  FROM  
+  app_course_cluster 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
+  WHERE  
+  app_course_cluster.cg_id > ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY  app_course_group.cg_id ASC  
+  LIMIT 0,1`;
 
-  let sql_curent = ` SELECT  
-   app_course_group.cg_id,
-    app_course_group.cg_name
-    FROM  
-    app_course_cluster 
-    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE  
-    app_course_group.cg_id = ? AND 
-    app_course_cluster.course_id = ? LIMIT 0,1`;
-  let p = [cg_id, course_id, cs_id];
-  const getNext = await runQuery(sql_next, [cg_id, course_id]);
-  const getPrevious = await runQuery(sql_previous, [cg_id, course_id]);
-  const getCurent = await runQuery(sql_curent, [cg_id, course_id]);
+  const sql_previous = ` SELECT  
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM  
+  app_course_cluster 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
+  WHERE  
+  app_course_cluster.cg_id < ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY  app_course_group.cg_id DESC  
+  LIMIT 0,1`;
 
-  const getCountAll = await runQuery(sql_count, p);
-  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
-
-  sql += `  ORDER BY app_course_lesson.cs_id ASC LIMIT 0,1 `;
-  const getContent = await runQuery(sql, p);
+  const sql_curent = ` SELECT  
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM  
+  app_course_cluster 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
+  WHERE  
+  app_course_cluster.cg_id = ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY  app_course_group.cg_id DESC  
+  LIMIT 0,1`;
 
   // ตรวจสอบว่ามี log หรือไม่
   const checkLog = await runQuery(
     "SELECT  *  FROM app_course_log  WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
     [cs_id, course_id, user_id]
   );
-  const last_cl_id = checkLog[0] !== undefined ? checkLog[0]?.cl_id : 0;
-  // const last_cs_id = checkLog[0] !== undefined ? checkLog[0]?.cs_id : 0;
+
+  const getNext = await runQuery(sql_next, [cg_id, course_id]); // หมวดหมู่ถัดไป
+  const getPrevious = await runQuery(sql_previous, [cg_id, course_id]); // หมวดหมู่ก่อนหน้านี้
+  const getCurent = await runQuery(sql_curent, [cg_id, course_id]); // หมวดหมู่ปัจจุบัน
+
+  const getContent = await runQuery(sql, [cg_id, cs_id, course_id]); //บทเรียนปัจจุบัน
+  const getCountAll = await runQuery(sql_count, [cg_id, course_id]); //บทเรียนทั้งหมด
+
+  const last_cl_id = checkLog[0] !== undefined ? checkLog[0]?.cl_id : 0; //บทเรียนล่าสุดที่มีการบันทึกหรือพึ่งเรียนไป
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0; //บทเรียนทั้งหมด
+
   // บทเรียนที่แสดงข้อมูลอันดับแรก นำมาเก็บ log เพื่อเป็นประวัติเรียนล่าสุด
   const first_cs_id = getContent[0] !== undefined ? getContent[0].cs_id : 0;
-
   // ถ้ารหัสบทเรียนที่รับค่ามา ไม่มีในหมวดหมู่ ให้ไปหา บทเรียนแรกของหมวดหมู่เรียนนั้น
   let debug_data_curent_lesson = {};
   let debug_cs_id = 0;
   if (first_cs_id === 0) {
     const r = await runQuery(
       `
-    SELECT 
-    app_course_lesson.cs_id,
-    app_course_lesson.cs_cover,
-    app_course_lesson.cs_name,
-    app_course_lesson.cs_video,
-    app_course_lesson.cs_description,
-    app_course_lesson.crt_date,
-    app_course_lesson.udp_date,
-    app_course_cluster.course_id,
-    app_course_group.cg_id,
-    app_course_group.cg_name
-    FROM app_course_cluster 
-    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE
-    app_course_group.cg_id = ? AND 
-    app_course_cluster.course_id = ? 
-    ORDER BY app_course_cluster.cs_id ASC LIMIT 0,1 `,
+  SELECT 
+  app_course_lesson.cs_id,
+  app_course_lesson.cs_cover,
+  app_course_lesson.cs_name,
+  app_course_lesson.cs_video,
+  app_course_lesson.cs_description,
+  app_course_lesson.crt_date,
+  app_course_lesson.udp_date,
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM app_course_lesson 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  INNER JOIN app_course_cluster ON app_course_lesson.cg_id = app_course_cluster.cg_id
+  WHERE
+  app_course_lesson.cancelled= 1 AND
+  app_course_lesson.cg_id = ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY app_course_lesson.cs_id ASC LIMIT 0,1 `,
       [cg_id, course_id]
     );
     debug_cs_id = r[0]?.cs_id !== undefined ? r[0]?.cs_id : 0;
@@ -702,7 +666,6 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
       [debug_cs_id, course_id, user_id, functions.dateAsiaThai()]
     );
   }
-
   if (
     first_cs_id !== undefined &&
     first_cs_id !== "" &&
@@ -714,50 +677,53 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
       [first_cs_id, course_id, user_id, functions.dateAsiaThai()]
     );
   }
+
   // บทเรียนก่อนหน้านี้
   const getPreviousLesson = await runQuery(
-    ` SELECT 
-    app_course_lesson.cs_id,
-    app_course_lesson.cs_cover,
-    app_course_lesson.cs_name,
-    app_course_lesson.cs_video,
-    app_course_lesson.cs_description,
-    app_course_lesson.crt_date,
-    app_course_lesson.udp_date,
-    app_course_cluster.course_id,
-    app_course_group.cg_id,
-    app_course_group.cg_name
-    FROM app_course_cluster 
-    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE
-    app_course_group.cg_id = ? AND 
-    app_course_cluster.course_id = ? AND
-    app_course_cluster.cs_id < ? ORDER BY app_course_cluster.cs_id DESC LIMIT 0 ,1`,
-    [cg_id, course_id, debug_cs_id !== 0 ? debug_cs_id : cs_id]
+    `SELECT 
+  app_course_lesson.cs_id,
+  app_course_lesson.cs_cover,
+  app_course_lesson.cs_name,
+  app_course_lesson.cs_video,
+  app_course_lesson.cs_description,
+  app_course_lesson.crt_date,
+  app_course_lesson.udp_date,
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM app_course_lesson 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  INNER JOIN app_course_cluster ON app_course_lesson.cg_id = app_course_cluster.cg_id
+  WHERE
+  app_course_lesson.cancelled= 1 AND
+  app_course_lesson.cg_id = ? AND 
+  app_course_lesson.cs_id < ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY app_course_lesson.cs_id DESC LIMIT 0 ,1`,
+    [cg_id, debug_cs_id !== 0 ? debug_cs_id : cs_id, course_id]
   );
 
-  // บทเรียนถัดไป
+  // บทเรียนก่อนหน้านี้
   const getNextLesson = await runQuery(
-    ` SELECT 
-    app_course_lesson.cs_id,
-    app_course_lesson.cs_cover,
-    app_course_lesson.cs_name,
-    app_course_lesson.cs_video,
-    app_course_lesson.cs_description,
-    app_course_lesson.crt_date,
-    app_course_lesson.udp_date,
-    app_course_cluster.course_id,
-    app_course_group.cg_id,
-    app_course_group.cg_name
-    FROM app_course_cluster 
-    INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_cluster.cs_id
-    INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
-    WHERE
-    app_course_group.cg_id = ? AND 
-    app_course_cluster.course_id = ? AND
-    app_course_cluster.cs_id > ? ORDER BY app_course_cluster.cs_id ASC LIMIT 0 ,1`,
-    [cg_id, course_id, debug_cs_id !== 0 ? debug_cs_id : cs_id]
+    `SELECT 
+  app_course_lesson.cs_id,
+  app_course_lesson.cs_cover,
+  app_course_lesson.cs_name,
+  app_course_lesson.cs_video,
+  app_course_lesson.cs_description,
+  app_course_lesson.crt_date,
+  app_course_lesson.udp_date,
+  app_course_group.cg_id,
+  app_course_group.cg_name
+  FROM app_course_lesson 
+  INNER JOIN app_course_group ON app_course_group.cg_id = app_course_lesson.cg_id
+  INNER JOIN app_course_cluster ON app_course_lesson.cg_id = app_course_cluster.cg_id
+  WHERE
+  app_course_lesson.cancelled= 1 AND
+  app_course_lesson.cg_id = ? AND 
+  app_course_lesson.cs_id > ? AND 
+  app_course_cluster.course_id = ? 
+  ORDER BY app_course_lesson.cs_id ASC LIMIT 0 ,1`,
+    [cg_id, debug_cs_id !== 0 ? debug_cs_id : cs_id, course_id]
   );
 
   const check_learning = await runQuery(
@@ -777,7 +743,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   if (total_learing > 0) {
     learning_status = "true";
   }
-  // console.log(getLastLesson);
+
   const response = {
     total_lesson: total,
     learning_status: learning_status,
@@ -1276,7 +1242,6 @@ router.delete("/condition/delete/:id", middleware, (req, res, next) => {
           message: "Data is null",
         });
       }
-
       con.query(
         "DELETE FROM app_course_condition WHERE id = ? ",
         [id],
@@ -1292,25 +1257,21 @@ router.delete("/condition/delete/:id", middleware, (req, res, next) => {
 
 router.get("/condition/list/?", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
-
-  const checkContent = await runQuery(
-    "SELECT  SUM(cc_value_a) AS sum_val_a , SUM(cc_value_b) AS sum_val_b FROM  app_course_condition WHERE  course_id=?",
+  const getCourseGroup = await runQuery(
+    `SELECT 
+     app_course_group.cg_id,
+     app_course_group.cg_name,
+     app_course_group.cg_amount_random,
+     (SELECT COUNT(*) AS total FROM app_course_lesson  WHERE cg_id=app_course_group.cg_id) AS total_lesson,
+     (SELECT COUNT(*) AS total FROM app_exam_question  WHERE cg_id=app_course_group.cg_id) AS total_question
+     FROM  
+     app_course_cluster 
+     INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
+     WHERE  app_course_cluster.course_id=?
+    `,
     [course_id]
   );
-  const content = await runQuery(
-    "SELECT  app_course_condition.*, app_course_group.cg_name FROM  app_course_condition  INNER JOIN  app_course_group ON app_course_group.cg_id =app_course_condition.cg_id  WHERE   app_course_condition.course_id=? ORDER BY id ASC",
-    [course_id]
-  );
-  const sum_val_a =
-    checkContent[0] !== undefined ? checkContent[0]?.sum_val_a : 0;
-  const sum_val_b =
-    checkContent[0] !== undefined ? checkContent[0]?.sum_val_b : 0;
-  const response = {
-    sum_val_a: sum_val_a,
-    sum_val_b: sum_val_b,
-    data: content,
-  };
-  return res.json(response);
+  return res.json(getCourseGroup);
 });
 
 module.exports = router;
