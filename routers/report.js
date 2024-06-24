@@ -187,7 +187,7 @@ router.post("/exam", middleware, async (req, res, next) => {
   let sql = `SELECT 
   t1.*,
   t2.em_code,
-  t2.em_name,
+  t2.em_name_lo,
   t2.em_cover,
   t2.em_description,
   t2.em_random_amount,

@@ -11,7 +11,8 @@ async function runQuery(sql, param) {
   });
 }
 
-router.post("/main/create", middleware, async (req, res, next) => {
+router.post("/main/create/:course_id", middleware, async (req, res, next) => {
+  const { course_id } = req.params;
   const data = req.body;
   const obj = common.drivinglicense_type;
   const result_filter = obj.filter(function (e) {
@@ -20,11 +21,11 @@ router.post("/main/create", middleware, async (req, res, next) => {
 
   const getCourse = await runQuery(
     "SELECT course_id FROM  app_course WHERE  course_id= ? ",
-    [data.course_id]
+    [course_id]
   );
   const getCourseExam = await runQuery(
     "SELECT course_id FROM  app_exam_main WHERE course_id= ? ",
-    [data.course_id]
+    [course_id]
   );
 
   const getUser = await runQuery(
@@ -33,16 +34,11 @@ router.post("/main/create", middleware, async (req, res, next) => {
   );
   const course_id_distinct =
     getCourseExam[0] !== undefined ? getCourseExam[0]?.course_id : 0;
-  const course_id = getCourse[0] !== undefined ? getCourse[0]?.course_id : 0;
+  const course_id_check =
+    getCourse[0] !== undefined ? getCourse[0]?.course_id : 0;
   const user_id = getUser[0] !== undefined ? getUser[0]?.user_id : 0;
-  if (course_id_distinct !== 0) {
-    return res.status(404).json({
-      status: 404,
-      message: "This course already exists in the system.",
-    });
-  }
 
-  if (course_id === 0) {
+  if (course_id_check === 0) {
     return res.status(404).json({
       status: 404,
       message: "This course is not available in the system.",
@@ -61,28 +57,55 @@ router.post("/main/create", middleware, async (req, res, next) => {
       message: "Invalid 'drivinglicense_type' ",
     });
   }
-  con.query(
-    "INSERT INTO app_exam_main (em_code,em_name,em_cover,em_description,em_random_amount,em_time,em_measure,dlt_code,crt_date,udp_date,user_crt,user_udp,course_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-    [
-      data.em_code,
-      data.em_name,
-      data.em_cover,
-      data.em_description,
-      data.em_random_amount,
-      data.em_time,
-      data.em_measure,
-      data.dlt_code,
-      functions.dateAsiaThai(),
-      functions.dateAsiaThai(),
-      user_id,
-      user_id,
-      course_id,
-    ],
-    function (err, result) {
-      if (err) throw err;
-      return res.json(result);
-    }
-  );
+
+  if (course_id_distinct === 0) {
+    con.query(
+      "INSERT INTO app_exam_main (em_code,em_name_lo,em_name_eng,em_cover,em_description,em_random_amount,em_time,em_measure,dlt_code,crt_date,udp_date,user_crt,user_udp,course_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      [
+        data.em_code,
+        data.em_name_lo,
+        data.em_name_eng,
+        data.em_cover,
+        data.em_description,
+        data.em_random_amount,
+        data.em_time,
+        data.em_measure,
+        data.dlt_code,
+        functions.dateAsiaThai(),
+        functions.dateAsiaThai(),
+        user_id,
+        user_id,
+        course_id,
+      ],
+      function (err, result) {
+        if (err) throw err;
+        return res.json(result);
+      }
+    );
+  } else {
+    con.query(
+      "UPDATE  app_exam_main SET em_code=? , em_name_lo=? ,em_name_eng=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,em_measure=?,dlt_code=?,udp_date=?,user_udp=?,course_id=? WHERE course_id=? ",
+      [
+        data.em_code,
+        data.em_name_lo,
+        data.em_name_eng,
+        data.em_cover,
+        data.em_description,
+        data.em_random_amount,
+        data.em_time,
+        data.em_measure,
+        data.dlt_code,
+        functions.dateAsiaThai(),
+        user_id,
+        course_id,
+        course_id,
+      ],
+      function (err, result) {
+        if (err) throw err;
+        return res.json(result);
+      }
+    );
+  }
 });
 
 router.put("/main/update/:em_id", middleware, async (req, res, next) => {
@@ -138,10 +161,11 @@ router.put("/main/update/:em_id", middleware, async (req, res, next) => {
   }
 
   con.query(
-    "UPDATE  app_exam_main SET em_code=? , em_name=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,em_measure=?,dlt_code=?,udp_date=?,user_udp=?,course_id=? WHERE em_id=? ",
+    "UPDATE  app_exam_main SET em_code=? , em_name_lo=? ,em_name_eng=? ,em_cover=? ,em_description=?,em_random_amount=?,em_time=?,em_measure=?,dlt_code=?,udp_date=?,user_udp=?,course_id=? WHERE em_id=? ",
     [
       data.em_code,
-      data.em_name,
+      data.em_name_lo,
+      data.em_name_eng,
       data.em_cover,
       data.em_description,
       data.em_random_amount,
@@ -168,11 +192,12 @@ router.post("/main/list/:course_id", middleware, async (req, res, next) => {
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let search_param = [];
-  const p = [course_id]
+  const p = [course_id];
   let sql = `SELECT 
     app_exam_main.em_id,
     app_exam_main.em_code,
-    app_exam_main.em_name,
+    app_exam_main.em_name_lo,
+    app_exam_main.em_name_eng,
     app_exam_main.em_cover,
     app_exam_main.em_description,
     app_exam_main.em_random_amount,
@@ -195,20 +220,21 @@ router.post("/main/list/:course_id", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1 AND app_exam_main.course_id = ? ";
 
-    const getCountAll = await runQuery(sql_count,p.concat(search_param));
+  const getCountAll = await runQuery(sql_count, p.concat(search_param));
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
-    let q = ` AND (app_exam_main.em_code  LIKE ? OR app_exam_main.em_name  LIKE  ? OR app_exam_main.em_description  LIKE  ?)`; //
+    let q = ` AND (app_exam_main.em_code  LIKE ? OR app_exam_main.em_name_lo  LIKE  ? OR app_exam_main.em_description  LIKE  ?)`; //
     sql += q;
     sql_count += q;
     search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
 
   const getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  const total_filter = getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+  const total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   // query ข้อมูล
-  const getContent = await runQuery(sql  + order, p.concat(search_param));
+  const getContent = await runQuery(sql + order, p.concat(search_param));
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -250,9 +276,10 @@ router.delete("/main/delete/:em_id", middleware, (req, res, next) => {
 
 router.get("/main/get/:em_id", middleware, (req, res, next) => {
   const { em_id } = req.params;
+  console.log(em_id);
   con.query(
-    "SELECT * FROM app_exam_main WHERE   cancelled = 1 AND (em_id = ? OR course_id = ?)",
-    [em_id,em_id],
+    "SELECT * FROM app_exam_main WHERE  cancelled = 1 AND (em_id = ? OR course_id = ?)",
+    [em_id, em_id],
     (err, rows) => {
       let _content = rows.length;
 
@@ -266,7 +293,8 @@ router.get("/main/get/:em_id", middleware, (req, res, next) => {
       const response = {
         em_id: reslut?.em_id,
         em_code: reslut?.em_code,
-        em_name: reslut?.em_name,
+        em_name_lo: reslut?.em_name_lo,
+        em_name_eng: reslut?.em_name_eng,
         em_cover: reslut?.em_cover,
         em_description: reslut?.em_description,
         crt_date: reslut?.crt_date,
@@ -277,7 +305,6 @@ router.get("/main/get/:em_id", middleware, (req, res, next) => {
     }
   );
 });
-
 
 router.post("/question/create", middleware, async (req, res, next) => {
   const data = req.body;
@@ -294,8 +321,8 @@ router.post("/question/create", middleware, async (req, res, next) => {
     });
   }
   con.query(
-    "INSERT INTO app_exam_question (eq_name,eq_image,eq_answer,cg_id) VALUES (?,?,?,?)",
-    [data.eq_name, data.eq_image, data.eq_answer, cg_id],
+    "INSERT INTO app_exam_question (eq_name_lo,eq_name_eng,eq_image,eq_answer,cg_id) VALUES (?,?,?,?,?)",
+    [data.eq_name_lo,data.eq_name_eng, data.eq_image, data.eq_answer, cg_id],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -319,8 +346,8 @@ router.put("/question/update/:eq_id", middleware, async (req, res, next) => {
     });
   }
   con.query(
-    "UPDATE  app_exam_question SET eq_name=? , eq_image=?,eq_answer=?, cg_id=? WHERE eq_id=? ",
-    [data.eq_name, data.eq_image, data.eq_answer, data.cg_id, eq_id],
+    "UPDATE  app_exam_question SET eq_name_lo=? ,eq_name_eng = ? , eq_image=?,eq_answer=?, cg_id=? WHERE eq_id=? ",
+    [data.eq_name_lo,data.eq_name_eng, data.eq_image, data.eq_answer, cg_id, eq_id],
     function (err, result) {
       if (err) throw err;
 
@@ -339,7 +366,8 @@ router.post("/question/:cg_id/list", middleware, async (req, res, next) => {
   let search_param = [];
   let sql = `SELECT
 	t1.eq_id, 
-	t1.eq_name, 
+	t1.eq_name_lo, 
+  t1.eq_name_eng,
 	t1.eq_image, 
 	t1.eq_answer, 
 	t1.cg_id
@@ -358,7 +386,7 @@ FROM
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
-    let q = ` AND (t1.eq_name  LIKE ?)`; //
+    let q = ` AND (t1.eq_name_lo  LIKE ?)`; //
     sql += q;
     sql_count += q;
     search_param = [`%${search}%`];
@@ -383,7 +411,7 @@ FROM
     );
     const newObj = {
       eq_id: el?.eq_id,
-      eq_name: el?.eq_name,
+      eq_name_lo: el?.eq_name_lo,
       eq_image: el?.eq_image,
       eq_answer: el?.eq_answer,
       cg_id: parseInt(cg_id),
@@ -432,7 +460,7 @@ router.delete("/question/delete/:eq_id", middleware, (req, res, next) => {
   );
 });
 
-router.get("/question/get/:eq_id", middleware,async (req, res, next) => {
+router.get("/question/get/:eq_id", middleware, async (req, res, next) => {
   const { eq_id } = req.params;
   const choices = await runQuery(
     "SELECT * FROM `app_exam_choice` WHERE app_exam_choice.cancelled =1 AND  app_exam_choice.eq_id = ?",
@@ -451,21 +479,21 @@ router.get("/question/get/:eq_id", middleware,async (req, res, next) => {
           message: "Data is null",
         });
       }
-     
+
       const reslut = rows[0];
       const response = {
         eq_id: reslut?.eq_id,
-        eq_name: reslut?.eq_name,
+        eq_name_lo: reslut?.eq_name_lo,
+        eq_name_eng: reslut?.eq_name_eng,
         eq_image: reslut?.eq_image,
         eq_answer: reslut?.eq_answer,
         cg_id: reslut?.cg_id,
-        choices:choices
+        choices: choices,
       };
       return res.json(response);
     }
   );
 });
-
 
 router.post("/choice/create", middleware, async (req, res, next) => {
   const data = req.body;
@@ -503,8 +531,8 @@ router.post("/choice/create", middleware, async (req, res, next) => {
     });
   }
   con.query(
-    "INSERT INTO app_exam_choice (ec_index,ec_name,ec_image,eq_id,cg_id) VALUES (?,?,?,?,?)",
-    [data.ec_index, data.ec_name, data.ec_image, eq_id, cg_id],
+    "INSERT INTO app_exam_choice (ec_index,ec_name_lo,ec_name_eng,ec_image,eq_id,cg_id) VALUES (?,?,?,?,?,?)",
+    [data.ec_index, data.ec_name_lo,data.ec_name_eng, data.ec_image, eq_id, cg_id],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -550,8 +578,8 @@ router.put("/choice/update/:ec_id", middleware, async (req, res, next) => {
     });
   }
   con.query(
-    "UPDATE  app_exam_choice SET ec_index=?,ec_name=?,ec_image=?,eq_id=?,cg_id=? WHERE ec_id=? ",
-    [data.ec_index, data.ec_name, data.ec_image, eq_id, cg_id, ec_id],
+    "UPDATE  app_exam_choice SET ec_index=?,ec_name_lo=?,ec_name_eng=?, ec_image=?,eq_id=?,cg_id=? WHERE ec_id=? ",
+    [data.ec_index, data.ec_name_lo,data.ec_name_eng, data.ec_image, eq_id, cg_id, ec_id],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -562,7 +590,7 @@ router.put("/choice/update/:ec_id", middleware, async (req, res, next) => {
 router.get("/choice/list/:eq_id", middleware, (req, res, next) => {
   const { eq_id } = req.params;
   con.query(
-    "SELECT ec_id,ec_index,ec_name,ec_image,eq_id,cg_id FROM app_exam_choice WHERE eq_id = ? AND  cancelled = 1 ",
+    "SELECT ec_id,ec_index,ec_name_lo,ec_name_eng,ec_image,eq_id,cg_id FROM app_exam_choice WHERE eq_id = ? AND  cancelled = 1 ",
     [eq_id],
     function (err, results) {
       return res.json(results);
@@ -597,12 +625,13 @@ router.get("/choice/get/:ec_id", middleware, (req, res, next) => {
       }
       const reslut = rows[0];
       const response = {
-        ec_id: reslut?.ec_id ,
+        ec_id: reslut?.ec_id,
         ec_index: reslut?.ec_index,
-        ec_name: reslut?.ec_name,
+        ec_name_lo: reslut?.ec_name_lo,
+        ec_name_eng:reslut?.ec_name_eng,
         ec_image: reslut?.ec_image,
         eq_id: reslut?.eq_id,
-        cg_id: reslut?.cg_id
+        cg_id: reslut?.cg_id,
       };
       return res.json(response);
     }
@@ -619,7 +648,7 @@ router.post("/start/render", middleware, async (req, res, next) => {
   const user_id = data.user_id;
   const offset = functions.setZero((current_page - 1) * per_page);
   let exam_complete = 0;
-  // --IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name', t2.ec_name,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
+  // --IFNULL(CONCAT('[',(SELECT    GROUP_CONCAT((JSON_OBJECT('ec_id', t2.ec_id,'ec_index', t2.ec_index,'ec_name_lo', t2.ec_name_lo,'ec_image', t2.ec_image,'eq_id', t2.eq_id,'em_id', t2.em_id)))  FROM app_exam_choice t2  WHERE eq_id =  t1.eq_id AND cancelled=1 ) ,']'),'[]') AS choices
   const sql_question = `
   SELECT
   t0.id,
@@ -627,7 +656,8 @@ router.post("/start/render", middleware, async (req, res, next) => {
   t0.is_complete,
   t0.ec_id,
   t1.eq_id, 
-  t1.eq_name, 
+  t1.eq_name_lo,
+  t1.eq_name_eng,  
   t1.eq_image, 
   t1.eq_answer, 
   t1.cg_id
@@ -732,7 +762,8 @@ FROM
       ec_score: el?.ec_score,
       is_complete: el?.is_complete,
       eq_id: el?.eq_id,
-      eq_name: el?.eq_name,
+      eq_name_lo: el?.eq_name_lo,
+      eq_name_eng: el?.eq_name_eng,
       eq_image: el?.eq_image,
       eq_answer: el?.eq_answer,
       cg_id: el?.cg_id,
@@ -897,7 +928,8 @@ router.get("/history?", middleware, async (req, res, next) => {
     `SELECT 
     app_exam_result.*,
     app_course.course_code,
-    app_course.course_name,
+    app_course.course_name_lo,
+    app_course.course_name_eng,
     app_exam_main.em_random_amount,
     app_exam_main.em_time,
     app_exam_main.em_measure,
@@ -931,7 +963,8 @@ router.post("/history/all/:course_id", middleware, async (req, res, next) => {
   let sql = `SELECT 
     app_exam_result.*,
     app_course.course_code,
-    app_course.course_name,
+    app_course.course_name_lo,
+    app_course.course_name_eng,
     app_exam_main.em_random_amount,
     app_exam_main.em_time,
     app_exam_main.em_measure,
@@ -945,7 +978,8 @@ router.post("/history/all/:course_id", middleware, async (req, res, next) => {
     WHERE  
     app_exam_result.course_id = ?
     `;
-  let sql_count = " SELECT  COUNT(*) as numRows FROM  app_exam_result INNER JOIN app_user ON app_user.user_id = app_exam_result.user_id WHERE app_exam_result.course_id = ? ";
+  let sql_count =
+    " SELECT  COUNT(*) as numRows FROM  app_exam_result INNER JOIN app_user ON app_user.user_id = app_exam_result.user_id WHERE app_exam_result.course_id = ? ";
 
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
@@ -953,10 +987,11 @@ router.post("/history/all/:course_id", middleware, async (req, res, next) => {
     let q = ` AND (app_exam_result.er_score_total LIKE ? OR app_user.user_firstname  LIKE ? OR app_user.user_lastname  LIKE ?)`; //
     sql += q;
     sql_count += q;
-    search_param = [`%${search}%`,`%${search}%`, `%${search}%`];
+    search_param = [`%${search}%`, `%${search}%`, `%${search}%`];
   }
   const getCountFilter = await runQuery(sql_count, p.concat(search_param));
-  const total_filter = getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
+  const total_filter =
+    getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
   sql += `  ORDER BY app_exam_result.er_id DESC LIMIT ${offset},${per_page} `;
   const getResultExamHistory = await runQuery(sql, p.concat(search_param));
   const response = {

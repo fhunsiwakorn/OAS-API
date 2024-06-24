@@ -52,3 +52,19 @@ ALTER TABLE `app_user` CHANGE `user_type` `user_type` INT(1) NOT NULL COMMENT '1
 ALTER TABLE `app_dlt_card` CHANGE `id` `id` VARCHAR(128) NOT NULL;
 ALTER TABLE `app_dlt_card` ADD `card_number` VARCHAR(64) NOT NULL AFTER `id`, ADD `issued_by` VARCHAR(64) NOT NULL AFTER `card_number`, ADD `full_name` VARCHAR(128) NOT NULL AFTER `issued_by`, ADD `address` VARCHAR(512) NOT NULL AFTER `full_name`;
 ALTER TABLE `app_dlt_card` ADD `user_create` INT NOT NULL COMMENT 'app_user.user_id' AFTER `user_id`;
+ALTER TABLE `app_course` ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `is_complete`;
+24/06/2024
+ALTER TABLE `app_course` CHANGE `course_name` `course_name_lo` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_course` CHANGE `course_name_lo` `course_name_lo` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_course` CHANGE `course_name_eng` `course_name_eng` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_course` ADD `course_name_eng` VARCHAR(128) NOT NULL AFTER `course_name_lo`;
+ALTER TABLE `app_course_group` CHANGE `cg_name` `cg_name_lo` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_course_group` ADD `cg_name_eng` VARCHAR(256) NOT NULL AFTER `cg_name_lo`;
+ALTER TABLE `app_course_lesson` CHANGE `cs_name` `cs_name_lo` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_course_lesson` ADD `cs_name_eng` VARCHAR(512) NOT NULL AFTER `cs_name_lo`;
+ALTER TABLE `app_exam_main` CHANGE `em_name` `em_name_lo` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_exam_main` ADD `em_name_eng` VARCHAR(256) NOT NULL AFTER `em_name_lo`;
+ALTER TABLE `app_exam_question` CHANGE `eq_name` `eq_name_lo` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_exam_question` ADD `eq_name_eng` VARCHAR(512) NOT NULL AFTER `eq_name_lo`;
+ALTER TABLE `app_exam_choice` CHANGE `ec_name` `ec_name_lo` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `app_exam_choice` ADD `ec_name_eng` VARCHAR(512) NOT NULL AFTER `ec_name_lo`;
