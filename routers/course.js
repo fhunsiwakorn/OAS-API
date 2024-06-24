@@ -186,6 +186,7 @@ router.post("/list", middleware, async (req, res, next) => {
   app_course.is_complete,
   app_course.crt_date,
   app_course.udp_date ,
+  app_course.active,
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update ,
 
   IFNULL((SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1), 0) AS total_course_group,
@@ -266,6 +267,7 @@ router.get("/get/:course_id", middleware, (req, res, next) => {
         course_remark_b: reslut?.course_remark_b,
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
+        active: reslut?.active,
       };
       return res.json(response);
     }
@@ -355,13 +357,48 @@ router.delete("/group/delete/:cg_id", middleware, (req, res, next) => {
   );
 });
 
+router.get("/group/active/:active/:cg_id", middleware, (req, res, next) => {
+  const { active, cg_id } = req.params;
+  let val = active;
+  if (active != 0 && active != 1) {
+    val = 1;
+  }
+  con.query(
+    "SELECT cg_id FROM app_course_group WHERE cg_id = ?",
+    [cg_id],
+    (err, rows) => {
+      let _content = rows.length;
+      if (_content <= 0) {
+        return res.status(204).json({
+          status: 204,
+          message: "Data is null",
+        });
+      }
+      con.query(
+        "UPDATE  app_course_group SET active = ? WHERE cg_id=? ",
+        [val, cg_id],
+        function (err, result) {
+          if (err) throw err;
+          // console.log("1 record inserted");
+          return res.json(result);
+        }
+      );
+    }
+  );
+});
+
 router.post("/group/all", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
-
+  const active_include = data.active_include;
+  let ex = '("0")';
+  if (active_include.length > 0) {
+    const toArr = active_include.toString();
+    ex = `(${toArr})`;
+  }
   let search_param = [];
   let sql = `SELECT 
      app_course_group.cg_id,
@@ -369,13 +406,15 @@ router.post("/group/all", middleware, async (req, res, next) => {
      app_course_group.cg_name_eng,
      app_course_group.crt_date,
      app_course_group.udp_date ,
+     app_course_group.active ,
      CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create , 
      CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
      FROM app_course_group 
      LEFT JOIN  app_user u1 ON u1.user_id = app_course_group.user_crt  
      LEFT JOIN  app_user u2 ON u2.user_id = app_course_group.user_udp 
      WHERE 
-     app_course_group.cancelled=1`;
+     app_course_group.cancelled=1 AND
+     app_course_group.active IN ${ex}`;
   let p = [];
 
   let sql_count =
@@ -433,6 +472,7 @@ router.get("/group/get/:cg_id", middleware, (req, res, next) => {
         udp_date: reslut?.udp_date,
         user_crt: reslut?.user_crt,
         user_udp: reslut?.user_udp,
+        active: reslut?.active,
       };
       return res.json(response);
     }
@@ -638,8 +678,6 @@ router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-
-
 router.post(
   "/cluster/create/:course_id",
   middleware,
@@ -727,7 +765,6 @@ router.delete(
 //     }
 //   );
 // });
-
 
 router.get("/get/option/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
@@ -1024,7 +1061,7 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
   const learned_content = await runQuery(
     "SELECT COUNT(*) AS numRows FROM app_course_log WHERE user_id = ? AND course_id = ? LIMIT 0,1",
-    [user_id,course_id]
+    [user_id, course_id]
   );
   const group_content = await runQuery(
     "SELECT COUNT(*) AS numRows FROM app_course_cluster WHERE course_id = ?  LIMIT 0,1",
@@ -1064,9 +1101,12 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
       message: "Data is null",
     });
   }
-  const totalGroup = group_content[0] !== undefined ? group_content[0]?.numRows : 0;
-  const totalLesson = lesson_content[0] !== undefined ? lesson_content[0]?.numRows : 0;
-  const totalLearned = learned_content[0] !== undefined ? learned_content[0].numRows : 0;
+  const totalGroup =
+    group_content[0] !== undefined ? group_content[0]?.numRows : 0;
+  const totalLesson =
+    lesson_content[0] !== undefined ? lesson_content[0]?.numRows : 0;
+  const totalLearned =
+    learned_content[0] !== undefined ? learned_content[0].numRows : 0;
   const progress = (parseFloat(totalLearned) / parseFloat(totalLesson)) * 100;
 
   const response = {
@@ -1257,7 +1297,6 @@ router.get("/document/get/:course_id", middleware, (req, res, next) => {
     }
   );
 });
-
 
 router.get("/condition/list/?", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
