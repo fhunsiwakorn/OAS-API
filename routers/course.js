@@ -205,7 +205,7 @@ router.post("/list", middleware, async (req, res, next) => {
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
 
-  let getCountAll = await runQuery(sql_count);
+  const getCountAll = await runQuery(sql_count);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
@@ -222,13 +222,13 @@ router.post("/list", middleware, async (req, res, next) => {
     ];
   }
 
-  let getCountFilter = await runQuery(sql_count, search_param);
+  const getCountFilter = await runQuery(sql_count, search_param);
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
   sql += `  ORDER BY app_course.course_id ASC LIMIT ${offset},${per_page} `;
 
-  let getContent = await runQuery(sql, search_param);
+  const getContent = await runQuery(sql, search_param);
   const response = {
     total: total, // จำนวนรายการทั้งหมด
     total_filter: total_filter, // จำนวนรายการทั้งหมด
@@ -391,7 +391,7 @@ router.get("/group/active/:active/:cg_id", middleware, (req, res, next) => {
 router.post("/group/all", middleware, async (req, res, next) => {
   const data = req.body;
   const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const per_page = data.per_page <= 150 ? data.per_page : 150;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   const active_include = data.active_include;
@@ -736,33 +736,34 @@ router.post(
     return res.json(r);
   }
 );
-router.get(
-  "/cluster/get/:course_id",
-  middleware,
-  async (req, res, next) => {
-    const { course_id } = req.params;
-    
-    const getCourseGrop  = await runQuery("SELECT * FROM `app_course_group` WHERE active = 1 AND cancelled = 1 ORDER BY cg_id ASC LIMIT 0,150",[]);
-    let obj = [];
-    for (let i = 0; i < getCourseGrop.length; i++) {
-      const el = getCourseGrop[i];
-      const getCourseGroupClustering = await runQuery(
-        "SELECT cg_id AS cg_id_selected ,cg_amount_random AS cg_amount_random_selected FROM `app_course_cluster` WHERE cg_id =? AND course_id = ?",
-        [el?.cg_id,course_id]
-      );
-      const cg_id_selected = getCourseGroupClustering[0] !== undefined ? getCourseGroupClustering[0]?.cg_id_selected : 0;
-      const newObj = {
-        cg_id: el?.cg_id,
-        cg_name_lo: el?.cg_name_lo,
-        cg_name_eng: el?.cg_name_eng,
-        selected: cg_id_selected ===  el?.cg_id ? true : false
-      };
-      obj.push(newObj);
+router.get("/cluster/get/:course_id", middleware, async (req, res, next) => {
+  const { course_id } = req.params;
 
-    } 
-    return res.json(obj);
+  const getCourseGrop = await runQuery(
+    "SELECT * FROM `app_course_group` WHERE active = 1 AND cancelled = 1 ORDER BY cg_id ASC LIMIT 0,150",
+    []
+  );
+  let obj = [];
+  for (let i = 0; i < getCourseGrop.length; i++) {
+    const el = getCourseGrop[i];
+    const getCourseGroupClustering = await runQuery(
+      "SELECT cg_id AS cg_id_selected ,cg_amount_random AS cg_amount_random_selected FROM `app_course_cluster` WHERE cg_id =? AND course_id = ?",
+      [el?.cg_id, course_id]
+    );
+    const cg_id_selected =
+      getCourseGroupClustering[0] !== undefined
+        ? getCourseGroupClustering[0]?.cg_id_selected
+        : 0;
+    const newObj = {
+      cg_id: el?.cg_id,
+      cg_name_lo: el?.cg_name_lo,
+      cg_name_eng: el?.cg_name_eng,
+      selected: cg_id_selected === el?.cg_id ? true : false,
+    };
+    obj.push(newObj);
   }
-); 
+  return res.json(obj);
+});
 
 router.delete(
   "/cluster/empty/:course_id",
@@ -780,7 +781,7 @@ router.delete(
       ]);
     return res.json(r);
   }
-); 
+);
 // router.delete("/cluster/delete/:cct_id", middleware, (req, res, next) => {
 //   const { cct_id } = req.params;
 //   con.query(
