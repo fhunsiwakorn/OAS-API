@@ -751,12 +751,10 @@ router.get(
         [el?.cg_id,course_id]
       );
       const cg_id_selected = getCourseGroupClustering[0] !== undefined ? getCourseGroupClustering[0]?.cg_id_selected : 0;
-      const cg_amount_random_selected = getCourseGroupClustering[0] !== undefined ? getCourseGroupClustering[0]?.cg_amount_random_selected : 0;
       const newObj = {
         cg_id: el?.cg_id,
         cg_name_lo: el?.cg_name_lo,
         cg_name_eng: el?.cg_name_eng,
-        cg_amount_random: cg_amount_random_selected === 0 ? el?.cg_amount_random : 0,
         selected: cg_id_selected ===  el?.cg_id ? true : false
       };
       obj.push(newObj);
