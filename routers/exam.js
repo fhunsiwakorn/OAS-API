@@ -753,7 +753,7 @@ FROM
     // console.log(el?.eq_id);
     // let choices = JSON.parse(el?.choices);
     const choices = await runQuery(
-      "SELECT * FROM `app_exam_choice` WHERE eq_id = ? AND cancelled =1",
+      "SELECT * FROM `app_exam_choice` WHERE eq_id = ? AND cancelled =1 ORDER BY ec_index ASC",
       [el?.eq_id]
     );
     let newObj = {

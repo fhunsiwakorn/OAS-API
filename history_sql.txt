@@ -55,3 +55,5 @@ ALTER TABLE `app_dlt_card` ADD `user_create` INT NOT NULL COMMENT 'app_user.user
 ALTER TABLE `app_course` ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `is_complete`;
 24/06/2024
 ALTER TABLE `app_course_group` ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `udp_date`;
+29/06/2024
+ALTER TABLE `app_course_cluster` ADD `cg_sort` INT(0) NOT NULL AFTER `cg_amount_random`;

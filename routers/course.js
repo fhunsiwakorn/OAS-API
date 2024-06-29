@@ -417,10 +417,8 @@ router.post("/group/all", middleware, async (req, res, next) => {
      app_course_group.cancelled=1 AND
      app_course_group.active IN ${ex}`;
   let p = [];
-
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_course_group WHERE  app_course_group.cancelled=1 ";
-
   const getCountAll = await runQuery(sql_count, p);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
@@ -620,7 +618,7 @@ router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
   const { cg_id } = req.params;
   const data = req.body;
   const current_page = data.page;
-  const per_page = data.per_page <= 50 ? data.per_page : 50;
+  const per_page = data.per_page <= 150 ? data.per_page : 150;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let search_param = [];
@@ -680,6 +678,47 @@ router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
 });
 
 router.post(
+  "/cluster/create/single/:course_id",
+  middleware,
+  async (req, res, next) => {
+    const data = req.body;
+    const { course_id } = req.params;
+    const getCountAll = await runQuery(
+      " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  course_id=? ",
+      [course_id]
+    );
+    const id = functions.randomCode();
+    //
+    const getCountCourseGroup = await runQuery(
+      " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  course_id=? AND cg_id = ? ",
+      [course_id, data?.cg_id]
+    );
+    const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+    const check_coruse_group =
+      getCountCourseGroup[0] !== undefined
+        ? getCountCourseGroup[0]?.numRows
+        : 0;
+    if (check_coruse_group > 0) {
+      return res.status(404).json({
+        status: 404,
+        message: "Invalid 'cg_id' ",
+      });
+    }
+    const insert = await runQuery(
+      "INSERT INTO app_course_cluster (cct_id,cg_id,cg_amount_random,cg_sort,course_id) VALUES  (?,?,?,?,?)",
+      [
+        `${id}`,
+        `${data?.cg_id}`,
+        `${data?.cg_amount_random}`,
+        `${parseInt(total) + 1}`,
+        `${course_id}`,
+      ]
+    );
+    insert.insertId = id;
+    return res.json(insert);
+  }
+);
+router.post(
   "/cluster/create/:course_id",
   middleware,
   async (req, res, next) => {
@@ -701,70 +740,57 @@ router.post(
       "UPDATE  app_course SET is_complete=1 ,udp_date=?  WHERE course_id = ? ",
       [functions.dateAsiaThai(), course_id]
     );
-    let sql =
-      " INSERT INTO app_course_cluster (cct_id,cg_id,cg_amount_random,course_id) VALUES ? ";
+    const sql =
+      " INSERT INTO app_course_cluster (cct_id,cg_id,cg_amount_random,cg_sort,course_id) VALUES ? ";
     let obj = [];
     for (let i = 0; i < data.length; i++) {
       const el = data[i];
-      const getCourseGroup = await runQuery(
-        "SELECT * FROM `app_course_group` WHERE cg_id =?",
-        [el?.cg_id]
-      );
-      const cg_amount_random =
-        getCourseGroup[0]?.cg_amount_random !== undefined
-          ? getCourseGroup[0]?.cg_amount_random
-          : 0;
       let newObj = [
         `${functions.randomCode()}`,
         `${el?.cg_id}`,
-        `${cg_amount_random}`,
+        `${el?.cg_amount_random}`,
+        `${i + 1}`,
         `${course_id}`,
       ];
       obj.push(newObj);
     }
-    // data.forEach((el) => {
-
-    //   let newObj = [
-    //     `${functions.randomCode()}`,
-    //     `${el?.cg_id}`,
-    //     `${course_id}`,
-    //   ];
-    //   obj.push(newObj);
-    // });
-
     const r = await runQuery(sql, [obj]);
     return res.json(r);
   }
 );
 router.get("/cluster/get/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
-
-  const getCourseGrop = await runQuery(
-    "SELECT * FROM `app_course_group` WHERE active = 1 AND cancelled = 1 ORDER BY cg_id ASC LIMIT 0,150",
-    []
+  const getCourseGroupClustering = await runQuery(
+    "SELECT * FROM `app_course_cluster` WHERE   course_id = ? ORDER BY cg_sort ASC",
+    [course_id]
   );
-  let obj = [];
-  for (let i = 0; i < getCourseGrop.length; i++) {
-    const el = getCourseGrop[i];
-    const getCourseGroupClustering = await runQuery(
-      "SELECT cg_id AS cg_id_selected ,cg_amount_random AS cg_amount_random_selected FROM `app_course_cluster` WHERE cg_id =? AND course_id = ?",
-      [el?.cg_id, course_id]
-    );
-    const cg_id_selected =
-      getCourseGroupClustering[0] !== undefined
-        ? getCourseGroupClustering[0]?.cg_id_selected
-        : 0;
-    const newObj = {
-      cg_id: el?.cg_id,
-      cg_name_lo: el?.cg_name_lo,
-      cg_name_eng: el?.cg_name_eng,
-      selected: cg_id_selected === el?.cg_id ? true : false,
-    };
-    obj.push(newObj);
-  }
-  return res.json(obj);
+  return res.json(getCourseGroupClustering);
 });
-
+router.get("/cluster/view/:cct_id", middleware, async (req, res, next) => {
+  const { cct_id } = req.params;
+  const r = await runQuery(
+    "SELECT * FROM `app_course_cluster` WHERE cct_id =?",
+    [cct_id]
+  );
+  return res.json(r);
+});
+router.put("/cluster/view/:cct_id", middleware, async (req, res, next) => {
+  const data = req.body;
+  const { cct_id } = req.params;
+  const r = await runQuery(
+    "UPDATE  app_course_cluster SET cg_amount_random= ? WHERE cct_id = ? ",
+    [data?.cg_amount_random, cct_id]
+  );
+  r.insertId = cct_id;
+  return res.json(r);
+});
+router.delete("/cluster/view/:cct_id", middleware, async (req, res, next) => {
+  const { cct_id } = req.params;
+  const r = await runQuery("DELETE FROM app_course_cluster WHERE cct_id = ? ", [
+    cct_id,
+  ]);
+  return res.json(r);
+});
 router.delete(
   "/cluster/empty/:course_id",
   middleware,
@@ -806,7 +832,7 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
     INNER JOIN app_course_group ON app_course_cluster.cg_id = app_course_group.cg_id
     WHERE app_course_cluster.course_id = ? 
     GROUP BY app_course_group.cg_id 
-    ORDER BY  app_course_group.cg_id ASC
+    ORDER BY app_course_cluster.cg_sort ASC
     `,
     [course_id]
   );
@@ -861,7 +887,6 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
       message: "Invalid  Data",
     });
   }
-
   const sql = `
   SELECT 
   app_course_lesson.cs_id,
@@ -905,9 +930,9 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   WHERE  
   app_course_cluster.cg_id > ? AND 
   app_course_cluster.course_id = ? 
-  ORDER BY  app_course_group.cg_id ASC  
+  ORDER BY  app_course_cluster.cg_sort ASC  
   LIMIT 0,1`;
-
+ 
   const sql_previous = ` SELECT  
   app_course_group.cg_id,
   app_course_group.cg_name_lo,
@@ -918,7 +943,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   WHERE  
   app_course_cluster.cg_id < ? AND 
   app_course_cluster.course_id = ? 
-  ORDER BY  app_course_group.cg_id DESC  
+  ORDER BY  app_course_cluster.cg_sort DESC  
   LIMIT 0,1`;
 
   const sql_curent = ` SELECT  
@@ -931,7 +956,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   WHERE  
   app_course_cluster.cg_id = ? AND 
   app_course_cluster.course_id = ? 
-  ORDER BY  app_course_group.cg_id DESC  
+  ORDER BY  app_course_cluster.cg_sort DESC  
   LIMIT 0,1`;
 
   // ตรวจสอบว่ามี log หรือไม่
@@ -939,7 +964,6 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     "SELECT  *  FROM app_course_log  WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
     [cs_id, course_id, user_id]
   );
-
   const getNext = await runQuery(sql_next, [cg_id, course_id]); // หมวดหมู่ถัดไป
   const getPrevious = await runQuery(sql_previous, [cg_id, course_id]); // หมวดหมู่ก่อนหน้านี้
   const getCurent = await runQuery(sql_curent, [cg_id, course_id]); // หมวดหมู่ปัจจุบัน
