@@ -57,3 +57,4 @@ ALTER TABLE `app_course` ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `is_comp
 ALTER TABLE `app_course_group` ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `udp_date`;
 29/06/2024
 ALTER TABLE `app_course_cluster` ADD `cg_sort` INT(0) NOT NULL AFTER `cg_amount_random`;
+ALTER TABLE `app_course_lesson` ADD `file_path` VARCHAR(128) NOT NULL AFTER `cs_description`;

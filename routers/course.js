@@ -38,7 +38,6 @@ router.post("/create", middleware, (req, res, next) => {
           message: "Username Error", // error.sqlMessage
         });
       }
-
       con.query(
         "INSERT INTO app_course (course_cover,course_code,course_name_lo,course_name_eng,course_description,course_remark_a,course_remark_b,crt_date,udp_date,user_crt,user_udp) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
@@ -493,13 +492,14 @@ router.post("/lesson/create", middleware, (req, res, next) => {
         });
       }
       con.query(
-        "INSERT INTO app_course_lesson (cs_cover,cs_name_lo,cs_name_eng,cs_video,cs_description,crt_date,udp_date,user_crt,user_udp,cg_id) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO app_course_lesson (cs_cover,cs_name_lo,cs_name_eng,cs_video,cs_description,file_path,crt_date,udp_date,user_crt,user_udp,cg_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
           data.cs_cover,
           data.cs_name_lo,
           data.cs_name_eng,
           data.cs_video,
           data.cs_description,
+          data.file_path,
           functions.dateAsiaThai(),
           functions.dateAsiaThai(),
           user_id,
@@ -532,13 +532,14 @@ router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
       }
 
       con.query(
-        "UPDATE  app_course_lesson SET cs_cover=? , cs_name_lo=? ,cs_name_eng=? ,cs_video=? ,cs_description=?,udp_date=? , user_udp=? ,cg_id=? WHERE cs_id=? ",
+        "UPDATE  app_course_lesson SET cs_cover=? , cs_name_lo=? ,cs_name_eng=? ,cs_video=? ,cs_description=?,file_path=?,udp_date=? , user_udp=? ,cg_id=? WHERE cs_id=? ",
         [
           data.cs_cover,
           data.cs_name_lo,
           data.cs_name_eng,
           data.cs_video,
           data.cs_description,
+          data.file_path,
           functions.dateAsiaThai(),
           user_id,
           data.cg_id,
@@ -847,6 +848,7 @@ router.get("/get/option/:course_id", middleware, async (req, res, next) => {
       app_course_lesson.cs_name_eng,
       app_course_lesson.cs_video,
       app_course_lesson.cs_description,
+      app_course_lesson.file_path,
       app_course_lesson.crt_date,
       app_course_lesson.udp_date,
       IF((SELECT COUNT(cs_id) AS total FROM app_course_log  WHERE user_id=? AND  cs_id=app_course_lesson.cs_id AND course_id=? ) < 1, "false", "true") AS learning_status
@@ -895,6 +897,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_name_eng,
   app_course_lesson.cs_video,
   app_course_lesson.cs_description,
+  app_course_lesson.file_path,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
   app_course_group.cg_id,
@@ -989,6 +992,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_name_eng,
   app_course_lesson.cs_video,
   app_course_lesson.cs_description,
+  app_course_lesson.file_path,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
   app_course_group.cg_id,
@@ -1032,6 +1036,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_name_eng,
   app_course_lesson.cs_video,
   app_course_lesson.cs_description,
+  app_course_lesson.file_path,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
   app_course_group.cg_id,
@@ -1058,6 +1063,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_name_eng,
   app_course_lesson.cs_video,
   app_course_lesson.cs_description,
+  app_course_lesson.file_path,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
   app_course_group.cg_id,
