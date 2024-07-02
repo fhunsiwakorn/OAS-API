@@ -216,7 +216,7 @@ router.post("/main/list", middleware, async (req, res, next) => {
      LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
      WHERE 
      app_exam_main.cancelled=1`;
-  let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
+  let order = ` ORDER BY app_exam_main.course_id ASC LIMIT ${offset},${per_page} `;
   let sql_count =
     " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1";
 
