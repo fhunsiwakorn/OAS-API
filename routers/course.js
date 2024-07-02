@@ -240,38 +240,53 @@ router.post("/list", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-router.get("/get/:course_id", middleware, (req, res, next) => {
+router.get("/get/:course_id", middleware,async (req, res, next) => {
   const { course_id } = req.params;
-  con.query(
-    "SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1",
-    [course_id],
-    (err, rows) => {
-      let _content = rows.length;
 
-      if (_content <= 0) {
-        return res.status(204).json({
-          status: 204,
-          message: "Data is null",
-        });
-      }
+  const getCourse = await runQuery("SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1", [course_id]);
+  const getExam = await runQuery("SELECT * FROM app_exam_main WHERE  course_id = ?", [course_id]);
+  const reslut = getCourse[0];
+  const reslutExam = getExam[0] !== undefined ? getExam[0] : {};
 
-      const reslut = rows[0];
-      const response = {
-        course_id: reslut?.course_id,
-        course_cover: reslut?.course_cover,
-        course_code: reslut?.course_code,
-        course_name_lo: reslut?.course_name_lo,
-        course_name_eng: reslut?.course_name_eng,
-        course_description: reslut?.course_description,
-        course_remark_a: reslut?.course_remark_a,
-        course_remark_b: reslut?.course_remark_b,
-        crt_date: reslut?.crt_date,
-        udp_date: reslut?.udp_date,
-        active: reslut?.active,
-      };
-      return res.json(response);
-    }
-  );
+  if (getCourse[0] === undefined) {
+    return res.status(204).json({
+      status: 204,
+      message: "Data is null",
+    });
+  }
+
+  const exam = {
+    em_id: reslutExam?.em_id,
+    em_code: reslutExam?.em_code,
+    em_name_lo: reslutExam?.em_name_lo,
+    em_name_eng: reslutExam?.em_name_eng,
+    em_cover: reslutExam?.em_cover,
+    em_description: reslutExam?.em_description,
+    em_random_amount: reslutExam?.em_random_amount,
+    em_time: reslutExam?.em_time,
+    em_measure: reslutExam?.em_measure,
+    crt_date: reslutExam?.crt_date,
+    udp_date: reslutExam?.udp_date,
+    course_id: reslutExam?.course_id,
+  };
+
+  const response = {
+    course_id: reslut?.course_id,
+    course_cover: reslut?.course_cover,
+    course_code: reslut?.course_code,
+    course_name_lo: reslut?.course_name_lo,
+    course_name_eng: reslut?.course_name_eng,
+    course_description: reslut?.course_description,
+    course_remark_a: reslut?.course_remark_a,
+    course_remark_b: reslut?.course_remark_b,
+    crt_date: reslut?.crt_date,
+    udp_date: reslut?.udp_date,
+    active: reslut?.active,
+    exam_desc:exam
+  };
+  return res.json(response);
+
+
 });
 
 router.post("/group/create", middleware, (req, res, next) => {

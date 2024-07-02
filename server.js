@@ -15,12 +15,20 @@ const report = require("./routers/report");
 const log = require("./routers/log");
 const general = require("./routers/general");
 const vrdls = require("./routers/vrdls");
+const con = require("./database");
 // const http = require("http");
 const os = require("os");
 const cluster = require("cluster");
 const numOfCpuCores = os.cpus().length;
 
 const port = process.env.PORT || 9200;
+
+// 
+con.query("SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))", function (err, result, fields) {
+  if (err) throw err;
+  console.log(result);
+});
+
 
 app.use(express.json(), cors());
 

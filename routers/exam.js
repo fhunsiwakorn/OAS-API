@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-let con = require("../database");
+const con = require("../database");
 const middleware = require("../middleware");
 const common = require("../common");
 const functions = require("../functions");
@@ -184,15 +184,15 @@ router.put("/main/update/:em_id", middleware, async (req, res, next) => {
   );
 });
 
-router.post("/main/list/:course_id", middleware, async (req, res, next) => {
-  const { course_id } = req.params;
+router.post("/main/list", middleware, async (req, res, next) => {
+
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
   const search = data.search;
   const offset = functions.setZero((current_page - 1) * per_page);
   let search_param = [];
-  const p = [course_id];
+  const p = [];
   let sql = `SELECT 
     app_exam_main.em_id,
     app_exam_main.em_code,
@@ -207,18 +207,18 @@ router.post("/main/list/:course_id", middleware, async (req, res, next) => {
     app_exam_main.crt_date,
     app_exam_main.udp_date,
     app_exam_main.course_id ,
-     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
+    CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
     CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, 
      (SELECT COUNT(*) FROM app_exam_question INNER JOIN app_course_cluster ON app_course_cluster.cg_id = app_exam_question.cg_id   WHERE app_course_cluster.course_id=app_exam_main.course_id) AS total_question
-     FROM app_exam_main 
+     FROM app_exam_main
+     INNER JOIN  app_course uc ON uc.course_id = app_exam_main.course_id  AND uc.active = 1
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  
      LEFT JOIN  app_user u2 ON u2.user_id = app_exam_main.user_udp 
      WHERE 
-     app_exam_main.cancelled=1 AND 
-     app_exam_main.course_id = ? `;
+     app_exam_main.cancelled=1`;
   let order = ` ORDER BY app_exam_main.em_id DESC LIMIT ${offset},${per_page} `;
   let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1 AND app_exam_main.course_id = ? ";
+    " SELECT  COUNT(*) as numRows FROM  app_exam_main WHERE app_exam_main.cancelled=1";
 
   const getCountAll = await runQuery(sql_count, p.concat(search_param));
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
@@ -297,6 +297,9 @@ router.get("/main/get/:em_id", middleware, (req, res, next) => {
         em_name_eng: reslut?.em_name_eng,
         em_cover: reslut?.em_cover,
         em_description: reslut?.em_description,
+        em_random_amount: reslut?.em_random_amount,
+        em_time: reslut?.em_time,
+        em_measure: reslut?.em_measure,
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
         course_id: reslut?.course_id,
@@ -406,7 +409,7 @@ FROM
     // console.log(el);
     // let choices = JSON.parse(el?.choices);
     const choices = await runQuery(
-      "SELECT * FROM `app_exam_choice` WHERE cancelled =1 AND  eq_id = ? AND cg_id = ?",
+      "SELECT * FROM `app_exam_choice` WHERE cancelled =1 AND  eq_id = ? AND cg_id = ? ORDER BY ec_index ASC",
       [el?.eq_id, cg_id]
     );
     const newObj = {
@@ -590,7 +593,7 @@ router.put("/choice/update/:ec_id", middleware, async (req, res, next) => {
 router.get("/choice/list/:eq_id", middleware, (req, res, next) => {
   const { eq_id } = req.params;
   con.query(
-    "SELECT ec_id,ec_index,ec_name_lo,ec_name_eng,ec_image,eq_id,cg_id FROM app_exam_choice WHERE eq_id = ? AND  cancelled = 1 ",
+    "SELECT ec_id,ec_index,ec_name_lo,ec_name_eng,ec_image,eq_id,cg_id FROM app_exam_choice WHERE eq_id = ? AND  cancelled = 1 ORDER BY ec_index ASC",
     [eq_id],
     function (err, results) {
       return res.json(results);
