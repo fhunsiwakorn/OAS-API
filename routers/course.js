@@ -900,6 +900,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   const cg_id = req.query.cg_id;
   const user_id = req.query.user_id;
   const cs_id = req.query.cs_id;
+  const sort = req.query.sort === undefined  ||  (req.query.sort !== "ASC" && req.query.sort !== "DESC") ? "ASC" : req.query.sort;
   if (
     course_id === undefined ||
     cg_id === undefined ||
@@ -986,9 +987,10 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
 
   // ตรวจสอบว่ามี log หรือไม่
   const checkLog = await runQuery(
-    "SELECT  *  FROM app_course_log  WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
+    "SELECT  *  FROM app_course_log WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
     [cs_id, course_id, user_id]
   );
+ 
   const getNext = await runQuery(sql_next, [cg_id, course_id]); // หมวดหมู่ถัดไป
   const getPrevious = await runQuery(sql_previous, [cg_id, course_id]); // หมวดหมู่ก่อนหน้านี้
   const getCurent = await runQuery(sql_curent, [cg_id, course_id]); // หมวดหมู่ปัจจุบัน
@@ -1027,7 +1029,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cancelled= 1 AND
   app_course_lesson.cg_id = ? AND 
   app_course_cluster.course_id = ? 
-  ORDER BY app_course_lesson.cs_sort ASC LIMIT 0,1 `,
+  ORDER BY app_course_lesson.cs_sort ${sort} LIMIT 0,1 `,
       [cg_id, course_id]
     );
     debug_cs_id = r[0]?.cs_id !== undefined ? r[0]?.cs_id : 0;
