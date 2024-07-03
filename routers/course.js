@@ -900,7 +900,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   const cg_id = req.query.cg_id;
   const user_id = req.query.user_id;
   const cs_id = req.query.cs_id;
-  const sort = req.query.sort === undefined  ||  (req.query.sort !== "ASC" && req.query.sort !== "DESC") ? "ASC" : req.query.sort;
+  const sort = req.query.sort === undefined  ||  (req.query.sort.toUpperCase() !== "ASC" && req.query.sort.toUpperCase() !== "DESC") ? "ASC" : req.query.sort;
   if (
     course_id === undefined ||
     cg_id === undefined ||
