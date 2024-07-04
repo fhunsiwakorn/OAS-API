@@ -960,7 +960,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_cluster 
   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
   WHERE  
-  app_course_cluster.cg_id > ? AND 
+  app_course_cluster.cg_sort > ? AND 
   app_course_cluster.course_id = ? 
   ORDER BY  app_course_cluster.cg_sort ASC  
   LIMIT 0,1`;
@@ -973,7 +973,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_cluster 
   INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
   WHERE  
-  app_course_cluster.cg_id < ? AND 
+  app_course_cluster.cg_sort < ? AND 
   app_course_cluster.course_id = ? 
   ORDER BY  app_course_cluster.cg_sort DESC  
   LIMIT 0,1`;
@@ -991,18 +991,36 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   ORDER BY  app_course_cluster.cg_sort DESC  
   LIMIT 0,1`;
 
+  const getIndexCourseGroup = await runQuery(
+    "SELECT  cg_sort  FROM app_course_cluster WHERE cg_id = ? AND  course_id=?  LIMIT 0 ,1",
+    [cg_id, course_id]
+  );
+  const getIndexCourseLesson = await runQuery(
+    "SELECT  cs_sort  FROM app_course_lesson WHERE cs_id = ? AND  cg_id=?  LIMIT 0 ,1",
+    [cs_id, cg_id]
+  );
+  // cs_sort
+
   // ตรวจสอบว่ามี log หรือไม่
   const checkLog = await runQuery(
     "SELECT  *  FROM app_course_log WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
     [cs_id, course_id, user_id]
   );
 
-  const getNext = await runQuery(sql_next, [cg_id, course_id]); // หมวดหมู่ถัดไป
-  const getPrevious = await runQuery(sql_previous, [cg_id, course_id]); // หมวดหมู่ก่อนหน้านี้
+  const cg_sort =
+  getIndexCourseGroup[0] !== undefined ? getIndexCourseGroup[0]?.cg_sort : 0; // ลำดับหมวดหมู่
+const cs_sort =
+  getIndexCourseLesson[0] !== undefined
+    ? getIndexCourseLesson[0]?.cs_sort
+    : 0; // ลำดับบทเรียน
+    
+  const getNext = await runQuery(sql_next, [cg_sort, course_id]); // หมวดหมู่ถัดไป
+  const getPrevious = await runQuery(sql_previous, [cg_sort, course_id]); // หมวดหมู่ก่อนหน้านี้
   const getCurent = await runQuery(sql_curent, [cg_id, course_id]); // หมวดหมู่ปัจจุบัน
 
   const getContent = await runQuery(sql, [cg_id, cs_id, course_id]); //บทเรียนปัจจุบัน
   const getCountAll = await runQuery(sql_count, [cg_id, course_id]); //บทเรียนทั้งหมด
+
 
   const last_cl_id = checkLog[0] !== undefined ? checkLog[0]?.cl_id : 0; //บทเรียนล่าสุดที่มีการบันทึกหรือพึ่งเรียนไป
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0; //บทเรียนทั้งหมด
@@ -1012,6 +1030,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   // ถ้ารหัสบทเรียนที่รับค่ามา ไม่มีในหมวดหมู่ ให้ไปหา บทเรียนแรกของหมวดหมู่เรียนนั้น
   let debug_data_curent_lesson = {};
   let debug_cs_id = 0;
+  let debug_cs_sort = 0;
   if (first_cs_id === 0) {
     const r = await runQuery(
       `
@@ -1022,6 +1041,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cs_name_eng,
   app_course_lesson.cs_video,
   app_course_lesson.cs_description,
+  app_course_lesson.cs_sort,
   app_course_lesson.file_path,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
@@ -1039,6 +1059,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
       [cg_id, course_id]
     );
     debug_cs_id = r[0]?.cs_id !== undefined ? r[0]?.cs_id : 0;
+    debug_cs_sort = r[0]?.cs_sort !== undefined ? r[0]?.cs_sort : 0;
     debug_data_curent_lesson = r[0] !== undefined ? r[0] : {};
     await runQuery(
       "INSERT INTO app_course_log (cs_id,course_id,user_id,udp_date) VALUES (?,?,?,?)",
@@ -1078,10 +1099,10 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   WHERE
   app_course_lesson.cancelled= 1 AND
   app_course_lesson.cg_id = ? AND 
-  app_course_lesson.cs_id < ? AND 
+  app_course_lesson.cs_sort < ? AND 
   app_course_cluster.course_id = ? 
   ORDER BY app_course_lesson.cs_sort DESC LIMIT 0 ,1`,
-    [cg_id, debug_cs_id !== 0 ? debug_cs_id : cs_id, course_id]
+    [cg_id, debug_cs_sort !== 0 ? debug_cs_sort : cs_sort, course_id]
   );
 
   // บทเรียนถัดไป
@@ -1105,10 +1126,10 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   WHERE
   app_course_lesson.cancelled= 1 AND
   app_course_lesson.cg_id = ? AND 
-  app_course_lesson.cs_id > ? AND 
+  app_course_lesson.cs_sort > ? AND 
   app_course_cluster.course_id = ? 
   ORDER BY app_course_lesson.cs_sort ASC LIMIT 0 ,1`,
-    [cg_id, debug_cs_id !== 0 ? debug_cs_id : cs_id, course_id]
+    [cg_id, debug_cs_sort !== 0 ? debug_cs_sort : cs_sort, course_id]
   );
 
   const check_learning = await runQuery(
