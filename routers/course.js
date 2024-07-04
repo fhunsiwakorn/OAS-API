@@ -996,8 +996,8 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     [cg_id, course_id]
   );
   const getIndexCourseLesson = await runQuery(
-    "SELECT  cs_sort  FROM app_course_lesson WHERE cs_id = ? AND  cg_id=?  LIMIT 0 ,1",
-    [cs_id, cg_id]
+    "SELECT  cs_sort  FROM app_course_lesson WHERE cs_id = ?LIMIT 0 ,1",
+    [cs_id]
   );
   // cs_sort
 
