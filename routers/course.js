@@ -1297,7 +1297,7 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
   for (let i = 0; i < getContent.length; i++) {
     const el = getContent[i];
     const learned_content = await runQuery(
-      "SELECT COUNT(DISTINCT(app_course_log.cs_id)) AS numRows  FROM app_course_log WHERE user_id = ? AND course_id = ?   LIMIT 0,1",
+      "SELECT COUNT(DISTINCT(cs_id)) AS numRows  FROM app_course_log WHERE user_id = ? AND course_id = ?   LIMIT 0,1",
       [user_id, el?.course_id]
     );
     const group_content = await runQuery(
