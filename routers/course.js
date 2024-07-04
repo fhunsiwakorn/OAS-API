@@ -1170,7 +1170,7 @@ router.get("/learn/status?", middleware, async (req, res, next) => {
   const user_id = req.query.user_id;
   const course_id = req.query.course_id;
   const learned_content = await runQuery(
-    "SELECT COUNT(*) AS numRows FROM app_course_log WHERE user_id = ? AND course_id = ? LIMIT 0,1",
+    "SELECT COUNT(DISTINCT(cs_id)) AS numRows  FROM app_course_log WHERE user_id = ? AND course_id = ? LIMIT 0,1",
     [user_id, course_id]
   );
   const group_content = await runQuery(
