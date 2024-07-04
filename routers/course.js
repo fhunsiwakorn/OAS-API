@@ -240,11 +240,17 @@ router.post("/list", middleware, async (req, res, next) => {
   return res.json(response);
 });
 
-router.get("/get/:course_id", middleware,async (req, res, next) => {
+router.get("/get/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
 
-  const getCourse = await runQuery("SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1", [course_id]);
-  const getExam = await runQuery("SELECT * FROM app_exam_main WHERE  course_id = ?", [course_id]);
+  const getCourse = await runQuery(
+    "SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1",
+    [course_id]
+  );
+  const getExam = await runQuery(
+    "SELECT * FROM app_exam_main WHERE  course_id = ?",
+    [course_id]
+  );
   const reslut = getCourse[0];
   const reslutExam = getExam[0] !== undefined ? getExam[0] : {};
 
@@ -282,11 +288,9 @@ router.get("/get/:course_id", middleware,async (req, res, next) => {
     crt_date: reslut?.crt_date,
     udp_date: reslut?.udp_date,
     active: reslut?.active,
-    exam_desc:exam
+    exam_desc: exam,
   };
   return res.json(response);
-
-
 });
 
 router.post("/group/create", middleware, (req, res, next) => {
@@ -492,7 +496,7 @@ router.get("/group/get/:cg_id", middleware, (req, res, next) => {
   );
 });
 
-router.post("/lesson/create", middleware,async (req, res, next) => {
+router.post("/lesson/create", middleware, async (req, res, next) => {
   const data = req.body;
   const user_id = data.user_id;
 
@@ -501,46 +505,43 @@ router.post("/lesson/create", middleware,async (req, res, next) => {
     [data?.cg_id]
   );
   const check_coruse_group =
-      getCountCourseGroup[0] !== undefined
-        ? getCountCourseGroup[0]?.numRows
-        : 0;
-    if (check_coruse_group <= 0) {
-      return res.status(404).json({
-        status: 404,
-        message: "Invalid 'cg_id' ",
-      });
-    }
-    const getCountAll = await runQuery(
-      " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  cg_id=? ",
-      [data?.cg_id]
-    );
-    const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
-    const insert = await runQuery(
-      "INSERT INTO app_course_lesson (cs_cover,cs_name_lo,cs_name_eng,cs_video,cs_description,cs_sort,file_path,crt_date,udp_date,user_crt,user_udp,cg_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-      [
-        data.cs_cover,
-        data.cs_name_lo,
-        data.cs_name_eng,
-        data.cs_video,
-        data.cs_description,
-        parseInt(total) + 1 ,
-        data.file_path,
-        functions.dateAsiaThai(),
-        functions.dateAsiaThai(),
-        user_id,
-        user_id,
-        data.cg_id,
-      ]
-    );
-    return res.json(insert);
-
+    getCountCourseGroup[0] !== undefined ? getCountCourseGroup[0]?.numRows : 0;
+  if (check_coruse_group <= 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "Invalid 'cg_id' ",
+    });
+  }
+  const getCountAll = await runQuery(
+    " SELECT  COUNT(*) as numRows FROM  app_course_lesson WHERE  cg_id=? ",
+    [data?.cg_id]
+  );
+  const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
+  const insert = await runQuery(
+    "INSERT INTO app_course_lesson (cs_cover,cs_name_lo,cs_name_eng,cs_video,cs_description,cs_sort,file_path,crt_date,udp_date,user_crt,user_udp,cg_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+    [
+      data.cs_cover,
+      data.cs_name_lo,
+      data.cs_name_eng,
+      data.cs_video,
+      data.cs_description,
+      parseInt(total) + 1,
+      data.file_path,
+      functions.dateAsiaThai(),
+      functions.dateAsiaThai(),
+      user_id,
+      user_id,
+      data.cg_id,
+    ]
+  );
+  return res.json(insert);
 });
 
 router.put("/lesson/update/:cs_id", middleware, (req, res, next) => {
   const { cs_id } = req.params;
   const data = req.body;
   const user_id = data.user_id;
-  
+
   con.query(
     "SELECT user_id FROM app_user WHERE user_id = ?",
     [user_id],
@@ -900,7 +901,12 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   const cg_id = req.query.cg_id;
   const user_id = req.query.user_id;
   const cs_id = req.query.cs_id;
-  const sort = req.query.sort === undefined  ||  (req.query.sort.toUpperCase() !== "ASC" && req.query.sort.toUpperCase() !== "DESC") ? "ASC" : req.query.sort;
+  const sort =
+    req.query.sort === undefined ||
+    (req.query.sort.toUpperCase() !== "ASC" &&
+      req.query.sort.toUpperCase() !== "DESC")
+      ? "ASC"
+      : req.query.sort;
   if (
     course_id === undefined ||
     cg_id === undefined ||
@@ -958,7 +964,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_cluster.course_id = ? 
   ORDER BY  app_course_cluster.cg_sort ASC  
   LIMIT 0,1`;
- 
+
   const sql_previous = ` SELECT  
   app_course_group.cg_id,
   app_course_group.cg_name_lo,
@@ -990,7 +996,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
     "SELECT  *  FROM app_course_log WHERE cs_id = ? AND  course_id=? AND  user_id=? ORDER BY cl_id DESC LIMIT 0 ,1",
     [cs_id, course_id, user_id]
   );
- 
+
   const getNext = await runQuery(sql_next, [cg_id, course_id]); // หมวดหมู่ถัดไป
   const getPrevious = await runQuery(sql_previous, [cg_id, course_id]); // หมวดหมู่ก่อนหน้านี้
   const getCurent = await runQuery(sql_curent, [cg_id, course_id]); // หมวดหมู่ปัจจุบัน
@@ -1029,7 +1035,7 @@ router.get("/lesson/list/learn/q", middleware, async (req, res, next) => {
   app_course_lesson.cancelled= 1 AND
   app_course_lesson.cg_id = ? AND 
   app_course_cluster.course_id = ? 
-  ORDER BY app_course_lesson.cs_sort ${sort} LIMIT 0,1 `,
+  ORDER BY app_course_lesson.cs_sort ${sort.toUpperCase()} LIMIT 0,1 `,
       [cg_id, course_id]
     );
     debug_cs_id = r[0]?.cs_id !== undefined ? r[0]?.cs_id : 0;
