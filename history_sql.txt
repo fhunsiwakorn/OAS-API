@@ -62,3 +62,6 @@ ALTER TABLE `app_course_lesson` ADD `file_path` VARCHAR(128) NOT NULL AFTER `cs_
 
 ALTER TABLE `app_course_cluster` CHANGE `cg_sort` `cg_sort` INT(11) NOT NULL DEFAULT '0';
 ALTER TABLE `app_course_lesson` ADD `cs_sort` INT NOT NULL DEFAULT '0' AFTER `cs_description`;
+
+08072024
+CREATE TABLE `oas`.`app_mobile_log_version` (`id` INT NOT NULL AUTO_INCREMENT , `version` VARCHAR(12) NOT NULL , `link_android` VARCHAR(128) NOT NULL , `link_ios` VARCHAR(128) NOT NULL , `description` VARCHAR(512) NOT NULL , `crt_date` DATETIME NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;

@@ -48,5 +48,13 @@ router.post("/sms/laotel/send", middleware, (req, res, next) => {
   );
   return res.json({ msg: "success" });
 });
+router.get("/mobile/version/detect", middleware, (req, res, next) => {
+  con.query(
+    "SELECT  *  FROM app_mobile_log_version  ORDER BY	id DESC LIMIT 0,1",
+    (err, rows) => {
+      return res.json(rows[0]);
+    }
+  );
+});
 
 module.exports = router;
