@@ -604,6 +604,7 @@ router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
         udp_date: reslut?.udp_date,
         user_crt: reslut?.user_crt,
         user_udp: reslut?.user_udp,
+        cg_id: reslut?.cg_id,
       };
       return res.json(response);
     }

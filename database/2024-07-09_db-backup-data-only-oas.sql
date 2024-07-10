@@ -4471,6 +4471,11 @@ INSERT INTO `app_exam_time` VALUES('1','00:19:51','1','3','2024-07-03 10:38:01')
 
 
 
+-- Dumping data for table `app_mobile_log_version` 
+
+
+
+
 -- Dumping data for table `app_news` 
 
 
