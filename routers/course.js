@@ -600,11 +600,12 @@ router.get("/lesson/get/:cs_id", middleware, (req, res, next) => {
         cs_name_eng: reslut?.cs_name_eng,
         cs_video: reslut?.cs_video,
         cs_description: reslut?.cs_description,
+        file_path: reslut?.file_path,
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
         user_crt: reslut?.user_crt,
         user_udp: reslut?.user_udp,
-        cg_id: reslut?.cg_id,
+        cg_id: reslut?.cg_id, 
       };
       return res.json(response);
     }
