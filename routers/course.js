@@ -4,7 +4,7 @@ const con = require("../database");
 const fs = require("fs");
 const middleware = require("../middleware");
 const functions = require("../functions");
-
+const common = require("../common");
 async function runQuery(sql, param) {
   return new Promise((resolve, reject) => {
     resolve(con.query(sql, param));
@@ -242,9 +242,19 @@ router.post("/list", middleware, async (req, res, next) => {
 
 router.get("/get/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
-
+  const obj = common.drivinglicense_type;
   const getCourse = await runQuery(
-    "SELECT * FROM app_course WHERE course_id = ? AND cancelled = 1",
+    `SELECT app_course.*, 
+  IFNULL((SELECT COUNT(app_course_lesson.cg_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id  GROUP BY app_course_lesson.cg_id LIMIT 1), 0) AS total_course_group,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id  LIMIT 1) AS total_lesson ,
+  (SELECT COUNT(app_course_lesson.cs_id)  AS total  FROM  app_course_cluster INNER JOIN app_course_lesson ON app_course_cluster.cg_id = app_course_lesson.cg_id  WHERE app_course_cluster.course_id=app_course.course_id AND  app_course_lesson.cs_video != ''   LIMIT 1) AS total_video,
+  (SELECT COUNT(*)  AS total  FROM  app_course_document  WHERE app_course_document.course_id=app_course.course_id   LIMIT 1) AS total_document,
+  (SELECT COUNT(*)  AS total  FROM  app_exam_question INNER JOIN app_course_cluster ON app_course_cluster.cg_id = app_exam_question.cg_id AND app_course_cluster.course_id=app_course.course_id LIMIT 1) AS total_exam
+    FROM 
+    app_course 
+    WHERE 
+    app_course.course_id = ? AND
+    app_course.cancelled = 1`,
     [course_id]
   );
   const getExam = await runQuery(
@@ -261,6 +271,10 @@ router.get("/get/:course_id", middleware, async (req, res, next) => {
     });
   }
 
+  const result_filter = obj.filter(function (e) {
+    return e.dlt_code === reslutExam?.dlt_code;
+  });
+
   const exam = {
     em_id: reslutExam?.em_id,
     em_code: reslutExam?.em_code,
@@ -271,9 +285,11 @@ router.get("/get/:course_id", middleware, async (req, res, next) => {
     em_random_amount: reslutExam?.em_random_amount,
     em_time: reslutExam?.em_time,
     em_measure: reslutExam?.em_measure,
+    dlt_code: reslutExam?.dlt_code,
     crt_date: reslutExam?.crt_date,
     udp_date: reslutExam?.udp_date,
     course_id: reslutExam?.course_id,
+    dlt_desc:result_filter[0] !== undefined ? result_filter[0] : {}
   };
 
   const response = {
@@ -285,9 +301,15 @@ router.get("/get/:course_id", middleware, async (req, res, next) => {
     course_description: reslut?.course_description,
     course_remark_a: reslut?.course_remark_a,
     course_remark_b: reslut?.course_remark_b,
+    is_complete: reslut?.is_complete,
     crt_date: reslut?.crt_date,
     udp_date: reslut?.udp_date,
     active: reslut?.active,
+    total_course_group: reslut?.total_course_group,
+    total_lesson: reslut?.total_lesson,
+    total_video: reslut?.total_video,
+    total_document: reslut?.total_document,
+    total_exam: reslut?.total_exam,
     exam_desc: exam,
   };
   return res.json(response);
