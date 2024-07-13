@@ -679,7 +679,8 @@ router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
   app_course_lesson.cs_description ,
   app_course_lesson.crt_date,
   app_course_lesson.udp_date,
-  app_course_group.cg_name_lo,     
+  app_course_group.cg_name_lo,   
+  app_course_group.cg_name_eng,  
   CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
   CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update
      FROM  app_course_lesson 
@@ -724,6 +725,24 @@ router.post("/lesson/all/:cg_id", middleware, async (req, res, next) => {
   };
   return res.json(response);
 });
+
+router.put("/lesson/sort/:cg_id", middleware,async (req, res, next) => {
+  const { cg_id } = req.params;
+  const data = req.body;
+  for (let i = 0; i < data.length; i++) {
+    const el = data[i];
+    await runQuery(
+      " UPDATE  app_course_lesson SET cs_sort= ?  WHERE cs_id=? AND cg_id=? ",
+      [i,el?.cs_id,cg_id]
+    );
+  }
+  const getLessonAll = await runQuery(
+    " SELECT * FROM app_course_lesson WHERE cg_id = ? ORDER BY cs_sort ASC",
+    [cg_id]
+  );
+  return res.json(getLessonAll);
+});
+
 
 router.post(
   "/cluster/create/single/:course_id",
@@ -809,7 +828,15 @@ router.post(
 router.get("/cluster/get/:course_id", middleware, async (req, res, next) => {
   const { course_id } = req.params;
   const getCourseGroupClustering = await runQuery(
-    "SELECT * FROM `app_course_cluster` WHERE   course_id = ? ORDER BY cg_sort ASC",
+    `SELECT app_course_cluster.* ,
+    app_course_group.cg_name_lo,
+    app_course_group.cg_name_eng
+     FROM app_course_cluster 
+     INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
+     WHERE  
+    app_course_cluster.course_id = ? 
+    ORDER BY 
+    app_course_cluster.cg_sort ASC`,
     [course_id]
   );
   return res.json(getCourseGroupClustering);
