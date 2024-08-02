@@ -168,7 +168,8 @@ router.get("/list?", middleware,async (req, res, next) => {
   //   console.log(user_id);
   const date = new Date(functions.dateAsiaThai());
   const dateStr = date.toISOString().split("T")[0];
-
+  console.log(dateStr);
+  
   const getDltCardAll = await runQuery(
     "SELECT app_dlt_card.*,CONCAT(app_user.user_firstname ,' ' , app_user.user_lastname) AS fullname_create FROM  app_dlt_card INNER JOIN app_user ON app_user.user_id = app_dlt_card.user_id WHERE  app_dlt_card.user_id = ?  AND DATE(app_dlt_card.expiry_date) > ? ORDER BY app_dlt_card.id DESC",
     [user_id,dateStr]
@@ -194,7 +195,6 @@ router.get("/list?", middleware,async (req, res, next) => {
       dlt_types: dlttypes,
     };
     obj.push(newObj);
-    ;
   }
   return res.json(obj)
 });

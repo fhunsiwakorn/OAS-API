@@ -201,8 +201,7 @@ router.post("/list", middleware, async (req, res, next) => {
    app_course.active IN ${ex}
    `;
 
-  let sql_count =
-    " SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 ";
+  let sql_count = ` SELECT  COUNT(*) as numRows FROM  app_course WHERE  cancelled=1 AND active IN ${ex} `;
 
   const getCountAll = await runQuery(sql_count);
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
