@@ -189,7 +189,7 @@ CREATE TABLE `app_dlt_card_type` (
   `dlt_code` varchar(3) NOT NULL,
   `dlt_card_id` varchar(128) NOT NULL COMMENT 'app_dlt_card.id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_cache`; 
 

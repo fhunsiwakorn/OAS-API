@@ -1100,11 +1100,17 @@ INSERT INTO `app_course_log` VALUES('404','286','1','2','2024-07-04 10:56:18');
 
 -- Dumping data for table `app_dlt_card` 
 
+INSERT INTO `app_dlt_card` VALUES('dGyZadJGAj','20240802002','url/image','url/image','url/image','url/image','2020-01-08','2023-11-25','2024-08-02 11:05:01','2024-08-02 11:05:01','1','1');
+INSERT INTO `app_dlt_card` VALUES('uNu3uS1LNy','20240802001','url/image','url/image','url/image','url/image','2020-01-08','2024-11-25','2024-08-02 11:01:54','2024-08-02 11:05:45','1','1');
 
 
 
 -- Dumping data for table `app_dlt_card_type` 
 
+INSERT INTO `app_dlt_card_type` VALUES('11','A1','dGyZadJGAj');
+INSERT INTO `app_dlt_card_type` VALUES('12','A2','dGyZadJGAj');
+INSERT INTO `app_dlt_card_type` VALUES('15','A1','uNu3uS1LNy');
+INSERT INTO `app_dlt_card_type` VALUES('16','A2','uNu3uS1LNy');
 
 
 
