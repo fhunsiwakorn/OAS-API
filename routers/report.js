@@ -44,7 +44,7 @@ router.post("/course/:course_id", middleware, async (req, res, next) => {
   let sql_count =
   " SELECT  COUNT(DISTINCT t1.user_id) as numRows FROM  app_course_log t1 INNER JOIN app_user t2 ON  t2.user_id = t1.user_id INNER JOIN app_course t3 ON  t3.course_id = t1.course_id  WHERE  t1.course_id = ? ";
 
-  const getCountAll = await runQuery(sql_count + " GROUP BY t1.user_id ", p.concat(search_param));
+  const getCountAll = await runQuery(sql_count, p.concat(search_param));
   const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
 
   if (search !== "" || search.length > 0) {
