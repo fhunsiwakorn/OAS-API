@@ -185,7 +185,6 @@ router.put("/main/update/:em_id", middleware, async (req, res, next) => {
 });
 
 router.post("/main/list", middleware, async (req, res, next) => {
-
   const data = req.body;
   const current_page = data.page;
   const per_page = data.per_page <= 50 ? data.per_page : 50;
@@ -325,7 +324,7 @@ router.post("/question/create", middleware, async (req, res, next) => {
   }
   con.query(
     "INSERT INTO app_exam_question (eq_name_lo,eq_name_eng,eq_image,eq_answer,cg_id) VALUES (?,?,?,?,?)",
-    [data.eq_name_lo,data.eq_name_eng, data.eq_image, data.eq_answer, cg_id],
+    [data.eq_name_lo, data.eq_name_eng, data.eq_image, data.eq_answer, cg_id],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -350,7 +349,14 @@ router.put("/question/update/:eq_id", middleware, async (req, res, next) => {
   }
   con.query(
     "UPDATE  app_exam_question SET eq_name_lo=? ,eq_name_eng = ? , eq_image=?,eq_answer=?, cg_id=? WHERE eq_id=? ",
-    [data.eq_name_lo,data.eq_name_eng, data.eq_image, data.eq_answer, cg_id, eq_id],
+    [
+      data.eq_name_lo,
+      data.eq_name_eng,
+      data.eq_image,
+      data.eq_answer,
+      cg_id,
+      eq_id,
+    ],
     function (err, result) {
       if (err) throw err;
 
@@ -535,7 +541,14 @@ router.post("/choice/create", middleware, async (req, res, next) => {
   }
   con.query(
     "INSERT INTO app_exam_choice (ec_index,ec_name_lo,ec_name_eng,ec_image,eq_id,cg_id) VALUES (?,?,?,?,?,?)",
-    [data.ec_index, data.ec_name_lo,data.ec_name_eng, data.ec_image, eq_id, cg_id],
+    [
+      data.ec_index,
+      data.ec_name_lo,
+      data.ec_name_eng,
+      data.ec_image,
+      eq_id,
+      cg_id,
+    ],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -582,7 +595,15 @@ router.put("/choice/update/:ec_id", middleware, async (req, res, next) => {
   }
   con.query(
     "UPDATE  app_exam_choice SET ec_index=?,ec_name_lo=?,ec_name_eng=?, ec_image=?,eq_id=?,cg_id=? WHERE ec_id=? ",
-    [data.ec_index, data.ec_name_lo,data.ec_name_eng, data.ec_image, eq_id, cg_id, ec_id],
+    [
+      data.ec_index,
+      data.ec_name_lo,
+      data.ec_name_eng,
+      data.ec_image,
+      eq_id,
+      cg_id,
+      ec_id,
+    ],
     function (err, result) {
       if (err) throw err;
       return res.json(result);
@@ -631,7 +652,7 @@ router.get("/choice/get/:ec_id", middleware, (req, res, next) => {
         ec_id: reslut?.ec_id,
         ec_index: reslut?.ec_index,
         ec_name_lo: reslut?.ec_name_lo,
-        ec_name_eng:reslut?.ec_name_eng,
+        ec_name_eng: reslut?.ec_name_eng,
         ec_image: reslut?.ec_image,
         eq_id: reslut?.eq_id,
         cg_id: reslut?.cg_id,
@@ -855,12 +876,20 @@ router.post("/result/render", middleware, async (req, res, next) => {
       ? checkMainCache[0]?.total_question
       : 0;
 
+  const getCacheFirst = await runQuery(
+    "SELECT * FROM app_exam_cache WHERE course_id = ? AND user_id = ? LIMIT 0 , 1",
+    [course_id,user_id]
+  );
+  const er_start_time = getCacheFirst[0]?.udp_date !== undefined ? getCacheFirst[0]?.udp_date: "";
+  // console.log(er_start_time);
+  
   // นำคำตอบที่เลือกมาตรวจสอบกับหมายเลขในคำถามว่าตรงกันหรือไม่
   con.query(
-    "INSERT INTO app_exam_result (er_score_total,er_question_total,er_use_time,crt_date,udp_date,user_id,course_id) VALUES (?,?,?,?,?,?,?)",
+    "INSERT INTO app_exam_result (er_score_total,er_question_total,er_start_time,er_use_time,crt_date,udp_date,user_id,course_id) VALUES (?,?,?,?,?,?,?,?)",
     [
       sum_score,
       total_question,
+      er_start_time,
       er_use_time,
       functions.dateAsiaThai(),
       functions.dateAsiaThai(),
@@ -929,7 +958,7 @@ router.get("/history?", middleware, async (req, res, next) => {
   const user_id = req.query.user_id;
   let p = [user_id];
   let p2 = [];
-  let sql =  `SELECT 
+  let sql = `SELECT 
   app_exam_result.*,
   app_course.course_code,
   app_course.course_name_lo,
@@ -947,12 +976,14 @@ router.get("/history?", middleware, async (req, res, next) => {
   WHERE  
   app_exam_result.user_id = ?`;
 
-  if(parseInt(course_id) !== 0 && course_id !== undefined){
-    sql += " AND  app_course.course_id = ? " 
+  if (parseInt(course_id) !== 0 && course_id !== undefined) {
+    sql += " AND  app_course.course_id = ? ";
     p2 = [course_id];
   }
-  
-  const getResultExamHistory = await runQuery(sql + " ORDER BY app_exam_result.er_id DESC  LIMIT 0,300 ", p.concat(p2)
+
+  const getResultExamHistory = await runQuery(
+    sql + " ORDER BY app_exam_result.er_id DESC  LIMIT 0,300 ",
+    p.concat(p2)
   );
   return res.json(getResultExamHistory);
 });

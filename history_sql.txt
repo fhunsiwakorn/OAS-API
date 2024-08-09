@@ -65,4 +65,6 @@ ALTER TABLE `app_course_lesson` ADD `cs_sort` INT NOT NULL DEFAULT '0' AFTER `cs
 
 08/07/2024
 CREATE TABLE `oas`.`app_mobile_log_version` (`id` INT NOT NULL AUTO_INCREMENT , `version` VARCHAR(12) NOT NULL , `link_android` VARCHAR(128) NOT NULL , `link_ios` VARCHAR(128) NOT NULL , `description` VARCHAR(512) NOT NULL , `crt_date` DATETIME NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
- 
+
+09/08/2024
+ALTER TABLE `app_exam_result` ADD `er_start_time` DATETIME NOT NULL AFTER `er_question_total`;
