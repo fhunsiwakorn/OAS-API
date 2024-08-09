@@ -927,29 +927,32 @@ router.get("/time?", middleware, (req, res, next) => {
 router.get("/history?", middleware, async (req, res, next) => {
   const course_id = req.query.course_id;
   const user_id = req.query.user_id;
-  const getResultExamHistory = await runQuery(
-    `SELECT 
-    app_exam_result.*,
-    app_course.course_code,
-    app_course.course_name_lo,
-    app_course.course_name_eng,
-    app_exam_main.em_random_amount,
-    app_exam_main.em_time,
-    app_exam_main.em_measure,
-    app_exam_main.dlt_code,
-    IF( app_exam_result.er_score_total >= app_exam_main.em_measure, "pass", "fail") AS status,
-    CONCAT(app_user.user_firstname ,' ' , app_user.user_lastname) AS fullname_tuter
-    FROM  app_exam_result 
-    INNER JOIN app_course ON app_course.course_id = app_exam_result.course_id
-    INNER JOIN app_exam_main ON app_exam_main.course_id = app_exam_result.course_id
-    INNER JOIN app_user ON app_user.user_id = app_exam_result.user_id
-    WHERE  
-    app_exam_result.course_id = ? AND
-    app_exam_result.user_id = ?
-    ORDER BY app_exam_result.er_id DESC
-    LIMIT 0,300
-    `,
-    [course_id, user_id]
+  let p = [user_id];
+  let p2 = [];
+  let sql =  `SELECT 
+  app_exam_result.*,
+  app_course.course_code,
+  app_course.course_name_lo,
+  app_course.course_name_eng,
+  app_exam_main.em_random_amount,
+  app_exam_main.em_time,
+  app_exam_main.em_measure,
+  app_exam_main.dlt_code,
+  IF( app_exam_result.er_score_total >= app_exam_main.em_measure, "pass", "fail") AS status,
+  CONCAT(app_user.user_firstname ,' ' , app_user.user_lastname) AS fullname_tuter
+  FROM  app_exam_result 
+  INNER JOIN app_course ON app_course.course_id = app_exam_result.course_id
+  INNER JOIN app_exam_main ON app_exam_main.course_id = app_exam_result.course_id
+  INNER JOIN app_user ON app_user.user_id = app_exam_result.user_id
+  WHERE  
+  app_exam_result.user_id = ?`;
+
+  if(parseInt(course_id) !== 0 && course_id !== undefined){
+    sql += " AND  app_course.course_id = ? " 
+    p2 = [course_id];
+  }
+  
+  const getResultExamHistory = await runQuery(sql + " ORDER BY app_exam_result.er_id DESC  LIMIT 0,300 ", p.concat(p2)
   );
   return res.json(getResultExamHistory);
 });

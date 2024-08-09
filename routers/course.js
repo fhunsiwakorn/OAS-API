@@ -759,6 +759,10 @@ router.post(
       " SELECT  COUNT(*) as numRows FROM  app_course_cluster WHERE  course_id=? AND cg_id = ? ",
       [course_id, data?.cg_id]
     );
+    await runQuery(
+      "UPDATE  app_course SET is_complete=1 ,udp_date=?  WHERE course_id = ? ",
+      [functions.dateAsiaThai(), course_id]
+    );
     const total = getCountAll[0] !== undefined ? getCountAll[0]?.numRows : 0;
     const check_coruse_group =
       getCountCourseGroup[0] !== undefined
@@ -1346,6 +1350,12 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
   let obj = [];
   for (let i = 0; i < getContent.length; i++) {
     const el = getContent[i];
+
+    const learned_last = await runQuery(
+      "SELECT app_course_log.* ,app_course_lesson.cg_id FROM app_course_log  INNER JOIN app_course_lesson ON app_course_lesson.cs_id = app_course_log.cs_id WHERE app_course_log.user_id = ? AND app_course_log.course_id = ? ORDER BY app_course_log.cl_id DESC LIMIT 0,1 ",
+      [user_id, el?.course_id]
+    );
+
     const learned_content = await runQuery(
       "SELECT COUNT(DISTINCT(cs_id)) AS numRows  FROM app_course_log WHERE user_id = ? AND course_id = ?   LIMIT 0,1",
       [user_id, el?.course_id]
@@ -1372,8 +1382,8 @@ router.post("/learn/history/:user_id", middleware, async (req, res, next) => {
       total_lesson: totalLesson,
       progress: progress.toFixed(2),
       last_date:
-        learned_content[0]?.udp_date !== undefined
-          ? learned_content[0]?.udp_date
+      learned_last[0]?.udp_date !== undefined
+          ? learned_last[0]?.udp_date
           : "",
     };
     const data_merg = { ...el, ...newObj };

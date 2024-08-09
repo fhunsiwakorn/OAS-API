@@ -108,7 +108,7 @@ INSERT INTO `app_country` VALUES('95','สโลวาเกีย','Slovakia','
 INSERT INTO `app_country` VALUES('96','สโลวีเนีย','Slovenia','สาธารณรัฐสโลวีเนีย','Republic of Slovenia','ลูบลิยานา','Ljubljana','Europe');
 INSERT INTO `app_country` VALUES('97','สวิตเซอร์แลนด์','Switzerland','สมาพันธรัฐสวิส','Swiss Confederation','เบิร์น / แบร์น','Bern','Europe');
 INSERT INTO `app_country` VALUES('98','สวีเดน','Sweden','ราชอาณาจักรสวีเดน','Kingdom of Sweden','สต็อกโฮล์ม','Stockholm','Europe');
-INSERT INTO `app_country` VALUES('99','สหราชอาณาจักร','United Kingdom','สหราชอาณาจักรเกรตบริเตน และนอร์เทิร์นไอร์แลนด์','United Kingdom of Great Britain\nand Northern Ireland','ลอนดอน','London','Europe');
+INSERT INTO `app_country` VALUES('99','สหราชอาณาจักร','United Kingdom','สหราชอาณาจักรเกรตบริเตน และนอร์เทิร์นไอร์แลนด์','United Kingdom of Great Britain\n\nand Northern Ireland','ลอนดอน','London','Europe');
 INSERT INTO `app_country` VALUES('100','ออสเตรีย','Austria','สาธารณรัฐออสเตรีย','Republic of Austria','เวียนนา','Vienna','Europe');
 INSERT INTO `app_country` VALUES('101','อันดอร์รา','Andorra','ราชรัฐอันดอร์รา','Principality of Andorra','อันดอร์ราลาเวลยา','Andorra la Vella','Europe');
 INSERT INTO `app_country` VALUES('102','อิตาลี','Italy','สาธารณรัฐอิตาลี','Italian Republic','โรม','Rome','Europe');
