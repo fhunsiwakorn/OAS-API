@@ -275,9 +275,16 @@ router.delete("/main/delete/:em_id", middleware, (req, res, next) => {
 
 router.get("/main/get/:em_id", middleware, (req, res, next) => {
   const { em_id } = req.params;
-  console.log(em_id);
+
   con.query(
-    "SELECT * FROM app_exam_main WHERE  cancelled = 1 AND (em_id = ? OR course_id = ?)",
+    `SELECT 
+    app_exam_main.*,
+    (SELECT SUM(app_course_cluster.cg_amount_random) FROM app_course_cluster WHERE app_course_cluster.course_id=app_exam_main.course_id)  AS total_question
+    FROM 
+    app_exam_main 
+    WHERE  
+    app_exam_main.cancelled = 1 AND 
+    (app_exam_main.em_id = ? OR app_exam_main.course_id = ?)`,
     [em_id, em_id],
     (err, rows) => {
       let _content = rows.length;
@@ -302,6 +309,7 @@ router.get("/main/get/:em_id", middleware, (req, res, next) => {
         crt_date: reslut?.crt_date,
         udp_date: reslut?.udp_date,
         course_id: reslut?.course_id,
+        total_question: reslut?.total_question
       };
       return res.json(response);
     }
