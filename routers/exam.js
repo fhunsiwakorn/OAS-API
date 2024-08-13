@@ -208,7 +208,7 @@ router.post("/main/list", middleware, async (req, res, next) => {
     app_exam_main.course_id ,
     CONCAT(u1.user_firstname ,' ' , u1.user_lastname) AS user_create ,
     CONCAT(u2.user_firstname ,' ' , u2.user_lastname) AS user_update, 
-     (SELECT COUNT(*) FROM app_exam_question INNER JOIN app_course_cluster ON app_course_cluster.cg_id = app_exam_question.cg_id   WHERE app_course_cluster.course_id=app_exam_main.course_id) AS total_question
+     (SELECT SUM(app_course_cluster.cg_amount_random) FROM app_course_cluster WHERE app_course_cluster.course_id=app_exam_main.course_id )  AS total_question
      FROM app_exam_main
      INNER JOIN  app_course uc ON uc.course_id = app_exam_main.course_id  AND uc.active = 1
      LEFT JOIN  app_user u1 ON u1.user_id = app_exam_main.user_crt  

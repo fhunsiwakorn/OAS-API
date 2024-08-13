@@ -832,7 +832,8 @@ router.get("/cluster/get/:course_id", middleware, async (req, res, next) => {
   const getCourseGroupClustering = await runQuery(
     `SELECT app_course_cluster.* ,
     app_course_group.cg_name_lo,
-    app_course_group.cg_name_eng
+    app_course_group.cg_name_eng,
+    (SELECT COUNT(cl.cs_id)  AS total  FROM  app_course_cluster cc INNER JOIN app_course_lesson cl ON cc.cg_id = cl.cg_id  WHERE cc.course_id=app_course_cluster.course_id AND cc.cg_id =app_course_cluster.cg_id   LIMIT 1) AS total_lesson 
      FROM app_course_cluster 
      INNER JOIN app_course_group ON app_course_group.cg_id = app_course_cluster.cg_id
      WHERE  

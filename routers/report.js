@@ -63,7 +63,7 @@ router.post("/course/:course_id", middleware, async (req, res, next) => {
     ];
   }
   sql += ` GROUP BY t1.user_id  ORDER BY t1.cl_id DESC LIMIT ${offset},${per_page} `;
-  const getCountFilter = await runQuery(sql_count +  p.concat(search_param));
+  const getCountFilter = await runQuery(sql_count , p.concat(search_param));
   const total_filter =
     getCountFilter[0] !== undefined ? getCountFilter[0]?.numRows : 0;
 
