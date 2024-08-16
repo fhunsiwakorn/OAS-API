@@ -206,7 +206,7 @@ CREATE TABLE `app_exam_cache` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_choice`; 
 
@@ -271,13 +271,14 @@ CREATE TABLE `app_exam_result` (
   `er_id` int(11) NOT NULL AUTO_INCREMENT,
   `er_score_total` int(11) NOT NULL,
   `er_question_total` int(11) NOT NULL,
+  `er_start_time` datetime NOT NULL,
   `er_use_time` time NOT NULL,
   `crt_date` datetime NOT NULL,
   `udp_date` datetime NOT NULL,
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id	',
   `course_id` int(11) NOT NULL COMMENT 'app_course.course_id',
   PRIMARY KEY (`er_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_exam_time`; 
 
@@ -290,7 +291,7 @@ CREATE TABLE `app_exam_time` (
   `user_id` int(11) NOT NULL COMMENT 'app_user.user_id',
   `udp_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Table structure for table `app_main_result`; 
 
