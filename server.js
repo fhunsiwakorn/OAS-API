@@ -73,12 +73,12 @@ if (numOfCpuCores > 1) {
       cluster.fork();
     }
 
-    cluster.on('disconnect', function(worker) 
-    {
-        console.error('disconnect!');
-        cluster.fork();
-    });
-    
+    // cluster.on('disconnect', function(worker) 
+    // {
+    //     console.error('disconnect!');
+    //     cluster.fork();
+    // });
+
     cluster.on("exit", function (worker) {
       console.log("Worker", worker.id, " has exitted.");
     });
